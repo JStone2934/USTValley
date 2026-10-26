@@ -1,5 +1,5 @@
 {
-  "mapVersion": "core-reconstructed-0.2.0",
+  "mapVersion": "core-reconstructed-0.2.2",
   "status": "source-geometry-reconstructed",
   "sourceSha256": "83bec18f56daa2b966dbd2d82ebfb7f2c1824c29181ddd7ea51715ce46ea6223",
   "sourceMapVersion": 271141,
@@ -30,8 +30,359 @@
     "室内直接采用源地图F1平面，缩放6；E/W按真实分离翼楼裁取，不合并成虚构大厅；保留房间、墙体和孔洞",
     "游戏入口从源entry与出入口点选择，在同一连通公共空间内寻找最近安全点；偏移量记录并受48像素上限约束；未发现额外入口不捏造",
     "开发边界仍为六组核心建筑的有限包络；15个编号的标签锚点并不代表单栋完整实测边界",
-    "源玻璃墙LineString保留中心线，未给宽度时按4逻辑像素保守碰撞，不填充建筑内部或堵塞源门洞"
+    "源玻璃墙LineString保留中心线，未给宽度时按4逻辑像素保守碰撞，不填充建筑内部或堵塞源门洞",
+    "角色按1.75m身高、0.50m体宽、0.28m地面纵深标定；依据校园纬度校正EPSG:3857局部比例，室内外分别换算角色尺寸、碰撞、步速与交互半径，不使用固定16×32显示尺寸"
   ],
+  "scaleAudit": {
+    "human": {
+      "heightMeters": 1.75,
+      "widthMeters": 0.5,
+      "depthMeters": 0.28,
+      "collisionRadiusMeters": 0.22,
+      "walkingMetersPerSecond": 2.8,
+      "interactionMeters": 1.5,
+      "runningMetersPerSecond": 5.6
+    },
+    "projection": "EPSG:3857 local spherical scale",
+    "scenes": [
+      {
+        "id": "campus_core",
+        "units": {
+          "referenceLatitudeDegrees": 22.890236623470635,
+          "metersPerProjectedUnit": 0.9212517001054473,
+          "pixelsPerProjectedUnit": 4,
+          "pixelsPerMeter": 4.341918717264952,
+          "heightProjection": 0.55
+        },
+        "player": {
+          "width": 2.170959358632476,
+          "height": 5.3948340062017035,
+          "groundDepth": 1.2157372408341867,
+          "radius": 0.9552221177982895,
+          "speed": 12.157372408341866,
+          "runSpeed": 24.31474481668373,
+          "interactionRadius": 6.512878075897428
+        },
+        "widthMeters": 416.4057684476622,
+        "heightMeters": 401.665741245975
+      },
+      {
+        "id": "interior_e1",
+        "units": {
+          "referenceLatitudeDegrees": 22.890236623470635,
+          "metersPerProjectedUnit": 0.9212517001054473,
+          "pixelsPerProjectedUnit": 6,
+          "pixelsPerMeter": 6.512878075897428,
+          "heightProjection": 0.55
+        },
+        "player": {
+          "width": 3.256439037948714,
+          "height": 8.092251009302554,
+          "groundDepth": 1.82360586125128,
+          "radius": 1.432833176697434,
+          "speed": 18.236058612512796,
+          "runSpeed": 36.47211722502559,
+          "interactionRadius": 9.769317113846142
+        },
+        "widthMeters": 147.40027201687158,
+        "heightMeters": 110.55020401265368
+      },
+      {
+        "id": "interior_e2",
+        "units": {
+          "referenceLatitudeDegrees": 22.890236623470635,
+          "metersPerProjectedUnit": 0.9212517001054473,
+          "pixelsPerProjectedUnit": 6,
+          "pixelsPerMeter": 6.512878075897428,
+          "heightProjection": 0.55
+        },
+        "player": {
+          "width": 3.256439037948714,
+          "height": 8.092251009302554,
+          "groundDepth": 1.82360586125128,
+          "radius": 1.432833176697434,
+          "speed": 18.236058612512796,
+          "runSpeed": 36.47211722502559,
+          "interactionRadius": 9.769317113846142
+        },
+        "widthMeters": 147.40027201687158,
+        "heightMeters": 110.55020401265368
+      },
+      {
+        "id": "interior_e3",
+        "units": {
+          "referenceLatitudeDegrees": 22.890236623470635,
+          "metersPerProjectedUnit": 0.9212517001054473,
+          "pixelsPerProjectedUnit": 6,
+          "pixelsPerMeter": 6.512878075897428,
+          "heightProjection": 0.55
+        },
+        "player": {
+          "width": 3.256439037948714,
+          "height": 8.092251009302554,
+          "groundDepth": 1.82360586125128,
+          "radius": 1.432833176697434,
+          "speed": 18.236058612512796,
+          "runSpeed": 36.47211722502559,
+          "interactionRadius": 9.769317113846142
+        },
+        "widthMeters": 144.9436008165904,
+        "heightMeters": 110.55020401265368
+      },
+      {
+        "id": "interior_e4",
+        "units": {
+          "referenceLatitudeDegrees": 22.890236623470635,
+          "metersPerProjectedUnit": 0.9212517001054473,
+          "pixelsPerProjectedUnit": 6,
+          "pixelsPerMeter": 6.512878075897428,
+          "heightProjection": 0.55
+        },
+        "player": {
+          "width": 3.256439037948714,
+          "height": 8.092251009302554,
+          "groundDepth": 1.82360586125128,
+          "radius": 1.432833176697434,
+          "speed": 18.236058612512796,
+          "runSpeed": 36.47211722502559,
+          "interactionRadius": 9.769317113846142
+        },
+        "widthMeters": 144.9436008165904,
+        "heightMeters": 110.55020401265368
+      },
+      {
+        "id": "interior_w1",
+        "units": {
+          "referenceLatitudeDegrees": 22.890236623470635,
+          "metersPerProjectedUnit": 0.9212517001054473,
+          "pixelsPerProjectedUnit": 6,
+          "pixelsPerMeter": 6.512878075897428,
+          "heightProjection": 0.55
+        },
+        "player": {
+          "width": 3.256439037948714,
+          "height": 8.092251009302554,
+          "groundDepth": 1.82360586125128,
+          "radius": 1.432833176697434,
+          "speed": 18.236058612512796,
+          "runSpeed": 36.47211722502559,
+          "interactionRadius": 9.769317113846142
+        },
+        "widthMeters": 144.9436008165904,
+        "heightMeters": 110.55020401265368
+      },
+      {
+        "id": "interior_w2",
+        "units": {
+          "referenceLatitudeDegrees": 22.890236623470635,
+          "metersPerProjectedUnit": 0.9212517001054473,
+          "pixelsPerProjectedUnit": 6,
+          "pixelsPerMeter": 6.512878075897428,
+          "heightProjection": 0.55
+        },
+        "player": {
+          "width": 3.256439037948714,
+          "height": 8.092251009302554,
+          "groundDepth": 1.82360586125128,
+          "radius": 1.432833176697434,
+          "speed": 18.236058612512796,
+          "runSpeed": 36.47211722502559,
+          "interactionRadius": 9.769317113846142
+        },
+        "widthMeters": 144.9436008165904,
+        "heightMeters": 110.55020401265368
+      },
+      {
+        "id": "interior_w3",
+        "units": {
+          "referenceLatitudeDegrees": 22.890236623470635,
+          "metersPerProjectedUnit": 0.9212517001054473,
+          "pixelsPerProjectedUnit": 6,
+          "pixelsPerMeter": 6.512878075897428,
+          "heightProjection": 0.55
+        },
+        "player": {
+          "width": 3.256439037948714,
+          "height": 8.092251009302554,
+          "groundDepth": 1.82360586125128,
+          "radius": 1.432833176697434,
+          "speed": 18.236058612512796,
+          "runSpeed": 36.47211722502559,
+          "interactionRadius": 9.769317113846142
+        },
+        "widthMeters": 147.40027201687158,
+        "heightMeters": 110.55020401265368
+      },
+      {
+        "id": "interior_w4",
+        "units": {
+          "referenceLatitudeDegrees": 22.890236623470635,
+          "metersPerProjectedUnit": 0.9212517001054473,
+          "pixelsPerProjectedUnit": 6,
+          "pixelsPerMeter": 6.512878075897428,
+          "heightProjection": 0.55
+        },
+        "player": {
+          "width": 3.256439037948714,
+          "height": 8.092251009302554,
+          "groundDepth": 1.82360586125128,
+          "radius": 1.432833176697434,
+          "speed": 18.236058612512796,
+          "runSpeed": 36.47211722502559,
+          "interactionRadius": 9.769317113846142
+        },
+        "widthMeters": 147.40027201687158,
+        "heightMeters": 110.55020401265368
+      },
+      {
+        "id": "interior_c1",
+        "units": {
+          "referenceLatitudeDegrees": 22.890236623470635,
+          "metersPerProjectedUnit": 0.9212517001054473,
+          "pixelsPerProjectedUnit": 6,
+          "pixelsPerMeter": 6.512878075897428,
+          "heightProjection": 0.55
+        },
+        "player": {
+          "width": 3.256439037948714,
+          "height": 8.092251009302554,
+          "groundDepth": 1.82360586125128,
+          "radius": 1.432833176697434,
+          "speed": 18.236058612512796,
+          "runSpeed": 36.47211722502559,
+          "interactionRadius": 9.769317113846142
+        },
+        "widthMeters": 127.74690241462203,
+        "heightMeters": 68.7867936078734
+      },
+      {
+        "id": "interior_c2",
+        "units": {
+          "referenceLatitudeDegrees": 22.890236623470635,
+          "metersPerProjectedUnit": 0.9212517001054473,
+          "pixelsPerProjectedUnit": 6,
+          "pixelsPerMeter": 6.512878075897428,
+          "heightProjection": 0.55
+        },
+        "player": {
+          "width": 3.256439037948714,
+          "height": 8.092251009302554,
+          "groundDepth": 1.82360586125128,
+          "radius": 1.432833176697434,
+          "speed": 18.236058612512796,
+          "runSpeed": 36.47211722502559,
+          "interactionRadius": 9.769317113846142
+        },
+        "widthMeters": 125.29023121434084,
+        "heightMeters": 90.89683441040414
+      },
+      {
+        "id": "interior_c3",
+        "units": {
+          "referenceLatitudeDegrees": 22.890236623470635,
+          "metersPerProjectedUnit": 0.9212517001054473,
+          "pixelsPerProjectedUnit": 6,
+          "pixelsPerMeter": 6.512878075897428,
+          "heightProjection": 0.55
+        },
+        "player": {
+          "width": 3.256439037948714,
+          "height": 8.092251009302554,
+          "groundDepth": 1.82360586125128,
+          "radius": 1.432833176697434,
+          "speed": 18.236058612512796,
+          "runSpeed": 36.47211722502559,
+          "interactionRadius": 9.769317113846142
+        },
+        "widthMeters": 88.44016321012295,
+        "heightMeters": 154.77028561771516
+      },
+      {
+        "id": "interior_c4",
+        "units": {
+          "referenceLatitudeDegrees": 22.890236623470635,
+          "metersPerProjectedUnit": 0.9212517001054473,
+          "pixelsPerProjectedUnit": 6,
+          "pixelsPerMeter": 6.512878075897428,
+          "heightProjection": 0.55
+        },
+        "player": {
+          "width": 3.256439037948714,
+          "height": 8.092251009302554,
+          "groundDepth": 1.82360586125128,
+          "radius": 1.432833176697434,
+          "speed": 18.236058612512796,
+          "runSpeed": 36.47211722502559,
+          "interactionRadius": 9.769317113846142
+        },
+        "widthMeters": 88.44016321012295,
+        "heightMeters": 154.77028561771516
+      },
+      {
+        "id": "interior_c5",
+        "units": {
+          "referenceLatitudeDegrees": 22.890236623470635,
+          "metersPerProjectedUnit": 0.9212517001054473,
+          "pixelsPerProjectedUnit": 6,
+          "pixelsPerMeter": 6.512878075897428,
+          "heightProjection": 0.55
+        },
+        "player": {
+          "width": 3.256439037948714,
+          "height": 8.092251009302554,
+          "groundDepth": 1.82360586125128,
+          "radius": 1.432833176697434,
+          "speed": 18.236058612512796,
+          "runSpeed": 36.47211722502559,
+          "interactionRadius": 9.769317113846142
+        },
+        "widthMeters": 88.44016321012295,
+        "heightMeters": 154.77028561771516
+      },
+      {
+        "id": "interior_c6",
+        "units": {
+          "referenceLatitudeDegrees": 22.890236623470635,
+          "metersPerProjectedUnit": 0.9212517001054473,
+          "pixelsPerProjectedUnit": 6,
+          "pixelsPerMeter": 6.512878075897428,
+          "heightProjection": 0.55
+        },
+        "player": {
+          "width": 3.256439037948714,
+          "height": 8.092251009302554,
+          "groundDepth": 1.82360586125128,
+          "radius": 1.432833176697434,
+          "speed": 18.236058612512796,
+          "runSpeed": 36.47211722502559,
+          "interactionRadius": 9.769317113846142
+        },
+        "widthMeters": 88.44016321012295,
+        "heightMeters": 154.77028561771516
+      },
+      {
+        "id": "interior_c7",
+        "units": {
+          "referenceLatitudeDegrees": 22.890236623470635,
+          "metersPerProjectedUnit": 0.9212517001054473,
+          "pixelsPerProjectedUnit": 6,
+          "pixelsPerMeter": 6.512878075897428,
+          "heightProjection": 0.55
+        },
+        "player": {
+          "width": 3.256439037948714,
+          "height": 8.092251009302554,
+          "groundDepth": 1.82360586125128,
+          "radius": 1.432833176697434,
+          "speed": 18.236058612512796,
+          "runSpeed": 36.47211722502559,
+          "interactionRadius": 9.769317113846142
+        },
+        "widthMeters": 105.6368616120913,
+        "heightMeters": 34.3933968039367
+      }
+    ]
+  },
   "buildings": [
     {
       "id": "E1",
@@ -113,11 +464,11 @@
         ]
       ],
       "entry": {
-        "x": 1122,
+        "x": 1126,
         "y": 982
       },
-      "entryDisplacement": 3.7250503352304674,
-      "innerEntryDisplacement": 4.772525536862044,
+      "entryDisplacement": 2.1061813787041483,
+      "innerEntryDisplacement": 1.0473776778221147,
       "footprint": "F1 source polygons, no replacement rectangle",
       "review": "pending",
       "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认"
@@ -252,7 +603,7 @@
         "y": 614
       },
       "entryDisplacement": 1.6475739740599815,
-      "innerEntryDisplacement": 3.162040480449277,
+      "innerEntryDisplacement": 2.4162988225796993,
       "footprint": "F1 source polygons, no replacement rectangle",
       "review": "pending",
       "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认"
@@ -349,7 +700,7 @@
         "y": 294
       },
       "entryDisplacement": 2.2567454442183306,
-      "innerEntryDisplacement": 3.8424080990961924,
+      "innerEntryDisplacement": 1.8878824115924075,
       "footprint": "F1 source polygons, no replacement rectangle",
       "review": "pending",
       "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认"
@@ -455,11 +806,11 @@
         ]
       ],
       "entry": {
-        "x": 558,
+        "x": 554,
         "y": 986
       },
-      "entryDisplacement": 3.6143740813590095,
-      "innerEntryDisplacement": 6.672705598181308,
+      "entryDisplacement": 1.9858751219550268,
+      "innerEntryDisplacement": 2.7504545078950358,
       "footprint": "F1 source polygons, no replacement rectangle",
       "review": "pending",
       "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认"
@@ -567,10 +918,10 @@
       ],
       "entry": {
         "x": 554,
-        "y": 702
+        "y": 698
       },
-      "entryDisplacement": 2.2638462845343543,
-      "innerEntryDisplacement": 15.423417260775883,
+      "entryDisplacement": 1.7677669529663689,
+      "innerEntryDisplacement": 7.496785978004156,
       "footprint": "F1 source polygons, no replacement rectangle",
       "review": "pending",
       "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认"
@@ -663,10 +1014,10 @@
       ],
       "entry": {
         "x": 554,
-        "y": 570
+        "y": 574
       },
-      "entryDisplacement": 3.0632009401930627,
-      "innerEntryDisplacement": 15.24638317765894,
+      "entryDisplacement": 0.9503683496413898,
+      "innerEntryDisplacement": 6.738857469927721,
       "footprint": "F1 source polygons, no replacement rectangle",
       "review": "pending",
       "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认"
@@ -745,10 +1096,10 @@
       ],
       "entry": {
         "x": 674,
-        "y": 450
+        "y": 454
       },
-      "entryDisplacement": 2.4284357104935137,
-      "innerEntryDisplacement": 7.71263897767815,
+      "entryDisplacement": 2.11123186789137,
+      "innerEntryDisplacement": 3.9553508061864897,
       "footprint": "F1 source polygons, no replacement rectangle",
       "review": "pending",
       "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认"
@@ -812,7 +1163,7 @@
         "y": 1262
       },
       "entryDisplacement": 1.2419742348374514,
-      "innerEntryDisplacement": 8.856635930193809,
+      "innerEntryDisplacement": 3.6715119501371527,
       "footprint": "F1 source polygons, no replacement rectangle",
       "review": "pending",
       "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认"
@@ -850,7 +1201,7 @@
         "y": 1094
       },
       "entryDisplacement": 1.5380507143784121,
-      "innerEntryDisplacement": 5.282972648045796,
+      "innerEntryDisplacement": 1.67026943934205,
       "footprint": "F1 source polygons, no replacement rectangle",
       "review": "pending",
       "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认"
@@ -887,10 +1238,10 @@
       ],
       "entry": {
         "x": 834,
-        "y": 874
+        "y": 870
       },
-      "entryDisplacement": 6.740897566348277,
-      "innerEntryDisplacement": 7.81836939521275,
+      "entryDisplacement": 2.7422071402430657,
+      "innerEntryDisplacement": 2.3847222060440885,
       "footprint": "F1 source polygons, no replacement rectangle",
       "review": "pending",
       "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认"
@@ -926,11 +1277,11 @@
         ]
       ],
       "entry": {
-        "x": 1046,
-        "y": 702
+        "x": 1034,
+        "y": 706
       },
-      "entryDisplacement": 14.925149915495012,
-      "innerEntryDisplacement": 6.585939568505019,
+      "entryDisplacement": 2.323811524199014,
+      "innerEntryDisplacement": 1.701352403236924,
       "footprint": "F1 source polygons, no replacement rectangle",
       "review": "pending",
       "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认"
@@ -1044,11 +1395,11 @@
         ]
       ],
       "entry": {
-        "x": 858,
+        "x": 854,
         "y": 198
       },
-      "entryDisplacement": 4.272154023440637,
-      "innerEntryDisplacement": 13.201367353422134,
+      "entryDisplacement": 1.1363538181393993,
+      "innerEntryDisplacement": 9.201961747366688,
       "footprint": "F1 source polygons, no replacement rectangle",
       "review": "pending",
       "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认"

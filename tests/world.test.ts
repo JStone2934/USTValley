@@ -83,7 +83,7 @@ test("export allowlist excludes original location, beacon and model resources", 
 });
 test("every portal has a reciprocal exit and both scenes have reachable return positions", () => {
   for (const scene of world.scenes) {
-    const visited = reachable(scene, scene.spawns[0], world.playerRadius);
+    const visited = reachable(scene, scene.spawns[0], scene.player.radius);
     for (const p of scene.portals) {
       assert.ok(visited.has(tileIndex(scene, p)));
       assert.ok(visited.has(tileIndex(scene, p.spawn)));
@@ -117,6 +117,9 @@ test("validation rejects duplicate IDs, broken references, wall spawns and remov
     },
     (w: typeof world) => {
       w.scenes[0].collision.pop();
+    },
+    (w: typeof world) => {
+      w.scenes[0].player.width = 16;
     },
   ];
   for (const mutate of cases) {
@@ -165,9 +168,12 @@ test("eight-direction input is normalized and large frame deltas are clamped", (
   const diagonal = move(scene, start, { x: 1, y: -1 }, 0.05);
   const dist = (p: { x: number; y: number }) =>
     Math.hypot(p.x - start.x, p.y - start.y);
-  assert.ok(Math.abs(dist(straight) - 3.2) < 1e-8);
+  assert.ok(Math.abs(dist(straight) - scene.player.speed * 0.05) < 1e-8);
   assert.ok(Math.abs(dist(straight) - dist(diagonal)) < 1e-8);
-  assert.ok(dist(move(scene, start, { x: 100, y: 100 }, 1000)) <= 6.4 + 1e-8);
+  assert.ok(
+    dist(move(scene, start, { x: 100, y: 100 }, 1000)) <=
+      scene.player.speed * 0.1 + 1e-8,
+  );
   for (const input of [
     { x: NaN, y: 0 },
     { x: 0, y: Infinity },
@@ -175,18 +181,28 @@ test("eight-direction input is normalized and large frame deltas are clamped", (
     assert.deepEqual(move(scene, start, input, 0.05), start);
   assert.deepEqual(move(scene, start, { x: 1, y: 0 }, -1), start);
 });
-test("collision prevents wall tunneling, bounds escape and through-wall interactions", () => {
-  const scene = structuredClone(world.scenes[1]);
-  let p: { x: number; y: number } = { ...scene.spawns[0] };
-  for (let i = 0; i < 200; i++) p = move(scene, p, { x: 0, y: 1 }, 0.05);
-  assert.ok(canStand(scene, p));
-  assert.ok(p.y < scene.height * 16 - 16);
+test("human-sized collision prevents thin-wall tunneling and through-wall interactions", () => {
+  const scene = structuredClone(world.scenes[1]),
+    step = scene.collisionSize,
+    width = (scene.width * 16) / step;
+  scene.collision.fill(0);
+  const x = Math.floor(width / 2) * step + step / 2,
+    wallY = 48;
+  const portal = { ...scene.portals[0], x, y: wallY + 10 };
+  scene.portals = [portal];
+  assert.ok(nearbyPortal(scene, { x, y: portal.y - 2 }));
+  for (let col = 0; col < width; col++)
+    scene.collision[(wallY / step) * width + col] = 1;
+  for (const speed of [scene.player.speed, scene.player.runSpeed]) {
+    let p = { x, y: wallY - 16 };
+    for (let i = 0; i < 200; i++)
+      p = move(scene, p, { x: 0, y: 1 }, 0.05, speed);
+    assert.ok(canStand(scene, p));
+    assert.ok(p.y + scene.player.radius < wallY);
+  }
   assert.equal(canStand(scene, { x: -1, y: 100 }), false);
   assert.equal(canStand(scene, { x: NaN, y: 100 }), false);
-  const portal = scene.portals[0];
-  const from = { x: portal.x, y: portal.y - 32 };
-  assert.ok(nearbyPortal(scene, { x: portal.x, y: portal.y - 8 }));
-  scene.collision[tileIndex(scene, { x: portal.x, y: portal.y - 16 })] = 1;
+  const from = { x, y: wallY - 6 };
   assert.equal(hasLineOfSight(scene, from, portal), false);
   assert.equal(nearbyPortal(scene, from, 48), undefined);
 });

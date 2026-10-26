@@ -1,5 +1,5 @@
 {
-  "mapVersion": "core-reconstructed-0.2.0",
+  "mapVersion": "core-reconstructed-0.2.2",
   "protocolVersion": 1,
   "source": "data/maps/all-maps.json",
   "transform": {
@@ -10,9 +10,6 @@
     "padding": 128
   },
   "tileSize": 16,
-  "speed": 64,
-  "interactionRadius": 24,
-  "playerRadius": 5,
   "groups": [
     {
       "key": "east",
@@ -158,10 +155,25 @@
     "室内直接采用源地图F1平面，缩放6；E/W按真实分离翼楼裁取，不合并成虚构大厅；保留房间、墙体和孔洞",
     "游戏入口从源entry与出入口点选择，在同一连通公共空间内寻找最近安全点；偏移量记录并受48像素上限约束；未发现额外入口不捏造",
     "开发边界仍为六组核心建筑的有限包络；15个编号的标签锚点并不代表单栋完整实测边界",
-    "源玻璃墙LineString保留中心线，未给宽度时按4逻辑像素保守碰撞，不填充建筑内部或堵塞源门洞"
+    "源玻璃墙LineString保留中心线，未给宽度时按4逻辑像素保守碰撞，不填充建筑内部或堵塞源门洞",
+    "角色按1.75m身高、0.50m体宽、0.28m地面纵深标定；依据校园纬度校正EPSG:3857局部比例，室内外分别换算角色尺寸、碰撞、步速与交互半径，不使用固定16×32显示尺寸"
   ],
   "collisionSize": 4,
   "interiorScale": 6,
   "roofHeightFactor": 0.55,
-  "lineWallWidth": 4
+  "lineWallWidth": 4,
+  "human": {
+    "heightMeters": 1.75,
+    "widthMeters": 0.5,
+    "depthMeters": 0.28,
+    "collisionRadiusMeters": 0.22,
+    "walkingMetersPerSecond": 2.8,
+    "interactionMeters": 1.5,
+    "runningMetersPerSecond": 5.6
+  },
+  "chest": {
+    "widthMeters": 0.8,
+    "heightMeters": 0.55,
+    "depthMeters": 0.45
+  }
 }

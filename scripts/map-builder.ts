@@ -28,6 +28,7 @@ import {
   type Sources,
 } from "./source-geometry.ts";
 export type { Sources } from "./source-geometry.ts";
+import { metricScale, scenePlayer } from "../src/shared/scale.ts";
 const size = config.collisionSize;
 export function gridPoint(scene: SceneMap, id: number): Point {
   const w = (scene.width * 16) / size;
@@ -50,6 +51,13 @@ export function emptyScene(
   height: number,
   ground: string,
 ): SceneMap {
+  const units = metricScale(
+    config.transform.origin[1],
+    id === "campus_core"
+      ? config.transform.pixelsPerProjectedUnit
+      : config.interiorScale,
+    config.roofHeightFactor,
+  );
   return {
     id,
     name,
@@ -57,6 +65,8 @@ export function emptyScene(
     height,
     tileSize: 16,
     collisionSize: size,
+    units,
+    player: scenePlayer(units, config.human),
     ground: Array(width * height).fill(1),
     collision: Array((((width * 16) / size) * height * 16) / size).fill(
       id === "campus_core" ? 0 : 1,
@@ -109,7 +119,7 @@ export function largestPublicSpace(scene: SceneMap): Set<number> {
     seen = new Uint8Array(count);
   for (let i = 0; i < count; i++)
     allowed[i] = Number(
-      canStand(scene, gridPoint(scene, i), config.playerRadius),
+      canStand(scene, gridPoint(scene, i), scene.player.radius),
     );
   let best: number[] = [];
   for (let seed = 0; seed < count; seed++) {
@@ -391,7 +401,7 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
       border(scene);
       const space = new Set(
         scene.collision.flatMap((_, i) =>
-          canStand(scene, gridPoint(scene, i), config.playerRadius) ? [i] : [],
+          canStand(scene, gridPoint(scene, i), scene.player.radius) ? [i] : [],
         ),
       );
       interiorGroups.set(`${group.key}:${index}`, {
@@ -511,7 +521,11 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
       );
     const template = {
       ...originalTemplate,
-      space: reachable(originalTemplate.scene, innerEntry, config.playerRadius),
+      space: reachable(
+        originalTemplate.scene,
+        innerEntry,
+        originalTemplate.scene.player.radius,
+      ),
     };
     const id = def.id.toLowerCase(),
       scene: SceneMap = {
@@ -665,9 +679,8 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
   const world: WorldMap = {
     mapVersion: config.mapVersion,
     protocolVersion: config.protocolVersion,
-    speed: config.speed,
-    interactionRadius: config.interactionRadius,
-    playerRadius: config.playerRadius,
+    human: config.human,
+    chest: config.chest,
     status: "reconstructed",
     scenes: [outdoor, ...evidence.map((e) => e.scene)],
     buildings: outdoor.buildings,
@@ -681,6 +694,17 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
     transform: { ...config.transform, offset },
     dimensions: { width, height, tileSize: 16, collisionSize: size },
     adjustments: config.adjustments,
+    scaleAudit: {
+      human: config.human,
+      projection: "EPSG:3857 local spherical scale",
+      scenes: world.scenes.map((s) => ({
+        id: s.id,
+        units: s.units,
+        player: s.player,
+        widthMeters: (s.width * 16) / s.units.pixelsPerMeter,
+        heightMeters: (s.height * 16) / s.units.pixelsPerMeter,
+      })),
+    },
     buildings: evidence.map(({ scene, ...e }) => e),
     checks: {
       scenes: 16,
@@ -743,6 +767,16 @@ export function validateWorld(world: WorldMap): void {
   if (world.scenes.reduce((n, s) => n + s.chests.length, 0) !== 12)
     throw new Error("Expected 12 chests");
   for (const scene of world.scenes) {
+    const expectedPlayer = scenePlayer(scene.units, world.human);
+    if (
+      Object.entries(expectedPlayer).some(
+        ([key, value]) =>
+          !Number.isFinite(scene.player[key as keyof typeof expectedPlayer]) ||
+          Math.abs(scene.player[key as keyof typeof expectedPlayer] - value) >
+            1e-9,
+      )
+    )
+      throw new Error(`Invalid physical player scale: ${scene.id}`);
     const budget = scene.id === "campus_core" ? 256 : 64;
     if (
       !Number.isInteger(scene.width) ||
@@ -761,10 +795,10 @@ export function validateWorld(world: WorldMap): void {
     )
       throw new Error(`Invalid grids: ${scene.id}`);
     if (!scene.spawns.length) throw new Error(`Missing spawn: ${scene.id}`);
-    const visited = reachable(scene, scene.spawns[0], world.playerRadius),
+    const visited = reachable(scene, scene.spawns[0], scene.player.radius),
       check = (p: Point) => {
         if (
-          !canStand(scene, p, world.playerRadius) ||
+          !canStand(scene, p, scene.player.radius) ||
           !visited.has(tileIndex(scene, p))
         )
           throw new Error(`Unreachable point: ${scene.id} (${p.x},${p.y})`);

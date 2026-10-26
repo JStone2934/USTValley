@@ -5,7 +5,7 @@ import React, {
   useSyncExternalStore,
 } from "react";
 import { createRoot } from "react-dom/client";
-import { createGame, GameBridge } from "./game";
+import { createGame, GameBridge, CAMERA_ZOOM } from "./game";
 import type { WorldMap } from "../shared/world";
 import "./style.css";
 
@@ -196,6 +196,8 @@ function App() {
     <main
       className="app-shell"
       data-scene={snapshot.sceneId}
+      data-avatar-width={snapshot.avatarSize?.width}
+      data-avatar-height={snapshot.avatarSize?.height}
       data-x={Math.round(snapshot.position.x)}
       data-y={Math.round(snapshot.position.y)}
     >
@@ -290,6 +292,7 @@ function App() {
               <div className="zoom-controls">
                 <button
                   aria-label="缩小视野"
+                  disabled={snapshot.zoom <= CAMERA_ZOOM.min}
                   onClick={() => bridge.zoom(snapshot.zoom - 1)}
                 >
                   −
@@ -297,6 +300,7 @@ function App() {
                 <span>{snapshot.zoom}×</span>
                 <button
                   aria-label="放大视野"
+                  disabled={snapshot.zoom >= CAMERA_ZOOM.max}
                   onClick={() => bridge.zoom(snapshot.zoom + 1)}
                 >
                   ＋
@@ -334,7 +338,8 @@ function App() {
             <kbd>W</kbd>
             <kbd>A</kbd>
             <kbd>S</kbd>
-            <kbd>D</kbd> / 方向键移动 <b>·</b> <kbd>E</kbd> 交互
+            <kbd>D</kbd> / 方向键移动 <b>·</b> <kbd>Shift</kbd> 奔跑 <b>·</b>{" "}
+            <kbd>E</kbd> 交互
           </span>
           <div>
             <button
@@ -380,6 +385,7 @@ function App() {
             <p>从 C2 学生活动中心附近出发，沿浅色步道探索校园。</p>
             <ol>
               <li>使用 WASD、方向键或左侧触摸摇杆移动。</li>
+              <li>电脑按住 Shift 奔跑，松开后恢复基础移动速度。</li>
               <li>靠近金色入口标记，按 E 或右侧交互键进入建筑。</li>
               <li>到达室内绿色探索区后，本次探索计数增加；再从出口返回。</li>
               <li>

@@ -9,12 +9,15 @@ import {
   type Roof,
 } from "../shared/world";
 
+export const CAMERA_ZOOM = { min: 1, initial: 4, max: 10 } as const;
+
 export type Snapshot = {
   sceneId: string;
   position: Point;
   discovered: string[];
   target?: string;
   zoom: number;
+  avatarSize?: { width: number; height: number };
 };
 export class GameBridge extends EventTarget {
   direction: Point = { x: 0, y: 0 };
@@ -26,7 +29,7 @@ export class GameBridge extends EventTarget {
     sceneId: "campus_core",
     position: { x: 0, y: 0 },
     discovered: [],
-    zoom: 2,
+    zoom: CAMERA_ZOOM.initial,
   };
   clear() {
     this.keys.clear();
@@ -65,7 +68,7 @@ export class CampusScene extends Phaser.Scene {
   private position: Point = { x: 0, y: 0 };
   private lastEmit = 0;
   private direction = "down";
-  private scaleFactor = 2;
+  private scaleFactor: number = CAMERA_ZOOM.initial;
   constructor(
     private world: WorldMap,
     private bridge: GameBridge,
@@ -108,17 +111,17 @@ export class CampusScene extends Phaser.Scene {
       for (let frame = 0; frame < 4; frame++) {
         const g = this.make.graphics({ x: 0, y: 0 });
         const step = frame % 2 ? 1 : 0;
-        g.fillStyle(0x283d36, 0.25).fillRect(2, 28, 12, 3);
+
         g.fillStyle(0x344655)
-          .fillRect(4, 23, 3, 6 - step)
-          .fillRect(9, 23, 3, 5 + step);
-        g.fillStyle(0xf4db92).fillRect(3, 13, 10, 11);
+          .fillRect(4, 23, 3, 9 - step)
+          .fillRect(9, 23, 3, 8 + step);
+        g.fillStyle(0xc86b42).fillRect(3, 13, 10, 11);
         g.fillStyle(0xdfa473)
-          .fillRect(1, 15 + step, 2, 7)
-          .fillRect(13, 15 - step, 2, 7);
+          .fillRect(0, 15 + step, 2, 7)
+          .fillRect(14, 15 - step, 2, 7);
         g.fillStyle(0xe8b98c).fillRect(3, 3, 10, 10);
         g.fillStyle(0x45382c)
-          .fillRect(2, 2, 12, 5)
+          .fillRect(2, 0, 12, 7)
           .fillRect(dir === "right" ? 2 : 12, 6, 2, 4);
         if (dir === "up") g.fillRect(3, 5, 10, 6);
         else g.fillStyle(0x343b35).fillRect(dir === "left" ? 4 : 9, 8, 2, 2);
@@ -168,10 +171,21 @@ export class CampusScene extends Phaser.Scene {
     for (const z of s.note_zones)
       g.lineStyle(1, 0x9a7f51, 0.5).strokeRect(z.x, z.y, z.width, z.height);
     for (const c of s.chests) {
-      const chest = this.add.graphics().setDepth(c.y);
-      chest.fillStyle(0x8b5b36).fillRect(c.x - 7, c.y - 10, 14, 10);
-      chest.fillStyle(0xc9974d).fillRect(c.x - 6, c.y - 9, 12, 4);
-      chest.fillStyle(0xf4d677).fillRect(c.x - 1, c.y - 5, 3, 4);
+      const dimensions = this.world.chest,
+        ppm = s.units.pixelsPerMeter;
+      const chest = this.add
+        .graphics({ x: c.x, y: c.y })
+        .setDepth(c.y)
+        .setScale(
+          (dimensions.widthMeters * ppm) / 14,
+          ((dimensions.heightMeters * s.units.heightProjection +
+            dimensions.depthMeters) *
+            ppm) /
+            10,
+        );
+      chest.fillStyle(0x8b5b36).fillRect(-7, -10, 14, 10);
+      chest.fillStyle(0xc9974d).fillRect(-6, -9, 12, 4);
+      chest.fillStyle(0xf4d677).fillRect(-1, -5, 3, 4);
     }
     for (const p of s.portals) {
       g.fillStyle(0xf0d893, 0.8).fillRect(p.x - 6, p.y - 3, 12, 6);
@@ -188,7 +202,8 @@ export class CampusScene extends Phaser.Scene {
     this.drawReferences();
     this.player = this.add
       .image(point.x, point.y, "avatar-down-0")
-      .setOrigin(0.5, 1);
+      .setOrigin(0.5, 1)
+      .setDisplaySize(s.player.width, s.player.height);
     this.cameras.main
       .setBounds(0, 0, s.width * 16, s.height * 16)
       .setZoom(this.scaleFactor)
@@ -210,7 +225,10 @@ export class CampusScene extends Phaser.Scene {
       g.fillStyle(0xb26053).fillCircle(p.x, p.y, 3);
   }
   setZoom(value: number) {
-    this.scaleFactor = Math.max(1, Math.min(4, Math.round(value)));
+    this.scaleFactor = Math.max(
+      CAMERA_ZOOM.min,
+      Math.min(CAMERA_ZOOM.max, Math.round(value)),
+    );
     this.cameras.main.setZoom(this.scaleFactor);
     this.publish();
   }
@@ -218,7 +236,7 @@ export class CampusScene extends Phaser.Scene {
     const p = nearbyPortal(
       this.current,
       this.position,
-      this.world.interactionRadius,
+      this.current.player.interactionRadius,
     );
     if (!p) return;
     const target = this.world.scenes.find((s) => s.id === p.targetScene)!;
@@ -230,7 +248,7 @@ export class CampusScene extends Phaser.Scene {
     const portal = nearbyPortal(
       this.current,
       this.position,
-      this.world.interactionRadius,
+      this.current.player.interactionRadius,
     );
     this.bridge.emit({
       sceneId: this.current.id,
@@ -241,7 +259,11 @@ export class CampusScene extends Phaser.Scene {
           ? `进入 ${portal.buildingId}`
           : "返回校园"
         : undefined,
-      zoom: this.scaleFactor,
+      zoom: this.cameras.main.zoom,
+      avatarSize: {
+        width: this.player.displayWidth,
+        height: this.player.displayHeight,
+      },
     });
   }
   update(time: number, delta: number) {
@@ -260,13 +282,16 @@ export class CampusScene extends Phaser.Scene {
             Number(k.has("w") || k.has("ArrowUp")),
         };
     const before = this.position;
+    const running =
+      !this.bridge.paused &&
+      (k.has("ShiftLeft") || k.has("ShiftRight") || k.has("Shift"));
     this.position = move(
       this.current,
       this.position,
       input,
       delta / 1000,
-      this.world.speed,
-      this.world.playerRadius,
+      running ? this.current.player.runSpeed : this.current.player.speed,
+      this.current.player.radius,
     );
     const moving =
       Math.hypot(before.x - this.position.x, before.y - this.position.y) > 0.01;
@@ -283,7 +308,7 @@ export class CampusScene extends Phaser.Scene {
       .setPosition(Math.round(this.position.x), Math.round(this.position.y))
       .setDepth(6000)
       .setTexture(
-        `avatar-${this.direction}-${moving ? Math.floor(time / 130) % 4 : 0}`,
+        `avatar-${this.direction}-${moving ? Math.floor(time / (running ? 80 : 130)) % 4 : 0}`,
       );
     for (const { roof, sprite } of this.roofSprites) {
       const within = roof.footprint.some((poly) =>
@@ -297,7 +322,16 @@ export class CampusScene extends Phaser.Scene {
           p.y >= roof.y &&
           p.y <= roof.y + roof.height,
       );
-      const alpha = within || nearDoor ? 0.32 : 1;
+      // Roof height projection can cover public ground outside its F1 footprint.
+      const x = Math.floor(this.position.x - roof.x),
+        y = Math.floor(this.position.y - roof.y);
+      const covered =
+        x >= 0 &&
+        y >= 0 &&
+        x < roof.width &&
+        y < roof.height &&
+        this.textures.getPixelAlpha(x, y, roof.image) > 0;
+      const alpha = within || nearDoor || covered ? 0.32 : 1;
       sprite.setAlpha(
         Phaser.Math.Linear(sprite.alpha, alpha, Math.min(1, delta / 100)),
       );
@@ -360,6 +394,10 @@ export function createGame(
       )
         return;
       const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      if (key === "Shift") {
+        bridge.keys.add(e.code || key);
+        return;
+      }
       if (
         [
           "w",
@@ -381,7 +419,13 @@ export function createGame(
   );
   window.addEventListener(
     "keyup",
-    (e) => bridge.keys.delete(e.key.length === 1 ? e.key.toLowerCase() : e.key),
+    (e) => {
+      if (e.key === "Shift") {
+        bridge.keys.delete(e.code);
+        bridge.keys.delete("Shift");
+      } else
+        bridge.keys.delete(e.key.length === 1 ? e.key.toLowerCase() : e.key);
+    },
     options,
   );
   window.addEventListener("blur", () => bridge.clear(), options);

@@ -1,3 +1,4 @@
+import type { HumanDimensions, MetricScale, ScenePlayer } from "./scale";
 export type Point = { x: number; y: number };
 export type Rect = Point & { width: number; height: number };
 export type BuildingId =
@@ -37,6 +38,8 @@ export type SceneMap = {
   ground: number[];
   collision: number[];
   collisionSize: number;
+  units: MetricScale;
+  player: ScenePlayer;
   surfaces: Surface[];
   art: { ground: string; roofs: Roof[] };
   decoration: Rect[];
@@ -54,9 +57,8 @@ export type SceneMap = {
 export type WorldMap = {
   mapVersion: string;
   protocolVersion: number;
-  speed: number;
-  interactionRadius: number;
-  playerRadius: number;
+  human: HumanDimensions;
+  chest: { widthMeters: number; heightMeters: number; depthMeters: number };
   status: "reconstructed";
   scenes: SceneMap[];
   buildings: Building[];
@@ -92,7 +94,11 @@ export function tileIndex(scene: SceneMap, point: Point): number {
   );
 }
 
-export function canStand(scene: SceneMap, point: Point, radius = 5): boolean {
+export function canStand(
+  scene: SceneMap,
+  point: Point,
+  radius = scene.player.radius,
+): boolean {
   if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) return false;
   if (
     point.x - radius < 0 ||
@@ -122,8 +128,8 @@ export function move(
   position: Point,
   input: Point,
   seconds: number,
-  speed = 64,
-  radius = 5,
+  speed = scene.player.speed,
+  radius = scene.player.radius,
 ): Point {
   if (
     ![input.x, input.y, seconds, speed].every(Number.isFinite) ||
@@ -162,7 +168,7 @@ export function contains(rect: Rect, p: Point): boolean {
 export function nearbyPortal(
   scene: SceneMap,
   point: Point,
-  radius = 24,
+  radius = scene.player.interactionRadius,
 ): Portal | undefined {
   return scene.portals
     .filter(
@@ -206,7 +212,7 @@ export function hasLineOfSight(
 export function reachable(
   scene: SceneMap,
   start: Point,
-  radius = 5,
+  radius = scene.player.radius,
 ): Set<number> {
   const startIndex = tileIndex(scene, start),
     visited = new Set<number>();

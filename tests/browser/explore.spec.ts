@@ -18,7 +18,7 @@ async function walk(page: Page, key: string, ms: number) {
 test("C2 exploration on the real F1 plan, paired return, dialog pause and blur", async ({
   page,
 }) => {
-  test.setTimeout(90_000);
+  test.setTimeout(180_000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.clock.install();
@@ -33,6 +33,8 @@ test("C2 exploration on the real F1 plan, paired return, dialog pause and blur",
   ) as WorldMap;
   const outside = world.scenes[0],
     c2 = outside.portals.find((p) => p.buildingId === "C2")!;
+  await assertAvatarScale(page, outside);
+  await page.screenshot({ path: "test-results/human-scale-outdoor.png" });
   await driveTo(page, outside, c2);
   await page.keyboard.press("e");
   await page.clock.runFor(150);
@@ -42,6 +44,8 @@ test("C2 exploration on the real F1 plan, paired return, dialog pause and blur",
   );
   const inside = world.scenes.find((s) => s.id === "interior_c2")!,
     zone = inside.exploration[0];
+  await assertAvatarScale(page, inside);
+  await page.screenshot({ path: "test-results/human-scale-indoor.png" });
   await driveTo(page, inside, {
     x: zone.x + zone.width / 2,
     y: zone.y + zone.height / 2,
@@ -182,7 +186,11 @@ async function driveTo(page: Page, scene: SceneMap, target: Point) {
       const n = ny * width + nx;
       if (
         parents.has(n) ||
-        !canStand(scene, { x: (nx + 0.5) * step, y: (ny + 0.5) * step }, 5)
+        !canStand(
+          scene,
+          { x: (nx + 0.5) * step, y: (ny + 0.5) * step },
+          scene.player.radius,
+        )
       )
         continue;
       parents.set(n, i);
@@ -215,7 +223,7 @@ async function driveTo(page: Page, scene: SceneMap, target: Point) {
         axis === "x" ? (delta > 0 ? "d" : "a") : delta > 0 ? "s" : "w";
       await page.keyboard.down(key);
       await page.clock.runFor(
-        Math.max(16, Math.round((Math.abs(delta) / 64) * 1000)),
+        Math.max(16, Math.round((Math.abs(delta) / scene.player.speed) * 1000)),
       );
       await page.keyboard.up(key);
       await page.clock.runFor(120);
@@ -227,3 +235,128 @@ async function driveTo(page: Page, scene: SceneMap, target: Point) {
     JSON.stringify({ actual, target }),
   ).toBeLessThan(6);
 }
+
+async function assertAvatarScale(page: Page, scene: SceneMap) {
+  const width = Number(
+    await page.locator("main").getAttribute("data-avatar-width"),
+  );
+  const height = Number(
+    await page.locator("main").getAttribute("data-avatar-height"),
+  );
+  expect(width).toBeCloseTo(scene.player.width, 6);
+  expect(height).toBeCloseTo(scene.player.height, 6);
+  expect(width / scene.units.pixelsPerMeter).toBeCloseTo(0.5, 6);
+  expect(
+    (height / scene.units.pixelsPerMeter - 0.28) / scene.units.heightProjection,
+  ).toBeCloseTo(1.75, 6);
+}
+
+test("Shift runs at twice the new base speed, releases correctly and clears on blur", async ({
+  page,
+}) => {
+  await page.clock.install();
+  await page.goto("/");
+  await expect.poll(() => position(page, "x")).toBeGreaterThan(0);
+  await page.clock.pauseAt(new Date(Date.now() + 1000));
+  const world = JSON.parse(
+    readFileSync(
+      new URL("../../public/maps/world.json", import.meta.url),
+      "utf8",
+    ),
+  ) as WorldMap;
+  const scene = world.scenes[0],
+    start = scene.spawns[0];
+  const direction = [
+    { key: "w", x: 0, y: -1 },
+    { key: "s", x: 0, y: 1 },
+    { key: "a", x: -1, y: 0 },
+    { key: "d", x: 1, y: 0 },
+  ].find((d) =>
+    Array.from({ length: 75 }, (_, i) => ({
+      x: start.x + d.x * i,
+      y: start.y + d.y * i,
+    })).every((p) => canStand(scene, p)),
+  );
+  expect(
+    direction,
+    "a clear path must be available for measuring real movement",
+  ).toBeTruthy();
+  const reset = async () => {
+    await page.getByRole("button", { name: /回到广场/ }).click();
+    await page.clock.runFor(150);
+  };
+  const point = async () => ({
+    x: await position(page, "x"),
+    y: await position(page, "y"),
+  });
+  const measure = async () => {
+    const before = await point();
+    await page.keyboard.down(direction!.key);
+    await page.clock.runFor(1000);
+    await page.keyboard.up(direction!.key);
+    await page.clock.runFor(150);
+    const after = await point();
+    return Math.hypot(after.x - before.x, after.y - before.y);
+  };
+  await reset();
+  const walk = await measure();
+  expect(Math.abs(walk - scene.player.speed)).toBeLessThan(2);
+  await reset();
+  await page.keyboard.down("ShiftLeft");
+  const run = await measure();
+  expect(Math.abs(run - scene.player.runSpeed)).toBeLessThan(2);
+  expect(Math.abs(run - 2 * walk)).toBeLessThan(2);
+  await page.keyboard.up("ShiftLeft");
+  const released = await measure();
+  expect(Math.abs(released - scene.player.speed)).toBeLessThan(2);
+  await reset();
+  await page.keyboard.down("ShiftLeft");
+  await page.keyboard.down("ShiftRight");
+  await page.keyboard.up("ShiftLeft");
+  expect(Math.abs((await measure()) - scene.player.runSpeed)).toBeLessThan(2);
+  await page.keyboard.up("ShiftRight");
+  await reset();
+  await page.keyboard.down("ShiftLeft");
+  await page.keyboard.down(direction!.key);
+  await page.clock.runFor(400);
+  await page.evaluate(() => window.dispatchEvent(new Event("blur")));
+  await page.clock.runFor(150);
+  const stopped = await point();
+  await page.clock.runFor(500);
+  expect(await point()).toEqual(stopped);
+  await page.keyboard.up(direction!.key);
+  await page.keyboard.up("ShiftLeft");
+  expect(Math.abs((await measure()) - scene.player.speed)).toBeLessThan(2);
+});
+
+test("camera defaults to 4x, supports 1–10x, and has no scale bar", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect.poll(() => position(page, "x")).toBeGreaterThan(0);
+  const world = JSON.parse(
+      readFileSync(
+        new URL("../../public/maps/world.json", import.meta.url),
+        "utf8",
+      ),
+    ) as WorldMap,
+    scene = world.scenes[0];
+  const zoom = page.locator(".zoom-controls span"),
+    plus = page.getByRole("button", { name: "放大视野" }),
+    minus = page.getByRole("button", { name: "缩小视野" });
+  await expect(zoom).toHaveText("4×");
+  await expect(page.locator(".world-scale")).toHaveCount(0);
+  await assertAvatarScale(page, scene);
+  await page.screenshot({ path: "test-results/default-zoom-4x.png" });
+  for (let i = 0; i < 6; i++) await plus.click();
+  await expect(zoom).toHaveText("10×");
+  await expect(plus).toBeDisabled();
+  await assertAvatarScale(page, scene);
+  await page.screenshot({ path: "test-results/maximum-zoom-10x.png" });
+  await page.getByRole("button", { name: /回到广场/ }).click();
+  await expect(zoom).toHaveText("10×");
+  for (let i = 0; i < 9; i++) await minus.click();
+  await expect(zoom).toHaveText("1×");
+  await expect(minus).toBeDisabled();
+  await assertAvatarScale(page, scene);
+});

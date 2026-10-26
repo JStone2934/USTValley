@@ -1,0 +1,877 @@
+[
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/h4bjun8x.bin",
+    "file": "res/projects/xgkdgz_all/h4bjun8x.bin",
+    "bytes": 1980033,
+    "sha256": "701d1f727e8a612849d1eea767aae858b87d8dbca1e65b0620a088102c494007",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/icons/31502d5c2fa8af5026df1c45974a64d8.svg",
+    "file": "res/projects/xgkdgz_all/icons/31502d5c2fa8af5026df1c45974a64d8.svg",
+    "bytes": 1650,
+    "sha256": "198da70c9f725cdec7696ab70c384c673df5ad33d1b08bb1118f123e8369e01f",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/icons/32d25645c9529328f9b00c76467a929b.png",
+    "file": "res/projects/xgkdgz_all/icons/32d25645c9529328f9b00c76467a929b.png",
+    "bytes": 2085,
+    "sha256": "59ceb04bd73a395abe58b373b4daf58a6fca4092c0e8d59edbf9d39bc52162d6",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/icons/3eb1d138875c61dabcab4a7bb15dacaf.svg",
+    "file": "res/projects/xgkdgz_all/icons/3eb1d138875c61dabcab4a7bb15dacaf.svg",
+    "bytes": 1863,
+    "sha256": "748302730c61a8cd3828be1a4baad57be658092c07061fec47de1b8467e589d8",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/icons/4e8711ba25f5c7ce45539184713db83a.svg",
+    "file": "res/projects/xgkdgz_all/icons/4e8711ba25f5c7ce45539184713db83a.svg",
+    "bytes": 1432,
+    "sha256": "d125e1d4b0163f99cbf3fdbc75e0f50b85264578e54016635ac0c9cce59bc6fd",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/icons/6effa5caf9da0901036ffde89e7bd3b9.svg",
+    "file": "res/projects/xgkdgz_all/icons/6effa5caf9da0901036ffde89e7bd3b9.svg",
+    "bytes": 3116,
+    "sha256": "692276996a7f45cc98f1c2f8c166ef85da1013c874d88cb6ef3d5d6419e9a85e",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/icons/72b0523f8384e4018dd6f0ee8fafbc36.svg",
+    "file": "res/projects/xgkdgz_all/icons/72b0523f8384e4018dd6f0ee8fafbc36.svg",
+    "bytes": 1902,
+    "sha256": "b011060ad4871efb5d2fd71ef238b97ef8941674af7e79329c36104b11dd3019",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/icons/86e59da5a8ff7e0911315745d29764a4.svg",
+    "file": "res/projects/xgkdgz_all/icons/86e59da5a8ff7e0911315745d29764a4.svg",
+    "bytes": 1465,
+    "sha256": "eaffb8d5011eaa3fd1cdf822188156996bef85588bae8ac1b281580686deff64",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/icons/8b87e5aa6e8c20bd1f46848819fd1ba6.svg",
+    "file": "res/projects/xgkdgz_all/icons/8b87e5aa6e8c20bd1f46848819fd1ba6.svg",
+    "bytes": 1187,
+    "sha256": "37b659c566d00f049eec8bef0a3e82ee70a32d075219f022c49d1d7718dea3e5",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/icons/90ffe8f61cc0acbcfd61d883cd24a712.svg",
+    "file": "res/projects/xgkdgz_all/icons/90ffe8f61cc0acbcfd61d883cd24a712.svg",
+    "bytes": 1193,
+    "sha256": "43f8d6e21e8ed72f34e0192f267892578cae2bc3984b52fbf44e160afa96ac0a",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/icons/b5bb370ff64a8796e0595bf755f003f7.svg",
+    "file": "res/projects/xgkdgz_all/icons/b5bb370ff64a8796e0595bf755f003f7.svg",
+    "bytes": 1405,
+    "sha256": "318aef9ad96466811a462b9b21616834ccdea43136f121635b66f05e052052b4",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/icons/bfed72ccf0833550bcf774c8585f1bf3.svg",
+    "file": "res/projects/xgkdgz_all/icons/bfed72ccf0833550bcf774c8585f1bf3.svg",
+    "bytes": 1406,
+    "sha256": "a24381133156d8a0ec3337e83d487ecc62597692c492ae208e3918004f698598",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/icons/c1bec4a4f96550e713f82bf6360eade2.svg",
+    "file": "res/projects/xgkdgz_all/icons/c1bec4a4f96550e713f82bf6360eade2.svg",
+    "bytes": 2296,
+    "sha256": "b6a35dbfe8e06f87d046e5830d7c5e6554beb07f7af2f3d086055f2f8082e645",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/icons/c61eaf8a198c9d9410f75d2e2a49689c.svg",
+    "file": "res/projects/xgkdgz_all/icons/c61eaf8a198c9d9410f75d2e2a49689c.svg",
+    "bytes": 1813,
+    "sha256": "5ec08028d0c173446b81351ea5b5d5a7a367d268ab080b6bbad982beb6437282",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/icons/d25a88052e846766d91bf12d97fd7dd2.svg",
+    "file": "res/projects/xgkdgz_all/icons/d25a88052e846766d91bf12d97fd7dd2.svg",
+    "bytes": 1126,
+    "sha256": "76739d94c665b8644e5a7c09496189608395c8d40de535aa9dbee242c37a9160",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/icons/d65c99ef49b41537e249ecdb1be5b3e0.svg",
+    "file": "res/projects/xgkdgz_all/icons/d65c99ef49b41537e249ecdb1be5b3e0.svg",
+    "bytes": 826,
+    "sha256": "5a032c28d4f3f74a295f247f75d0a618b3d70cbe8750873b6ca23e99a11af544",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/icons/f952bad41c35684fd93373cb4fc16b07.svg",
+    "file": "res/projects/xgkdgz_all/icons/f952bad41c35684fd93373cb4fc16b07.svg",
+    "bytes": 1219,
+    "sha256": "808577c89b68f4ff3405b4382b78a3d5352ecef0040e79eeadab24aa64818c6f",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/icons/ff04ba63a7cc1f918e1851dd061c2eaf.svg",
+    "file": "res/projects/xgkdgz_all/icons/ff04ba63a7cc1f918e1851dd061c2eaf.svg",
+    "bytes": 2016,
+    "sha256": "4aeaba2b331a26848cd5488e6e04fe4a529b9f49510da0f8f654470e6ed23c72",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/016da5dc30661499e713c1eab045f318.glb",
+    "file": "res/projects/xgkdgz_all/mapres/016da5dc30661499e713c1eab045f318.glb",
+    "bytes": 74224,
+    "sha256": "98af59f1a1d5f10cb0fe103035a26924d0d920655546491df9f4a07ea528df90",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/01d9dbbd8d99bfa1d543656edcd1762f.glb",
+    "file": "res/projects/xgkdgz_all/mapres/01d9dbbd8d99bfa1d543656edcd1762f.glb",
+    "bytes": 205156,
+    "sha256": "0bd3202904fe38263719e15d8682764a85f37f3eb1e018df15ae57df7a3e89c9",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/04d099a5a0fc6453a2717e75723538a1.glb",
+    "file": "res/projects/xgkdgz_all/mapres/04d099a5a0fc6453a2717e75723538a1.glb",
+    "bytes": 5884,
+    "sha256": "0cfad318af35df6fa57f5550a3f1083c0fdc0afc49a0ace1fb5df3a7ddd7f779",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/069af5dc560bce245c513ca90d53accd.glb",
+    "file": "res/projects/xgkdgz_all/mapres/069af5dc560bce245c513ca90d53accd.glb",
+    "bytes": 250472,
+    "sha256": "fd009eaed61608bf1e9a96c4042b43be6193c95ecba5d2425c949920cc341547",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/087c32a05b99f989b63141e69f08a164.glb",
+    "file": "res/projects/xgkdgz_all/mapres/087c32a05b99f989b63141e69f08a164.glb",
+    "bytes": 1780,
+    "sha256": "227241a6997b7a2246a7474dde016c5841d761e9df29cdf601f84c27c4719fcf",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/0a0ae90485ff11ba82607f72b9363251.glb",
+    "file": "res/projects/xgkdgz_all/mapres/0a0ae90485ff11ba82607f72b9363251.glb",
+    "bytes": 34628,
+    "sha256": "7b9725ac63944b671e0576ac284c0bd35f3befe05bbe916c677726f9915a2bc5",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/0dbecbd2d09a0669f133c6187fdd2b06.glb",
+    "file": "res/projects/xgkdgz_all/mapres/0dbecbd2d09a0669f133c6187fdd2b06.glb",
+    "bytes": 445832,
+    "sha256": "c3384bb5b2cc3648567a8d8c8b7fa3b45daacc8b93a4eb69bc9bdf44f7360019",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/0e6ba71a56d41e40a3d4bd85df3b41d5.glb",
+    "file": "res/projects/xgkdgz_all/mapres/0e6ba71a56d41e40a3d4bd85df3b41d5.glb",
+    "bytes": 97704,
+    "sha256": "146192c007218aa832f86c3954d8d3b26c9fbe1a23597430a719ac6432d13dec",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/0e9bcc08962e45153d7cc9911074ad97.glb",
+    "file": "res/projects/xgkdgz_all/mapres/0e9bcc08962e45153d7cc9911074ad97.glb",
+    "bytes": 43036,
+    "sha256": "60d81d1493dbe217e2df9f0fc9d0c97fb4a152d3a5a4d58367ae2354f6356f06",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/13a9b4a941449c8ea410979b1525a1ca.glb",
+    "file": "res/projects/xgkdgz_all/mapres/13a9b4a941449c8ea410979b1525a1ca.glb",
+    "bytes": 33692,
+    "sha256": "3b3f6ee071892f09275850d1e3a4293551788a564a5b395f6aa33727abe08f71",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/150c653c34ef58f0c1f52d9e118354cd.png",
+    "file": "res/projects/xgkdgz_all/mapres/150c653c34ef58f0c1f52d9e118354cd.png",
+    "bytes": 1740,
+    "sha256": "cc67cda4583297ca878455f5afe29cff06406a6f0dd558cb86e2c64156c04be9",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/16aefe1a4236c27b3bab797d181eaf29.glb",
+    "file": "res/projects/xgkdgz_all/mapres/16aefe1a4236c27b3bab797d181eaf29.glb",
+    "bytes": 48548,
+    "sha256": "8d82feae15220d90c12eb9e8568fa8aede06fb4355ff521851af5d482742cf72",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/1b5b6dcf89d013750810cbe1f65baa35.glb",
+    "file": "res/projects/xgkdgz_all/mapres/1b5b6dcf89d013750810cbe1f65baa35.glb",
+    "bytes": 273912,
+    "sha256": "2eedcd3da34de5de899f314c44e1b0129f7bc65aa3e88d81d7707b72ef3af4a5",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/1c06247039d34fb571e830e24b34335a.jpg",
+    "file": "res/projects/xgkdgz_all/mapres/1c06247039d34fb571e830e24b34335a.jpg",
+    "bytes": 10779,
+    "sha256": "9a683b18faeb5afdd3aafe363e3837bf9cea30417f3d35b32082190a53f04035",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/1e07ca33e609c636a9006d3c5c139312.glb",
+    "file": "res/projects/xgkdgz_all/mapres/1e07ca33e609c636a9006d3c5c139312.glb",
+    "bytes": 69144,
+    "sha256": "a5e92d53a5f156e6a19941bc7be9bfdbc74173ec02f26621f5ba4c6315807ec4",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/1fa28bcf8f5acabca21faab712acc5ba.png",
+    "file": "res/projects/xgkdgz_all/mapres/1fa28bcf8f5acabca21faab712acc5ba.png",
+    "bytes": 1753,
+    "sha256": "68cd8ab6934cf3a5635cc16d18d6e9aab2d9c4ce9eac65663872212b8f67ba75",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/2798e13abba7080eb0ba0775b43bf04f.glb",
+    "file": "res/projects/xgkdgz_all/mapres/2798e13abba7080eb0ba0775b43bf04f.glb",
+    "bytes": 57320,
+    "sha256": "9e1c1842a6e8f9e60975e944b6e9f30a9b050934a08defba63da33a1e69b160c",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/296d360a97b1d439bc5b30b79a79b3a1.glb",
+    "file": "res/projects/xgkdgz_all/mapres/296d360a97b1d439bc5b30b79a79b3a1.glb",
+    "bytes": 6500,
+    "sha256": "1b15403918e5ceaf1febfb83cbe92b8ecbd8e5208540bdefcfbf1f32fc486d5c",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/30a404dabdd73afadb59e8eb6e466fa9.glb",
+    "file": "res/projects/xgkdgz_all/mapres/30a404dabdd73afadb59e8eb6e466fa9.glb",
+    "bytes": 221624,
+    "sha256": "9f3f9af33cecfe4d5065ab8ab269d962b33f06329fbb09a64e5703d24237b136",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/34df0dcf3e5d1002b2ac56fbac8a1c83.glb",
+    "file": "res/projects/xgkdgz_all/mapres/34df0dcf3e5d1002b2ac56fbac8a1c83.glb",
+    "bytes": 66956,
+    "sha256": "fcd50503eff10d68e9b6259ff86f06d7e32c9acb7419d834cc60bb172ed4ecfc",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/350cd29e53de82adb89acc22b8f26c9f.glb",
+    "file": "res/projects/xgkdgz_all/mapres/350cd29e53de82adb89acc22b8f26c9f.glb",
+    "bytes": 141668,
+    "sha256": "309752b43ca3819edbb99e2fccfad89fa25c4b2e480c77ec44cba9e527a35065",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/35e744eeae1685ebead7d24c2e294a00.glb",
+    "file": "res/projects/xgkdgz_all/mapres/35e744eeae1685ebead7d24c2e294a00.glb",
+    "bytes": 311956,
+    "sha256": "ee77aa77f6a039eaa99564b49f4eb2ad9a1395a149bf8d17e6d64bb41bc0f25a",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/35efc07fb48622813da1c091b2c940a5.jpg",
+    "file": "res/projects/xgkdgz_all/mapres/35efc07fb48622813da1c091b2c940a5.jpg",
+    "bytes": 11363,
+    "sha256": "1cef902a06bd2f56ab56d5a2b9da929b40c1fe300dcd9bf917256d38ec5bc3b6",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/380c058a870fde183de403d0c399e6aa.glb",
+    "file": "res/projects/xgkdgz_all/mapres/380c058a870fde183de403d0c399e6aa.glb",
+    "bytes": 13272,
+    "sha256": "46c67ba9e8f2c4ba218005026a38008875f154bdd28cb518e256a54db57dbcd7",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/3c4f83399b50e8dd83dc64649af524ba.png",
+    "file": "res/projects/xgkdgz_all/mapres/3c4f83399b50e8dd83dc64649af524ba.png",
+    "bytes": 2735,
+    "sha256": "7b4a74a5964306d0d4edbf34b3c33ae19bbf2e4a91f61b394a93940f9098130f",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/3dc5a3537a0d4843936f0e8ba5f99f3f.glb",
+    "file": "res/projects/xgkdgz_all/mapres/3dc5a3537a0d4843936f0e8ba5f99f3f.glb",
+    "bytes": 24648,
+    "sha256": "27e77193f976b6e705825da8a61026fb155d433c99a986cf31e7bcfdd9e8ad4e",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/414df7e065794a1bc4122de20f36e250.png",
+    "file": "res/projects/xgkdgz_all/mapres/414df7e065794a1bc4122de20f36e250.png",
+    "bytes": 1507,
+    "sha256": "41c64f7cfbf59470bf2d79045a9fcd99ae182705e084316b2b2b17f19765160c",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/447370911e1ceef2ef1bc22c2a693529.glb",
+    "file": "res/projects/xgkdgz_all/mapres/447370911e1ceef2ef1bc22c2a693529.glb",
+    "bytes": 69724,
+    "sha256": "7943a409834bc4364c06981a726c7347b46eeb6105732fe8e83a8407f8e33a5b",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/48ae4056c06209c9ebdca728c54ba53d.jpg",
+    "file": "res/projects/xgkdgz_all/mapres/48ae4056c06209c9ebdca728c54ba53d.jpg",
+    "bytes": 13316,
+    "sha256": "f910e4e024582b50415e4bbc29dfd3cc6fa51ebeaecd64fd8a8df1a5f4cfb61d",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/4a8d72ea291260d7e2677887957be66d.jpg",
+    "file": "res/projects/xgkdgz_all/mapres/4a8d72ea291260d7e2677887957be66d.jpg",
+    "bytes": 8673,
+    "sha256": "879bfa36eed113a6fd26708255b47d9237b55b3fe8f6255f49f639eb09ac9e3c",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/4b9bf76a07234e19f123cd782ca4225e.jpg",
+    "file": "res/projects/xgkdgz_all/mapres/4b9bf76a07234e19f123cd782ca4225e.jpg",
+    "bytes": 1719,
+    "sha256": "0ae4bf43299e3f320373000b81782165d6fb39105232ca85fb8f5c246957b322",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/53e0044ab9f6534aa0f9b46238e65d1f.jpg",
+    "file": "res/projects/xgkdgz_all/mapres/53e0044ab9f6534aa0f9b46238e65d1f.jpg",
+    "bytes": 11595,
+    "sha256": "7064b8461b9f43cdae3d4025643bc55afe24327109f0e742c6915d3ed9906038",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/5b7bbae6544e411d81a16bebd80c4550.png",
+    "file": "res/projects/xgkdgz_all/mapres/5b7bbae6544e411d81a16bebd80c4550.png",
+    "bytes": 2598,
+    "sha256": "2d43dbecbe6258923c2703933b591b3cd6d8c3c28f5f6f45c07c0e1f14e74624",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/5f4475819941b5952be2fa0a6a057dd3.glb",
+    "file": "res/projects/xgkdgz_all/mapres/5f4475819941b5952be2fa0a6a057dd3.glb",
+    "bytes": 209596,
+    "sha256": "d063e823f95e470f94bce9145fe95484545a62c8ba05792422fc8d0d2cd97508",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/6265162778770cb78cd1d977f1a47059.png",
+    "file": "res/projects/xgkdgz_all/mapres/6265162778770cb78cd1d977f1a47059.png",
+    "bytes": 2751,
+    "sha256": "f21c0f1f3557c87e6a14a7b8e4662ac2f5e941fffcd5280d4c661cf276e63a4d",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/6419a909b5d7159c79bbe331f1901c85.glb",
+    "file": "res/projects/xgkdgz_all/mapres/6419a909b5d7159c79bbe331f1901c85.glb",
+    "bytes": 14396,
+    "sha256": "a36a9dfdba7f375e80828bc3ff425ca9c14722c88605e6df0a094061d463f8c5",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/6bb7a1e21f0bc0c515cdf7f33654950e.jpg",
+    "file": "res/projects/xgkdgz_all/mapres/6bb7a1e21f0bc0c515cdf7f33654950e.jpg",
+    "bytes": 11047,
+    "sha256": "aaf9c69725e91c2ac5a0fffe299dcb182e3ce81679ad24f5f3e588f54c11fd09",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/6c555de99541c9bbd6fa31c9ff302695.png",
+    "file": "res/projects/xgkdgz_all/mapres/6c555de99541c9bbd6fa31c9ff302695.png",
+    "bytes": 2041,
+    "sha256": "cfd71a07f439e122708bf30f0e9ef9dc9651f986aca130a7fe888ddf3bbec3f2",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/6e1a910213856b879e934aa99fac016e.glb",
+    "file": "res/projects/xgkdgz_all/mapres/6e1a910213856b879e934aa99fac016e.glb",
+    "bytes": 87716,
+    "sha256": "597c80e9152c99722ac1324c7a6247c2e24890649c42df1706addd8a21d387be",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/6e8e87ebb451562eff0cec525c4ddd01.glb",
+    "file": "res/projects/xgkdgz_all/mapres/6e8e87ebb451562eff0cec525c4ddd01.glb",
+    "bytes": 46468,
+    "sha256": "d8bacf349c1cf9e23cbc99178aa1d6c9d2443c52428c5bb5130f5821bf8c264a",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/6eda2eafb036b45ee1f01ae95e516860.glb",
+    "file": "res/projects/xgkdgz_all/mapres/6eda2eafb036b45ee1f01ae95e516860.glb",
+    "bytes": 86348,
+    "sha256": "c3bd94b2588246761fd718721528731b85f6de19730190c6cda2690f15706bc6",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/7338118e17612cda6fa13aeccaa47e97.glb",
+    "file": "res/projects/xgkdgz_all/mapres/7338118e17612cda6fa13aeccaa47e97.glb",
+    "bytes": 45672,
+    "sha256": "c813dcb0b55315b4cc3780960e48860dac2f3471a6112b38685c06f91b7d165e",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/73b8618a18a095b6cb3427f71814252f.glb",
+    "file": "res/projects/xgkdgz_all/mapres/73b8618a18a095b6cb3427f71814252f.glb",
+    "bytes": 44700,
+    "sha256": "750e0d59294f1d96ac0f6d1b9df1911b598590c1f73ab3201735871d5277c545",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/7542a7a65a4e2ee79c62c8f15c0a97ac.glb",
+    "file": "res/projects/xgkdgz_all/mapres/7542a7a65a4e2ee79c62c8f15c0a97ac.glb",
+    "bytes": 418924,
+    "sha256": "f8414a18cb9715eafc3a8107e841b3a62a07a64a33f23029c892904b4094ecd7",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/7732b11a90347899e19f21f776da5db8.glb",
+    "file": "res/projects/xgkdgz_all/mapres/7732b11a90347899e19f21f776da5db8.glb",
+    "bytes": 486108,
+    "sha256": "9582404e405ea50e0365f7c7a06463cf6023691a38d2ba96a55a02e3056cfd98",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/79a2194d3d0b6a0cab78691ee1d3281e.glb",
+    "file": "res/projects/xgkdgz_all/mapres/79a2194d3d0b6a0cab78691ee1d3281e.glb",
+    "bytes": 236428,
+    "sha256": "5a790a073480ed895c4437dd0a62f61d8473e980e2f381af479e546755fca73a",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/7a895ab4b645022691beebdbad8be394.glb",
+    "file": "res/projects/xgkdgz_all/mapres/7a895ab4b645022691beebdbad8be394.glb",
+    "bytes": 69180,
+    "sha256": "1760577429423e620da345b78bce78976ca8c3184a4f8fe0bd6868fd83af4598",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/7af3173824c9ec7d6f1685a9390d0deb.png",
+    "file": "res/projects/xgkdgz_all/mapres/7af3173824c9ec7d6f1685a9390d0deb.png",
+    "bytes": 3322,
+    "sha256": "6bdfa182168f6b7ad72c2327d8131430460c5a927047cdecd5939519cec27a6c",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/7ce80ff375522083e5132042efeb17b3.glb",
+    "file": "res/projects/xgkdgz_all/mapres/7ce80ff375522083e5132042efeb17b3.glb",
+    "bytes": 147472,
+    "sha256": "59dcc87730c49fbcc308b1f0a3dc7ef707dbd4377f352f3435809cb987f07f83",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/7d461c5bde530c05ae6d1f24b4bf3990.glb",
+    "file": "res/projects/xgkdgz_all/mapres/7d461c5bde530c05ae6d1f24b4bf3990.glb",
+    "bytes": 24668,
+    "sha256": "f406387c22e54c203d372715b8ed78ede704a52d0affa9ae1c266d2a61e055bb",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/7d66dc9eed95762de4a2eba4129739df.glb",
+    "file": "res/projects/xgkdgz_all/mapres/7d66dc9eed95762de4a2eba4129739df.glb",
+    "bytes": 3004,
+    "sha256": "63e83a40186b35c4b1ea48044759862d265ed823d7862379047189192ce2d1bc",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/818eaea8a34b43dc886601aa04983a73.png",
+    "file": "res/projects/xgkdgz_all/mapres/818eaea8a34b43dc886601aa04983a73.png",
+    "bytes": 2699,
+    "sha256": "7213d11b3cd4494b99475ec79da4a01fe8bba91a35345cbd12372a395968a518",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/83c09c484a437e77b51964d22a4f0108.jpg",
+    "file": "res/projects/xgkdgz_all/mapres/83c09c484a437e77b51964d22a4f0108.jpg",
+    "bytes": 16810,
+    "sha256": "00a6377aa16e29753514f282431a9d493447497f2de9ffbb04c2a807dd575502",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/85defa5d5c9b4b0d661265bae45b4c53.glb",
+    "file": "res/projects/xgkdgz_all/mapres/85defa5d5c9b4b0d661265bae45b4c53.glb",
+    "bytes": 236572,
+    "sha256": "cf5fdc86b1114dfd4b4d11b3a52aeed35a93545cfe71b41f0dd7cd6d69d6e8eb",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/869a327666bd08caf1d9fde2bb0be7b7.png",
+    "file": "res/projects/xgkdgz_all/mapres/869a327666bd08caf1d9fde2bb0be7b7.png",
+    "bytes": 2499,
+    "sha256": "e9d2c846cf3374e129334a962752318eb5270d1ada01d89f6ac22fd41836e103",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/8adfd5f4921453b636ab4e25bfb78e49.glb",
+    "file": "res/projects/xgkdgz_all/mapres/8adfd5f4921453b636ab4e25bfb78e49.glb",
+    "bytes": 87936,
+    "sha256": "98a9681c0b85f59996c0fa0b155099252ec8cd72f279e45f683fbc3cfa1c1ca1",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/8bcf15a47900d644497b62d5233f9c73.glb",
+    "file": "res/projects/xgkdgz_all/mapres/8bcf15a47900d644497b62d5233f9c73.glb",
+    "bytes": 34072,
+    "sha256": "3999d30560c5e23d7c4ead30150962b8dacced6fa177a1ce52dc2a08f6a7a334",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/965219a8d0072c9107a8a0cd8401b859.glb",
+    "file": "res/projects/xgkdgz_all/mapres/965219a8d0072c9107a8a0cd8401b859.glb",
+    "bytes": 318416,
+    "sha256": "3d3b70f43c5e190522882623df8bc6d5c9ca9ff84e27c3977ba455a75e6b42ee",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/98d8a2b31693c1c7822f57198b9ff701.png",
+    "file": "res/projects/xgkdgz_all/mapres/98d8a2b31693c1c7822f57198b9ff701.png",
+    "bytes": 1871,
+    "sha256": "b48a8f102e21b6b4529723f6553e79510392c0f2719561accfd2b13e9506d6d8",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/9a01daada485b7d3e85f51eb0a4d941b.glb",
+    "file": "res/projects/xgkdgz_all/mapres/9a01daada485b7d3e85f51eb0a4d941b.glb",
+    "bytes": 18760,
+    "sha256": "5ae7d14b8ead1cd0d97a411b8935f7338de1c26015e8661468e81e398af0317f",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/a1647aa86f4a5e7ac973be21635ec2ba.glb",
+    "file": "res/projects/xgkdgz_all/mapres/a1647aa86f4a5e7ac973be21635ec2ba.glb",
+    "bytes": 37468,
+    "sha256": "c13b4fddcc6e5594b7fd9020ae79a709772d8aaaf6c87cb7299fdaa86b0fc7d7",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/a216e519dabbb0ccb42a7587ed1757b3.glb",
+    "file": "res/projects/xgkdgz_all/mapres/a216e519dabbb0ccb42a7587ed1757b3.glb",
+    "bytes": 18420,
+    "sha256": "607fe87f7aeb47fb05494761d6ea09d23d0fac70bd71845ddf80ff8dd05f9e72",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/a2bf467fac3f73c3a4f900cc2d20f89e.glb",
+    "file": "res/projects/xgkdgz_all/mapres/a2bf467fac3f73c3a4f900cc2d20f89e.glb",
+    "bytes": 509396,
+    "sha256": "15a4ee1079d3e3e20dec508c5e486dcde98b8da31d9b1ffd363f015032d8cb07",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/aaf5afeaa3cb96af5df0d2e2971c3712.glb",
+    "file": "res/projects/xgkdgz_all/mapres/aaf5afeaa3cb96af5df0d2e2971c3712.glb",
+    "bytes": 33488,
+    "sha256": "42bcc6de6e8c8b2aad74cf583fb3673dd3f398f7494318b679ab1e0987f9048c",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/ac77f7f0d0b41d4871e779c8036431e3.png",
+    "file": "res/projects/xgkdgz_all/mapres/ac77f7f0d0b41d4871e779c8036431e3.png",
+    "bytes": 2847,
+    "sha256": "e51d60c79659a35746ea31a67069c461464c661d1eee73d73d2b7602dd6955a9",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/acb5b322b9eb0d2f239e4e704e423056.glb",
+    "file": "res/projects/xgkdgz_all/mapres/acb5b322b9eb0d2f239e4e704e423056.glb",
+    "bytes": 18976,
+    "sha256": "6f8f1617a9900a6026470eb1fcfa1b5f699af3b28de18572241c0025a0b7b8f4",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/adc787bec4ab72481a037ccee68e46cd.png",
+    "file": "res/projects/xgkdgz_all/mapres/adc787bec4ab72481a037ccee68e46cd.png",
+    "bytes": 2803,
+    "sha256": "4acf8b855ebf5eb0856c91d454d6dc10207e45d060755423ea82713c4913ba05",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/ae3436050085c600bfd1bb6b1b4f4704.glb",
+    "file": "res/projects/xgkdgz_all/mapres/ae3436050085c600bfd1bb6b1b4f4704.glb",
+    "bytes": 438512,
+    "sha256": "db983c488aaed34c4e2cba66a5ab3f458efcf82eb024ab5a7896c5d0b053452e",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/ae570fa7847047dfae6bd31e4dc33cc3.glb",
+    "file": "res/projects/xgkdgz_all/mapres/ae570fa7847047dfae6bd31e4dc33cc3.glb",
+    "bytes": 9364,
+    "sha256": "24cf9f81b7f40f420895afa4ada3ad5e81a33104eeffe68611b863bf4bf03f52",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/b2b70e1ff2337b1bd15145eabf0446e2.glb",
+    "file": "res/projects/xgkdgz_all/mapres/b2b70e1ff2337b1bd15145eabf0446e2.glb",
+    "bytes": 39096,
+    "sha256": "97a3c4370889a4f83cd5bbd343137dbf6d6a282f381a404a9b62761679232046",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/b34edeb92bf90d4e2da40f316dda07c0.png",
+    "file": "res/projects/xgkdgz_all/mapres/b34edeb92bf90d4e2da40f316dda07c0.png",
+    "bytes": 1168,
+    "sha256": "279a56fce536f17b19d7b6c324fdece0a7cb3b3af16547292303040d8ed6e7be",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/b4d3c5db1cb35a9dfeb3b8a12a197d21.glb",
+    "file": "res/projects/xgkdgz_all/mapres/b4d3c5db1cb35a9dfeb3b8a12a197d21.glb",
+    "bytes": 480068,
+    "sha256": "fa852e456747c747b4840a5f85e7b5434d57b9bdb2068ab018924a2c2469b0b6",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/b56abdb801873df959e9ce3a9bd2053c.jpg",
+    "file": "res/projects/xgkdgz_all/mapres/b56abdb801873df959e9ce3a9bd2053c.jpg",
+    "bytes": 31679,
+    "sha256": "dd04ee1fe458c6442e1cf26ce275d648c2367780d009c00470909175baa899a7",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/b6b9d7b7743876a29f5bf36a0f2ff1ee.glb",
+    "file": "res/projects/xgkdgz_all/mapres/b6b9d7b7743876a29f5bf36a0f2ff1ee.glb",
+    "bytes": 273216,
+    "sha256": "0f0067b28a669db4f60b1f0fbeaa6606397af3fa0523c0a22318098a15577124",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/b9e467db37f19f92b9bc66f191bff461.glb",
+    "file": "res/projects/xgkdgz_all/mapres/b9e467db37f19f92b9bc66f191bff461.glb",
+    "bytes": 4704,
+    "sha256": "1a7687736b698e1764f15fd8ab38cd5836b763086e5656f3a2e822f72de73fe4",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/be617bd8ed0ac1a54774ed5fefd8036a.png",
+    "file": "res/projects/xgkdgz_all/mapres/be617bd8ed0ac1a54774ed5fefd8036a.png",
+    "bytes": 1967,
+    "sha256": "fe0b87d1a01dafa78e6473a55fdb507494cedc4dda38ff0f9a04bcf3582bafb1",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/bf470d31c049de34b3f14b637cb17fef.png",
+    "file": "res/projects/xgkdgz_all/mapres/bf470d31c049de34b3f14b637cb17fef.png",
+    "bytes": 1499,
+    "sha256": "ea68465aa9032bff85e79c33a4516e5fb2add4906922a3ab68833dc86e062ff5",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/c048fe9795c3ff144f79ee3588f6ec98.jpg",
+    "file": "res/projects/xgkdgz_all/mapres/c048fe9795c3ff144f79ee3588f6ec98.jpg",
+    "bytes": 12963,
+    "sha256": "25fe82fd3e7ad5a0be5e5313df9f18cefc82d0f99c3f5f13c99bddd452d4fcd8",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/c122b117bf165b4158ee23106072a14f.glb",
+    "file": "res/projects/xgkdgz_all/mapres/c122b117bf165b4158ee23106072a14f.glb",
+    "bytes": 53504,
+    "sha256": "6d69d6fb0d5afdd1fa3b3d2b6bd1627b711303ef6957afcec263297eac63a20d",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/c145cc8206b5ebc2533def210cddf5c1.glb",
+    "file": "res/projects/xgkdgz_all/mapres/c145cc8206b5ebc2533def210cddf5c1.glb",
+    "bytes": 104148,
+    "sha256": "38ca77f728675d8bef2ea9bb6b90d9a42ad2750dd2bae385267e4e3b80ef910c",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/c1f7635e6e6708523112a38e1d600929.glb",
+    "file": "res/projects/xgkdgz_all/mapres/c1f7635e6e6708523112a38e1d600929.glb",
+    "bytes": 15376,
+    "sha256": "8f4ef0efae1c453c2417859a6eac220732f34e96e63bbd8dcb4f16ddf0f5a77a",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/c25d7cf1596409df9cdb1d84892a5541.glb",
+    "file": "res/projects/xgkdgz_all/mapres/c25d7cf1596409df9cdb1d84892a5541.glb",
+    "bytes": 19936,
+    "sha256": "b3fecd9154abb8880c6a4470e5e8e924ea1c64ccca97f646e61fbd8290e2db0f",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/c37f9c0db1f8a8d2849c6a2744072715.glb",
+    "file": "res/projects/xgkdgz_all/mapres/c37f9c0db1f8a8d2849c6a2744072715.glb",
+    "bytes": 103560,
+    "sha256": "1ad6d6a75d123674f5f9f2b66884026fb57dead8dc8512e3e443d8bc9367a23f",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/c7e73b357f43ae5298879468bf5556e7.png",
+    "file": "res/projects/xgkdgz_all/mapres/c7e73b357f43ae5298879468bf5556e7.png",
+    "bytes": 3024,
+    "sha256": "046661cf63b33d1f2b774dfec2bfd93c59355d8c2df7935860662e6bd925a416",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/cb3742f26cc8e99f8a43639a5abe5723.png",
+    "file": "res/projects/xgkdgz_all/mapres/cb3742f26cc8e99f8a43639a5abe5723.png",
+    "bytes": 1629,
+    "sha256": "f58efbc05d24dabb06f1ae641383c307cb86e35731a22cef7fad61e386171506",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/cd8de08a6ed07f57d17dab36e6a9de17.glb",
+    "file": "res/projects/xgkdgz_all/mapres/cd8de08a6ed07f57d17dab36e6a9de17.glb",
+    "bytes": 127764,
+    "sha256": "758d64fe2613155bee03258871d2e31cbc6b03a8d5257b67ee89c2375ffb8464",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/d182e583e5a77692365a9f63eff051b7.png",
+    "file": "res/projects/xgkdgz_all/mapres/d182e583e5a77692365a9f63eff051b7.png",
+    "bytes": 2498,
+    "sha256": "a072f1a0897180200648ca16906b705c0d12b34791a2f62ccf5ca71993725526",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/d1a2483786e154654dc43f72ea05aef1.jpg",
+    "file": "res/projects/xgkdgz_all/mapres/d1a2483786e154654dc43f72ea05aef1.jpg",
+    "bytes": 12567,
+    "sha256": "0d30812a6cb1eaa942613639dbb2fae0eae70bc4b0021a286616a3e1bf4a46d5",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/d30d97abc6792ec69a2c7d8c69bfbfcc.jpg",
+    "file": "res/projects/xgkdgz_all/mapres/d30d97abc6792ec69a2c7d8c69bfbfcc.jpg",
+    "bytes": 12584,
+    "sha256": "0cd0e6204ed04aa8b3718256e78311e2767cb9dbd5026218fefe1b668b6da3ee",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/dc4866d3853ad262813f577dd98efcb6.png",
+    "file": "res/projects/xgkdgz_all/mapres/dc4866d3853ad262813f577dd98efcb6.png",
+    "bytes": 3067,
+    "sha256": "a76c51882227f309466650d0b81fd0f6270ee0e8140733befc092d1381a14682",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/dcae6435b10bbbc183f93e9276f1619c.glb",
+    "file": "res/projects/xgkdgz_all/mapres/dcae6435b10bbbc183f93e9276f1619c.glb",
+    "bytes": 10044,
+    "sha256": "75fc5aefe920061fb877837004ddd89fcd79881168650a3c28536eee7b3c0dfa",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/de52a4c36d6919de88c873e259c6cb20.glb",
+    "file": "res/projects/xgkdgz_all/mapres/de52a4c36d6919de88c873e259c6cb20.glb",
+    "bytes": 54548,
+    "sha256": "c779a1314697c072311d59a1863441e544ee5a8c9fbc96246bf2e8c70b6cb308",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/df1418fa56e5d4a233ac857f3d1660f7.jpg",
+    "file": "res/projects/xgkdgz_all/mapres/df1418fa56e5d4a233ac857f3d1660f7.jpg",
+    "bytes": 2132,
+    "sha256": "c12a107dba9afc6656a10675b711c3ab3f9e1f75d0cb11be35bdf3ac19741243",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/e00077bdda991105551a41cec6b2a07b.glb",
+    "file": "res/projects/xgkdgz_all/mapres/e00077bdda991105551a41cec6b2a07b.glb",
+    "bytes": 11880,
+    "sha256": "19cb3513caac5149a74d7445349e66d3697709c72d12324a198701b037e7a304",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/e1ea0daa45795391069a591fcca63daa.glb",
+    "file": "res/projects/xgkdgz_all/mapres/e1ea0daa45795391069a591fcca63daa.glb",
+    "bytes": 210936,
+    "sha256": "dbd05b5f34acf7cf62d16989f1ca0627e1d1921f27622858055113bcf8c5864f",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/e20ad0b1f5e103658d1992e4f7c0c82e.glb",
+    "file": "res/projects/xgkdgz_all/mapres/e20ad0b1f5e103658d1992e4f7c0c82e.glb",
+    "bytes": 56860,
+    "sha256": "33b8967478fd3779ec6cfadfdbcff716627c3eaeb7a8317a4d027e2823fe7996",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/e309016be33997c79e6426feed16ff9f.glb",
+    "file": "res/projects/xgkdgz_all/mapres/e309016be33997c79e6426feed16ff9f.glb",
+    "bytes": 22048,
+    "sha256": "eeed102556d1662f418a38b78afb46bda0930d836ed352670887d259cf7a10bb",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/e793e6b0e35082dae873ffb40fccb8e8.png",
+    "file": "res/projects/xgkdgz_all/mapres/e793e6b0e35082dae873ffb40fccb8e8.png",
+    "bytes": 2080,
+    "sha256": "bfb2f4735c4eddad9fad2955a3f53bf7c0950e3fec0d60d7e6e38a705594c0fd",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/e98dc9bcfd9f2ad147bfd2bd329b0237.glb",
+    "file": "res/projects/xgkdgz_all/mapres/e98dc9bcfd9f2ad147bfd2bd329b0237.glb",
+    "bytes": 3712,
+    "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/f1c6edf5c41d83da1c5c61534e11fb6f.glb",
+    "file": "res/projects/xgkdgz_all/mapres/f1c6edf5c41d83da1c5c61534e11fb6f.glb",
+    "bytes": 24216,
+    "sha256": "4132949faf9ba07b8ddefa0da9d6968d80325ec077c9ec901fbf8c7eac309e3b",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/f4644382c51f77b3240c1cc1547164da.glb",
+    "file": "res/projects/xgkdgz_all/mapres/f4644382c51f77b3240c1cc1547164da.glb",
+    "bytes": 38400,
+    "sha256": "cd15eb80e3c3f9207b1219f2e7090c8effffb83c1c9b707af441bf4921ca6c00",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/f4a12cf3ab5c3f158a3658b35e3c3b58.png",
+    "file": "res/projects/xgkdgz_all/mapres/f4a12cf3ab5c3f158a3658b35e3c3b58.png",
+    "bytes": 2694,
+    "sha256": "1b7902300e2342dc43e7f265f6e2294621f1515d52fc5f160f85e933e9a5d988",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/f793f40fa29fb3d8a407cc4a7662e3c4.glb",
+    "file": "res/projects/xgkdgz_all/mapres/f793f40fa29fb3d8a407cc4a7662e3c4.glb",
+    "bytes": 174596,
+    "sha256": "279138035eacd77a698e55509b53e740f687c965ef4986712cfd4e8416ab8f06",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/f86b1c013bceffc602dbaa4e93cf437f.png",
+    "file": "res/projects/xgkdgz_all/mapres/f86b1c013bceffc602dbaa4e93cf437f.png",
+    "bytes": 2422,
+    "sha256": "709e0e2dfe7ab92590281ef73ea52ad3bb395b5a9786c700c7c2591bba3934c0",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/fada506965324eb0e1afcdf27988101c.glb",
+    "file": "res/projects/xgkdgz_all/mapres/fada506965324eb0e1afcdf27988101c.glb",
+    "bytes": 260528,
+    "sha256": "0309ec3d1b2fd5bda29d0e1424d39440e507355215bffe43319091667fec98f6",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/fdfb1e73ca3689ccd763fac0d0b8ac55.png",
+    "file": "res/projects/xgkdgz_all/mapres/fdfb1e73ca3689ccd763fac0d0b8ac55.png",
+    "bytes": 2062,
+    "sha256": "be3713f8ce286204b3c1f1c9d472b9b949bfd02ffbcd8d8c4458a9e7e82685e3",
+    "status": "ok"
+  },
+  {
+    "url": "https://campus-map.hkust-gz.edu.cn/res/projects/xgkdgz_all/mapres/ffdad555e606805590fabbb5ff71b440.glb",
+    "file": "res/projects/xgkdgz_all/mapres/ffdad555e606805590fabbb5ff71b440.glb",
+    "bytes": 403332,
+    "sha256": "47ef8946771d161b6fc32ac205a63bd828c7e0d03f5973fa5343c67945a9e932",
+    "status": "ok"
+  }
+]

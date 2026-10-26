@@ -1,0 +1,42 @@
+{
+  "name": "ustvalley",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "maps:build": "tsx scripts/build-maps.ts",
+    "maps:verify": "tsx scripts/build-maps.ts --check",
+    "maps:release": "tsx scripts/build-maps.ts --check --strict",
+    "dev": "npm run maps:build && vite --host 0.0.0.0",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "test:e2e": "playwright test",
+    "build": "npm run maps:verify && npm run typecheck && vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 3000",
+    "maps:unpack": "tsx scripts/unpack-maps.ts",
+    "maps:inspect": "tsx scripts/inspect-floors.ts"
+  },
+  "dependencies": {
+    "phaser": "3.90.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.58.2",
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "sharp": "0.35.5",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vite": "7.3.7"
+  },
+  "overrides": {
+    "vite": {
+      "esbuild": "0.28.2"
+    }
+  }
+}

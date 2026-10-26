@@ -1,0 +1,167 @@
+{
+  "mapVersion": "core-reconstructed-0.2.0",
+  "protocolVersion": 1,
+  "source": "data/maps/all-maps.json",
+  "transform": {
+    "origin": [12632200, 2618750],
+    "rotationDegrees": 30,
+    "pixelsPerProjectedUnit": 4,
+    "flipY": true,
+    "padding": 128
+  },
+  "tileSize": 16,
+  "speed": 64,
+  "interactionRadius": 24,
+  "playerRadius": 5,
+  "groups": [
+    {
+      "key": "east",
+      "featureId": 45963,
+      "sourceMap": "xgkjdxaz_dkyl",
+      "name": "东科研楼"
+    },
+    {
+      "key": "west",
+      "featureId": 45962,
+      "sourceMap": "xgkjdgz_xkyl",
+      "name": "西科研楼"
+    },
+    {
+      "key": "administration",
+      "featureId": 43595,
+      "sourceMap": "xgkdgz_xzbgl",
+      "name": "行政办公楼"
+    },
+    {
+      "key": "activity",
+      "featureId": 43540,
+      "sourceMap": "xgkdgz_xshdzx",
+      "name": "学生活动中心"
+    },
+    {
+      "key": "academic",
+      "featureId": 43543,
+      "sourceMap": "xgkjdgz_xsyjzx",
+      "name": "学术研究中心"
+    },
+    {
+      "key": "library",
+      "featureId": 43596,
+      "sourceMap": "xgkdgz_tsg",
+      "name": "图书馆"
+    }
+  ],
+  "buildings": [
+    {
+      "id": "E1",
+      "group": "east",
+      "name": "东科研楼一",
+      "anchor": "room-label-median"
+    },
+    {
+      "id": "E2",
+      "group": "east",
+      "name": "东科研楼二",
+      "anchor": "room-label-median"
+    },
+    {
+      "id": "E3",
+      "group": "east",
+      "name": "东科研楼三",
+      "anchor": "room-label-median"
+    },
+    {
+      "id": "E4",
+      "group": "east",
+      "name": "东科研楼四",
+      "anchor": "room-label-median"
+    },
+    {
+      "id": "W1",
+      "group": "west",
+      "name": "西科研楼一",
+      "anchor": "room-label-median"
+    },
+    {
+      "id": "W2",
+      "group": "west",
+      "name": "西科研楼二",
+      "anchor": "room-label-median"
+    },
+    {
+      "id": "W3",
+      "group": "west",
+      "name": "西科研楼三",
+      "anchor": "room-label-median"
+    },
+    {
+      "id": "W4",
+      "group": "west",
+      "name": "西科研楼四",
+      "anchor": "room-label-median"
+    },
+    {
+      "id": "C1",
+      "group": "administration",
+      "name": "行政办公楼",
+      "anchor": "model-center"
+    },
+    {
+      "id": "C2",
+      "group": "activity",
+      "name": "学生活动中心",
+      "anchor": "model-center",
+      "entryFeatureId": 72730,
+      "entrySourceMap": "xgkdgz_xshdzx"
+    },
+    {
+      "id": "C3",
+      "group": "academic",
+      "name": "演讲厅 C · 创作空间",
+      "anchor": "feature-center",
+      "featureId": 45185
+    },
+    {
+      "id": "C4",
+      "group": "academic",
+      "name": "演讲厅 B",
+      "anchor": "feature-center",
+      "featureId": 24060
+    },
+    {
+      "id": "C5",
+      "group": "academic",
+      "name": "学术研究中心五",
+      "anchor": "poi",
+      "featureId": 24716
+    },
+    {
+      "id": "C6",
+      "group": "academic",
+      "name": "学术研究中心六",
+      "anchor": "poi",
+      "featureId": 24717
+    },
+    {
+      "id": "C7",
+      "group": "library",
+      "name": "图书馆",
+      "anchor": "model-center",
+      "entryFeatureId": 53762,
+      "entrySourceMap": "xgkdgz_all"
+    }
+  ],
+  "adjustments": [
+    "保留源EPSG:3857建筑轮廓、道路、绿化、水体及连廊；统一旋转30度、缩放和Y轴翻转，不重新排列建筑",
+    "逐节点应用T/R/S、地图tarray的XY放置与源height的竖向尺度后，正交烘焙真实GLB；Z高度投影系数0.55，保留材质与轮廓",
+    "取消64×64通用建筑和网格最短路步道；室外碰撞来自真实F1房间、墙体、水体，公共连廊保留通行",
+    "室内直接采用源地图F1平面，缩放6；E/W按真实分离翼楼裁取，不合并成虚构大厅；保留房间、墙体和孔洞",
+    "游戏入口从源entry与出入口点选择，在同一连通公共空间内寻找最近安全点；偏移量记录并受48像素上限约束；未发现额外入口不捏造",
+    "开发边界仍为六组核心建筑的有限包络；15个编号的标签锚点并不代表单栋完整实测边界",
+    "源玻璃墙LineString保留中心线，未给宽度时按4逻辑像素保守碰撞，不填充建筑内部或堵塞源门洞"
+  ],
+  "collisionSize": 4,
+  "interiorScale": 6,
+  "roofHeightFactor": 0.55,
+  "lineWallWidth": 4
+}

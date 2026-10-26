@@ -1,0 +1,280 @@
+{
+  "success": true,
+  "code": 0,
+  "data": {
+    "projectCode": "xgkdgz_all",
+    "projectId": "1536642616566804481",
+    "projectName": "香港科技大学(广州)",
+    "maps": [
+      {
+        "mapCode": "xgkdgz_all",
+        "mapId": "2536642821758976001",
+        "mapName": "香港科技大学(广州)",
+        "urls": {},
+        "floors": [
+          {
+            "z": 0,
+            "name": "F1",
+            "alias": "F1"
+          }
+        ]
+      },
+      {
+        "mapCode": "xgkdgz_tsg",
+        "mapId": "2536643258293747713",
+        "mapName": "香港科技大学(广州)_图书馆",
+        "urls": {},
+        "floors": [
+          {
+            "z": 0,
+            "name": "F1",
+            "alias": "F1"
+          },
+          {
+            "z": 3,
+            "name": "F2",
+            "alias": "F2"
+          },
+          {
+            "z": 6,
+            "name": "F3",
+            "alias": "F3"
+          },
+          {
+            "z": 9,
+            "name": "F4",
+            "alias": "F4"
+          },
+          {
+            "z": 12,
+            "name": "F5",
+            "alias": "F5"
+          },
+          {
+            "z": 15,
+            "name": "F6",
+            "alias": "F6"
+          }
+        ]
+      },
+      {
+        "mapCode": "xgkdgz_xzbgl",
+        "mapId": "2536643548455698434",
+        "mapName": "香港科技大学(广州)_行政办公楼",
+        "urls": {},
+        "floors": [
+          {
+            "z": 0,
+            "name": "F1",
+            "alias": "F1"
+          },
+          {
+            "z": 3,
+            "name": "F2",
+            "alias": "F2"
+          },
+          {
+            "z": 6,
+            "name": "F3",
+            "alias": "F3"
+          },
+          {
+            "z": 9,
+            "name": "F4",
+            "alias": "F4"
+          },
+          {
+            "z": 12,
+            "name": "F5",
+            "alias": "F5"
+          },
+          {
+            "z": 15,
+            "name": "F6",
+            "alias": "F6"
+          },
+          {
+            "z": 18,
+            "name": "F7",
+            "alias": "F7"
+          },
+          {
+            "z": 21,
+            "name": "F8",
+            "alias": "F8"
+          }
+        ]
+      },
+      {
+        "mapCode": "xgkdgz_xshdzx",
+        "mapId": "2542046921405300738",
+        "mapName": "香港科技大学(广州)_学生活动中心",
+        "urls": {},
+        "floors": [
+          {
+            "z": 0,
+            "name": "F1",
+            "alias": "F1"
+          },
+          {
+            "z": 3,
+            "name": "F2",
+            "alias": "F2"
+          }
+        ]
+      },
+      {
+        "mapCode": "xgkjdxaz_dkyl",
+        "mapId": "2545247202855157762",
+        "mapName": "香港科技大学(广州)_东科研楼",
+        "urls": {},
+        "floors": [
+          {
+            "z": 0,
+            "name": "F1",
+            "alias": "F1"
+          },
+          {
+            "z": 3,
+            "name": "F2",
+            "alias": "F2"
+          },
+          {
+            "z": 6,
+            "name": "F3",
+            "alias": "F3"
+          },
+          {
+            "z": 9,
+            "name": "F4",
+            "alias": "F4"
+          },
+          {
+            "z": 12,
+            "name": "F5",
+            "alias": "F5"
+          },
+          {
+            "z": 15,
+            "name": "F6",
+            "alias": "F6"
+          }
+        ]
+      },
+      {
+        "mapCode": "xgkjdgz_tcc",
+        "mapId": "2549953185955250178",
+        "mapName": "香港科技大学(广州)_地下停车场",
+        "urls": {},
+        "floors": [
+          {
+            "z": -3,
+            "name": "B1",
+            "alias": "B1"
+          }
+        ]
+      },
+      {
+        "mapCode": "xgkjdgz_xkyl",
+        "mapId": "2550396483694034946",
+        "mapName": "香港科技大学(广州)_西科研楼",
+        "urls": {},
+        "floors": [
+          {
+            "z": 0,
+            "name": "F1",
+            "alias": "F1"
+          },
+          {
+            "z": 3,
+            "name": "F2",
+            "alias": "F2"
+          },
+          {
+            "z": 6,
+            "name": "F3",
+            "alias": "F3"
+          },
+          {
+            "z": 9,
+            "name": "F4",
+            "alias": "F4"
+          },
+          {
+            "z": 12,
+            "name": "F5",
+            "alias": "F5"
+          },
+          {
+            "z": 15,
+            "name": "F6",
+            "alias": "F6"
+          }
+        ]
+      },
+      {
+        "mapCode": "xgkjdgz_xsyjzx",
+        "mapId": "2554025713086562305",
+        "mapName": "香港科技大学(广州)_学术研究中心",
+        "urls": {},
+        "floors": [
+          {
+            "z": 0,
+            "name": "F1",
+            "alias": "F1"
+          },
+          {
+            "z": 3,
+            "name": "F2",
+            "alias": "F2"
+          },
+          {
+            "z": 6,
+            "name": "F3",
+            "alias": "F3"
+          }
+        ]
+      },
+      {
+        "mapCode": "xgkjdxaz_tyg",
+        "mapId": "2558010364985671682",
+        "mapName": "香港科技大学(广州)_体育馆",
+        "urls": {},
+        "floors": [
+          {
+            "z": 0,
+            "name": "F1",
+            "alias": "F1"
+          }
+        ]
+      }
+    ],
+    "configs": [
+      {
+        "propertyCode": "projectMark",
+        "content": "{\"groundCode\":\"xgkdgz_all\",\"undergroundCode\":\"xgkjdgz_tcc\"}"
+      },
+      {
+        "propertyCode": "searchGroups",
+        "content": "[{\"name\":\"教室\",\"src\":\"/res/projects/xgkdgz_all/icons/bfed72ccf0833550bcf774c8585f1bf3.svg\",\"name_en\":\"ClassRoom\",\"tags\":[\"教室\"]},{\"name\":\"停车场\",\"src\":\"/res/projects/xgkdgz_all/icons/f952bad41c35684fd93373cb4fc16b07.svg\",\"name_en\":\"Parking Lot\",\"tags\":[\"停车场\"]},{\"name\":\"卫生间\",\"src\":\"/res/projects/xgkdgz_all/icons/ff04ba63a7cc1f918e1851dd061c2eaf.svg\",\"name_en\":\"Toilet\",\"tags\":[\"洗手间\"]},{\"name\":\"饭堂\",\"src\":\"/res/projects/xgkdgz_all/icons/d65c99ef49b41537e249ecdb1be5b3e0.svg\",\"name_en\":\"Canteen\",\"tags\":[\"食堂\",\"canteen\"]},{\"name\":\"电梯\",\"src\":\"/res/projects/xgkdgz_all/icons/8b87e5aa6e8c20bd1f46848819fd1ba6.svg\",\"name_en\":\"Lift\",\"tags\":[\"电梯\",\"Lift\"]},{\"name\":\"打印机\",\"src\":\"/res/projects/xgkdgz_all/icons/86e59da5a8ff7e0911315745d29764a4.svg\",\"name_en\":\"Printer\",\"tags\":[\"打印机\"]},{\"name\":\"会议室\",\"src\":\"/res/projects/xgkdgz_all/icons/bfed72ccf0833550bcf774c8585f1bf3.svg\",\"name_en\":\"Meeting Room\",\"tags\":[\"会议室\"]},{\"name\":\"实验室\",\"src\":\"/res/projects/xgkdgz_all/icons/bfed72ccf0833550bcf774c8585f1bf3.svg\",\"name_en\":\"Labs\",\"tags\":[\"实验室\"]},{\"name\":\"宿舍\",\"src\":\"/res/projects/xgkdgz_all/icons/d25a88052e846766d91bf12d97fd7dd2.svg\",\"name_en\":\"Dormitory\",\"tags\":[\"宿舍\"]},{\"name\":\"科研楼\",\"src\":\"/res/projects/xgkdgz_all/icons/3eb1d138875c61dabcab4a7bb15dacaf.svg\",\"name_en\":\"Concourse\",\"tags\":[\"科研楼\"]},{\"name\":\"图书馆\",\"src\":\"/res/projects/xgkdgz_all/icons/90ffe8f61cc0acbcfd61d883cd24a712.svg\",\"name_en\":\"Library\",\"tags\":[\"图书馆\"]},{\"name\":\"行政办公楼\",\"src\":\"/res/projects/xgkdgz_all/icons/31502d5c2fa8af5026df1c45974a64d8.svg\",\"name_en\":\"Administration\",\"tags\":[\"行政楼\"]},{\"name\":\"学术研究中心\",\"src\":\"/res/projects/xgkdgz_all/icons/4e8711ba25f5c7ce45539184713db83a.svg\",\"name_en\":\"Lecture Hall\",\"tags\":[\"学术研究中心\"]},{\"name\":\"体育馆\",\"src\":\"/res/projects/xgkdgz_all/icons/c61eaf8a198c9d9410f75d2e2a49689c.svg\",\"name_en\":\"Sport Hall\",\"tags\":[\"体育场馆\"]},{\"name\":\"AED\",\"src\":\"/res/projects/xgkdgz_all/icons/c1bec4a4f96550e713f82bf6360eade2.svg\",\"name_en\":\"AED\",\"tags\":[\"AED\"]},{\"name\":\"急救箱\",\"src\":\"/res/projects/xgkdgz_all/icons/b5bb370ff64a8796e0595bf755f003f7.svg\",\"name_en\":\"First-aid Kit\",\"tags\":[\"急救箱\"]},{\"name\":\"抓娃娃机\",\"src\":\"/res/projects/xgkdgz_all/icons/6effa5caf9da0901036ffde89e7bd3b9.svg\",\"name_en\":\"Claw Machine\",\"tags\":[\"抓娃娃机\"]},{\"name\":\"自动售货机\",\"src\":\"/res/projects/xgkdgz_all/icons/72b0523f8384e4018dd6f0ee8fafbc36.svg\",\"name_en\":\"Vending Machines\",\"tags\":[\"自助机\"]}]"
+      },
+      {
+        "propertyCode": "routePolicies",
+        "content": "[{\"mode\":\"walk\",\"policies\":[{\"changeFloorFactor\":{\"escalator\":8,\"lift\":8,\"slope\":10,\"stairs\":24},\"changeFloorWaitCost\":{\"lift\":45},\"id\":\"least_distance\",\"name\":\"推荐路线\",\"reason\":\"舒适快捷\"},{\"changeFloorFactor\":{\"escalator\":8,\"lift\":8,\"slope\":10},\"changeFloorWaitCost\":{\"lift\":45},\"id\":\"least_time\",\"name\":\"不走楼梯\"},{\"changeFloorFactor\":{\"lift\":8,\"slope\":10},\"changeFloorWaitCost\":{\"lift\":45},\"id\":\"barrier_free\",\"name\":\"电梯\"}]},{\"mode\":\"car\",\"policies\":[{\"changeFloorFactor\":{\"slope\":10},\"changeFloorWaitCost\":{},\"id\":\"slope\",\"name\":\"推荐路线\"}]}]"
+      },
+      {
+        "propertyCode": "customConfig",
+        "content": "{\"homeSearchMode\":true,\"recordPoiMode\":true,\"arMode\":true,\"vrMode\":false,\"gpsMode\":true,\"worldMapMode\":true,\"showMapMode\":true,\"comeHereMode\":true,\"sceneLogo\":null,\"frontendUrl\":\"\",\"meVersion\":\"/enterprise/stable/202503\",\"seVersion\":\"/hkustGZ\",\"frontendLogo\":\"/res/projects/xgkdgz_all/icons/32d25645c9529328f9b00c76467a929b.png\",\"sceneTypes\":[],\"keepBH\":true,\"collectionMode\":true,\"arFollowModel\":null,\"arFollowModelEnable\":false,\"vrLogo\":null,\"isOfficial\":true,\"careMode\":false,\"darkMode\":false,\"shareCardImg\":\"\",\"languages\":[\"zhcn\",\"en\"],\"b2\":true,\"disableSTT\":false,\"noFeedback\":false,\"disableLocationTip\":false,\"disableParkBar\":false,\"disableEPL\":true,\"noPushPackLayer\":false,\"noMultiIndoor\":false,\"noListId\":false,\"pushLogo\":\"\",\"vrMascot\":\"\",\"bigHeaderText\":\"\",\"bigHeaderLogo\":\"\",\"bsQrHost\":\"\",\"bsServer\":\"\",\"noQr\":false,\"noIntro\":false,\"noSetMyPos\":false,\"backMainResetView\":false,\"showAllFloorItem\":false,\"bigNoRotate\":false,\"bigGuideInfoFirst\":false,\"distanceUnit\":[],\"beaconMode\":true,\"aoaMode\":false,\"noCarRegion\":false,\"weatherMode\":false,\"heatmapMode\":false,\"visionMode\":\"\",\"arPathModel\":\"\",\"busyCarModel\":false,\"navHistoryMode\":false,\"__configTemplateId\":\"1494518436249792513\",\"mapViewConfig\":{\"center\":{\"x\":12632135.41,\"y\":2618705.78},\"zoom\":17.27,\"pitch\":60,\"heading\":41},\"bsMapViewConfig\":null,\"h5AR\":true,\"sttLangs\":[{\"language\":\"zh_CN\",\"text\":\"普通话\"},{\"language\":\"zh_HK\",\"text\":\"粤语\"},{\"language\":\"en_US\",\"text\":\"英文\"}],\"langMode\":1,\"userType\":\"sso\"}"
+      }
+    ],
+    "dynamicOptions": {
+      "services": [
+        "poiRichDetail"
+      ],
+      "license": "/res/license/slicense.js?t=1790587415323"
+    },
+    "lastUpdatedTime": 1790644822549,
+    "allUrl": "/res/projects/xgkdgz_all/h4bjun8x.bin",
+    "c2": "4.1.110"
+  }
+}

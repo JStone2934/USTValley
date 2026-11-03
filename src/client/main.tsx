@@ -1,3 +1,4 @@
+import { sundial } from "../shared/sundial";
 import React, {
   useEffect,
   useRef,
@@ -324,7 +325,7 @@ function App() {
   const [world, setWorld] = useState<WorldMap>();
   const [error, setError] = useState("");
   const [attempt, retry] = useState(0);
-  const [panel, setPanel] = useState<"map" | "guide" | null>(null);
+  const [panel, setPanel] = useState<"map" | "guide" | "sundial" | null>(null);
   const [references, setReferences] = useState(false);
   const snapshot = useSyncExternalStore(subscribe, getSnapshot);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -333,8 +334,13 @@ function App() {
       setWorld(undefined);
       setError("地图图像加载失败，请重试");
     };
+    const observe = () => setPanel("sundial");
+    bridge.addEventListener(sundial.id, observe);
     bridge.addEventListener("loaderror", onError);
-    return () => bridge.removeEventListener("loaderror", onError);
+    return () => {
+      bridge.removeEventListener(sundial.id, observe);
+      bridge.removeEventListener("loaderror", onError);
+    };
   }, []);
   useEffect(() => {
     const abort = new AbortController();
@@ -387,7 +393,7 @@ function App() {
           </span>
         </a>
         <div className="chapter">
-          <span className="eyebrow">BUILD 0.5 / 立体像素校园</span>
+          <span className="eyebrow">BUILD 0.5.1 / 立体像素校园</span>
           <h1>
             从校园，
             <br />
@@ -558,6 +564,14 @@ function App() {
       </section>
       <dialog
         ref={dialog}
+        data-panel={panel}
+        aria-labelledby="panel-title"
+        onKeyDown={(e) => {
+          if (panel === "sundial" && e.key.toLowerCase() === "e" && !e.repeat) {
+            e.stopPropagation();
+            setPanel(null);
+          }
+        }}
         onCancel={() => setPanel(null)}
         onClose={() => {
           if (panel) setPanel(null);
@@ -566,12 +580,14 @@ function App() {
         <div className="dialog-heading">
           <div>
             <span className="eyebrow">UST VALLEY / FIELD NOTES</span>
-            <h2>
+            <h2 id="panel-title">
               {panel === "map"
                 ? current?.id !== "campus_core"
                   ? `当前楼层地图 · ${current?.floor.name}`
                   : "校园地图"
-                : "漫游指南"}
+                : panel === "sundial"
+                  ? sundial.title
+                  : "漫游指南"}
             </h2>
           </div>
           <button aria-label="关闭面板" onClick={() => setPanel(null)}>
@@ -580,6 +596,8 @@ function App() {
         </div>
         {panel === "map" && world ? (
           <Overview world={world} />
+        ) : panel === "sundial" ? (
+          <p className="guide">{sundial.note}</p>
         ) : (
           <div className="guide">
             <p>从 C2 学生活动中心附近出发，沿浅色步道探索校园。</p>

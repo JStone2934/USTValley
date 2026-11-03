@@ -790,3 +790,23 @@ dialog::backdrop {
   color: #6a7b66;
   line-height: 1.6;
 }
+
+dialog[data-panel="sundial"] {
+  position: fixed;
+  inset: auto auto 1rem 1rem;
+  margin: 0;
+  padding: 16px 20px;
+  max-width: min(24rem, calc(100vw - 2rem));
+}
+dialog[data-panel="sundial"]::backdrop {
+  background: #233b3218;
+  backdrop-filter: none;
+}
+dialog[data-panel="sundial"] .guide {
+  margin: 0;
+  line-height: 1.75;
+}
+
+.app-shell:has(dialog[open][data-panel="sundial"]) :is(.interaction-hint, .passage-options, .touch-controls) {
+  display: none;
+}

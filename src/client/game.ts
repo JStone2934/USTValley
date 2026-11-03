@@ -1,3 +1,5 @@
+import { addSundialForeground } from "./sundial-art";
+import { canObserveSundial, sundial } from "../shared/sundial";
 import { makeStudentAvatar } from "./avatar-art";
 import Phaser from "phaser";
 import { actorOcclusion } from "./occlusion";
@@ -203,11 +205,15 @@ export class CampusScene extends Phaser.Scene {
       .setDepth(-100)
       .setName("floor-plan");
     for (const landmark of s.art.landmarks ?? []) {
+      const plaza = landmark.id === sundial.featureId;
       this.add
         .image(landmark.x, landmark.y, landmark.image)
         .setOrigin(0)
         .setDisplaySize(landmark.width, landmark.height)
-        .setDepth(landmark.frontY < 0 ? -90 : 6000 + landmark.frontY);
+        .setDepth(
+          plaza ? -89 : landmark.frontY < 0 ? -90 : 6000 + landmark.frontY,
+        );
+      if (plaza) addSundialForeground(this, landmark);
     }
     this.roofSprites = (s.id === "campus_core" ? s.art.roofs : []).map(
       (roof) => ({
@@ -481,7 +487,15 @@ export class CampusScene extends Phaser.Scene {
       return;
     }
     const p = action?.portal;
-    if (!p) return;
+    if (!p) {
+      if (
+        !nearby.length &&
+        (!actionId || actionId === sundial.id) &&
+        canObserveSundial(this.current, this.position)
+      )
+        this.bridge.dispatchEvent(new Event(sundial.id));
+      return;
+    }
     const target = this.world.scenes.find((s) => s.id === p.targetScene)!;
     const reverse = target.portals.find((q) => q.id === p.targetPortal)!;
     this.enterScene(target.id, reverse.spawn);
@@ -489,12 +503,18 @@ export class CampusScene extends Phaser.Scene {
   publish() {
     if (!this.current) return;
     const actions = this.loading ? [] : this.nearbyActions();
+    const observation =
+      !this.loading &&
+      !actions.length &&
+      canObserveSundial(this.current, this.position);
     this.bridge.emit({
       sceneId: this.current.id,
       position: { ...this.position },
       discovered: [...this.discovered],
-      target: actions[0]?.label,
-      passages: actions.map(({ id, label }) => ({ id, label })),
+      target: actions[0]?.label ?? (observation ? sundial.action : undefined),
+      passages: observation
+        ? [{ id: sundial.id, label: sundial.action }]
+        : actions.map(({ id, label }) => ({ id, label })),
       floorImages: this.children.list
         .filter((object) => object.name === "floor-plan")
         .map((object) => (object as Phaser.GameObjects.Image).texture.key),

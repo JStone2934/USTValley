@@ -1,0 +1,329 @@
+import sharp from "sharp";
+import type { SceneMap, Surface } from "../src/shared/world.ts";
+import { pathData } from "./source-geometry.ts";
+
+const rect = (x: number, y: number, w: number, h: number, color: string) =>
+  `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${color}"/>`;
+function pattern(
+  id: string,
+  w: number,
+  h: number,
+  color: string,
+  marks: string,
+) {
+  return `<pattern id="${id}" patternUnits="userSpaceOnUse" patternTransform="scale(${id === "asphalt" ? 0.4 : id === "pond" ? 0.8 : id === "lawn" ? 0.52 : 0.48})" width="${w}" height="${h}">${rect(0, 0, w, h, color)}${marks}</pattern>`;
+}
+
+// A little patch of lawn repeats at roughly thirty metres. Draw clusters rather than
+// independent noisy pixels so tufts still have a lit blade and a shaded base at 4×.
+function meadow() {
+  let seed = 137;
+  const pick = (range: number) => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return Math.floor((seed / 4294967296) * range);
+  };
+  const marks: string[] = [];
+  for (let i = 0; i < 24; i++) {
+    const x = pick(116),
+      y = pick(124),
+      tone = i % 2 ? "#94b27a" : "#8cac75";
+    marks.push(
+      rect(x + 2, y, 7, 1, tone),
+      rect(x, y + 1, 12, 2, tone),
+      rect(x + 3, y + 3, 11, 1, tone),
+    );
+  }
+  for (let row = 0; row < 13; row++) {
+    for (let col = 0; col < 13; col++) {
+      const x = col * 10 + pick(7),
+        y = row * 10 + pick(7);
+      const blade = pick(5);
+      if (blade < 2) {
+        marks.push(
+          rect(x, y, 4, 1, "#88ab74"),
+          rect(x + 1, y - 1, 2, 1, "#88ab74"),
+        );
+      } else {
+        marks.push(
+          rect(x, y, 3, 1, "#799b6b"),
+          rect(x + 2, y - 1, 1, 1, "#799b6b"),
+        );
+        if (blade === 4) marks.push(rect(x - 1, y - 1, 1, 1, "#abc486"));
+      }
+    }
+  }
+  for (let i = 0; i < 7; i++) {
+    const x = pick(124),
+      y = pick(124);
+    marks.push(
+      rect(x, y, 3, 1, "#7d9c6c"),
+      rect(x, y - 1, 1, 1, "#e3d495"),
+      rect(x + 3, y - 2, 1, 1, "#c5cb88"),
+    );
+  }
+  return pattern("lawn", 130, 130, "#90af77", marks.join(""));
+}
+
+const definitions = [
+  meadow(),
+  pattern(
+    "plaza",
+    20,
+    12,
+    "#dccdb1",
+    '<path fill="none" stroke="#cdbfa6" d="M0 0H20M0 6H20M5 0V6M15 6V12"/>' +
+      rect(6, 1, 5, 1, "#e5d8bf") +
+      rect(1, 7, 4, 1, "#e5d8bf"),
+  ),
+  pattern(
+    "path",
+    18,
+    12,
+    "#e8d8b8",
+    '<path fill="none" stroke="#d8c8ad" d="M0 0H18M0 6H18M0 0V6M9 6V12"/>' +
+      rect(1, 1, 5, 1, "#efe1c6"),
+  ),
+  pattern(
+    "asphalt",
+    29,
+    19,
+    "#a8a99f",
+    rect(3, 4, 2, 1, "#b4b3a6") +
+      rect(14, 11, 2, 1, "#9c9e99") +
+      rect(24, 1, 1, 1, "#9c9e99"),
+  ),
+  pattern(
+    "pond",
+    83,
+    49,
+    "#579b9b",
+    '<path fill="#489093" d="M0 9h13v1h6v1H7v-1H0zM29 31h16v1h5v1H37v-1h-8zM64 21h9v1h-9z"/>' +
+      '<path fill="#75b9ae" d="M4 22h5v-1h5v1h-4v1H4zM43 7h8v-1h4v1h-3v1h-9zM66 38h7v-1h5v1h-3v1h-9z"/>' +
+      rect(15, 19, 3, 1, "#9bd0bb") +
+      rect(51, 10, 2, 1, "#9bd0bb"),
+  ),
+  pattern(
+    "treads",
+    8,
+    4,
+    "#bec0ae",
+    rect(0, 0, 8, 1, "#879a91") + rect(0, 1, 8, 1, "#e0dfc7"),
+  ),
+].join("");
+
+const material: Record<string, [string, string, number]> = {
+  floor: ["#dfd7c4", "#b3b7a3", 1],
+  garden: ["url(#lawn)", "#79976c", 2],
+  road: ["url(#asphalt)", "#92998e", 2],
+  crosswalk: ["#f6eacb", "#e4dbbc", 0.5],
+  room: ["#cdbca2", "#a3a294", 1],
+  corridor: ["url(#path)", "#c5b99d", 1],
+  water: ["url(#pond)", "#397d80", 3],
+  stairs: ["url(#treads)", "#8e9e94", 1],
+  lift: ["#9eafb0", "#708987", 1],
+  detail: ["#cebd9f", "#b1ac97", 1],
+  wall: ["#b3af9b", "#858c82", 1],
+};
+
+function draw(s: Surface): string {
+  const [fill, edge, width] = material[s.kind];
+  if (s.line) {
+    const pts = s.line.map((p) => `${p.x},${p.y}`).join(" ");
+    const stroke = (ink: string, w: number) =>
+      `<polyline points="${pts}" fill="none" stroke="${ink}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"/>`;
+    return (
+      stroke(edge, (s.strokeWidth ?? 1) + width) +
+      stroke(fill, s.strokeWidth ?? 1)
+    );
+  }
+  const d = pathData(s.polygons);
+  const body = `<path d="${d}" fill="${fill}" fill-rule="evenodd" stroke="${edge}" stroke-width="${width * 0.6}" stroke-linejoin="round"/>`;
+  // The inner bank follows the actual shoreline, including its islands.
+  if (s.kind !== "water") return body;
+  const clip = `shore-${s.sourceMap}-${s.sourceId}`;
+  return `<defs><clipPath id="${clip}"><path d="${d}" clip-rule="evenodd"/></clipPath></defs>${body}<g clip-path="url(#${clip})"><path d="${d}" fill="none" stroke="#81b9a5" stroke-width="5"/><path d="${d}" fill="none" stroke="#bccea9" stroke-width="2"/></g>`;
+}
+
+export function campusLayerSvg(scene: SceneMap, layer: string) {
+  const w = scene.width * scene.tileSize,
+    h = scene.height * scene.tileSize;
+  const shapes = scene.surfaces;
+  const campusNav = (s: Surface) =>
+    s.kind === "corridor" && s.sourceMap === scene.sourceMap;
+  const kinds: Record<string, string[]> = {
+    floor: ["floor"],
+    terrain: ["road", "garden", "crosswalk"],
+    rooms: ["room"],
+    passages: ["corridor"],
+    fixtures: ["water", "detail", "stairs", "lift"],
+    walls: ["wall"],
+  };
+  // The outdoor navigation overlay is broader than the painted paths. Place it
+  // below mapped lawns, road markings and water so it cannot erase these features.
+  const body =
+    layer === "base"
+      ? rect(0, 0, w, h, "url(#plaza)") +
+        shapes.filter(campusNav).map(draw).join("")
+      : (kinds[layer] ?? [])
+          .flatMap((k) =>
+            shapes.filter((s) => s.kind === k && !campusNav(s)).map(draw),
+          )
+          .join("");
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" shape-rendering="crispEdges"><defs>${definitions}</defs>${body}</svg>`;
+}
+
+// Colour ramps keep the GLB's windows, grass roofs and warm stone recognizable,
+// but group photographic noise into deliberate, legible planes of colour.
+const masonry = [
+  "#293e49",
+  "#3c5261",
+  "#4c6376",
+  "#667a8c",
+  "#839298",
+  "#9daaab",
+  "#b5c1b9",
+  "#d1d2c2",
+  "#e4dfca",
+  "#f7efd7",
+];
+const roofGrass = [
+  "#294c49",
+  "#395f50",
+  "#4f7756",
+  "#65905f",
+  "#82a46a",
+  "#9bb879",
+  "#b6cd8a",
+  "#d3dda3",
+];
+const warm = [
+  "#453d42",
+  "#644e49",
+  "#836455",
+  "#a38269",
+  "#c4a184",
+  "#dbc2a4",
+  "#edd8bb",
+  "#f7e6cd",
+];
+const parse = (colors: string[]) =>
+  colors.map((c) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16)));
+const blueRamp = parse([
+  "#254b59",
+  "#396c79",
+  "#508d95",
+  "#6aa9a5",
+  "#99cdbd",
+  "#c0e0cb",
+]);
+const neutralRamp = parse(masonry),
+  greenRamp = parse(roofGrass),
+  warmRamp = parse(warm);
+
+export async function gradeCampusModel(
+  input: Buffer,
+  surfaceIds?: Uint16Array,
+  names?: string[],
+) {
+  const { data, info } = await sharp(input)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const families = names?.map((name) =>
+    /草地/.test(name) ? "grass" : /太阳能|光伏/.test(name) ? "solar" : "",
+  );
+  for (let i = 0; i < data.length; i += 4) {
+    if (!data[i + 3]) continue;
+    const r = data[i],
+      g = data[i + 1],
+      b = data[i + 2];
+    const luma = (r * 0.28 + g * 0.53 + b * 0.19) / 255;
+    // Preserve strongly coloured artwork, e.g. the red monument in the plaza.
+    if (r > g + 40 && r > b + 40) continue;
+    const ramp =
+      g > r + 18 && b > r + 18
+        ? blueRamp
+        : g > b + 14 && g >= r - 5
+          ? greenRamp
+          : r > g + 11 && r > b + 16
+            ? warmRamp
+            : neutralRamp;
+    const c =
+      ramp[
+        Math.round(
+          Math.min(1, Math.max(0, (luma - 0.07) / 0.87)) * (ramp.length - 1),
+        )
+      ];
+    const index = i / 4,
+      x = index % info.width,
+      y = Math.floor(index / info.width);
+    const face = surfaceIds?.[index] ?? 0,
+      family = families?.[(face & 0x7fff) - 1];
+    let color = c,
+      accent = 0;
+    if (family === "grass") {
+      // Hand-sized clusters and occasional pairs of light blades on the actual
+      // planted roof material, including its sloping faces.
+      const hash =
+        (Math.imul(x >> 2, 374761393) ^ Math.imul(y >> 2, 668265263)) >>> 0;
+      const u = x % 4,
+        v = y % 4;
+      if (hash % 7 < 2 && ((v === 2 && u < 3) || (v === 1 && u === 2)))
+        accent = -11;
+      if (hash % 19 === 4 && v === 1 && u < 2) accent = 12;
+    } else if (family === "solar") {
+      color = [
+        Math.max(38, 0.65 * c[0]),
+        Math.max(57, 0.8 * c[1]),
+        Math.max(78, c[2]),
+      ];
+      if (x % 7 === 0 || y % 11 === 0) accent = 11;
+    } else if (face & 0x8000 && ramp === neutralRamp && luma > 0.76) {
+      const seam = x + 8 * Math.floor(y / 9);
+      if (y % 9 === 0 || seam % 18 === 0) accent = -7;
+      else if (y % 9 === 1 && seam % 18 < 6) accent = 5;
+    }
+    for (let ch = 0; ch < 3; ch++)
+      data[i + ch] = Math.max(0, Math.min(255, Math.round(color[ch] + accent)));
+  }
+  return sharp(data, { raw: info }).png({ compressionLevel: 9 }).toBuffer();
+}
+
+// Project the actual mesh onto the ground along the sun vector. Using one SVG
+// path avoids dark seams where triangles overlap. Courtyard holes stay sunlit.
+export function castShadow(
+  parts: import("./gltf.ts").Primitive[],
+  convert: (v: number[]) => { x: number; y: number },
+  scale: number,
+) {
+  const triangles: string[] = [];
+  for (const part of parts) {
+    const points = part.vertices.map((v) => {
+      const p = convert(v),
+        z = Math.max(0, v[2]) * scale;
+      return { x: Math.round(p.x + z * 0.25), y: Math.round(p.y + z * 0.19) };
+    });
+    for (let i = 0; i < part.indices.length; i += 3) {
+      const a = points[part.indices[i]],
+        b = points[part.indices[i + 1]],
+        c = points[part.indices[i + 2]];
+      const cross = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+      if (cross > 0)
+        triangles.push(`M${a.x} ${a.y}L${b.x} ${b.y} ${c.x} ${c.y}Z`);
+      else if (cross < 0)
+        triangles.push(`M${a.x} ${a.y}L${c.x} ${c.y} ${b.x} ${b.y}Z`);
+    }
+  }
+  return triangles.join("");
+}
+export function shadowSvg(scene: SceneMap, paths: string[]) {
+  const w = scene.width * scene.tileSize,
+    h = scene.height * scene.tileSize;
+  const footprints = scene.art.roofs
+    .map(
+      (r) =>
+        `<path d="${pathData(r.footprint)}" fill="black" fill-rule="evenodd"/>`,
+    )
+    .join("");
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" shape-rendering="crispEdges"><defs><mask id="outdoors"><rect width="100%" height="100%" fill="white"/>${footprints}</mask></defs><path d="${paths.join("")}" fill="#354f55" opacity=".25" mask="url(#outdoors)"/></svg>`;
+}

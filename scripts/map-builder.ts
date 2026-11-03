@@ -1,3 +1,6 @@
+import { fitSourceFixtures } from "./fixture-collision.ts";
+import { fitRoomCasework } from "./room-casework.ts";
+import { fitRoomDoors } from "./room-doors.ts";
 import { createHash } from "node:crypto";
 import config from "../content/map-config.json";
 import {
@@ -39,6 +42,7 @@ import {
   sourceFloor,
 } from "./scene-layers.ts";
 export { emptyScene, gridPoint, sourceFloor } from "./scene-layers.ts";
+import { stampRedBirdPlaza } from "./plaza-collision.ts";
 import { reconstructFloors } from "./floor-topology.ts";
 const size = config.collisionSize;
 function median(values: number[]): number {
@@ -282,6 +286,7 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
       });
     }
   }
+  const plazaCollision = stampRedBirdPlaza(outdoor, campus, convert);
   border(outdoor);
   const outsideSpace = largestPublicSpace(outdoor),
     usedEntries = new Set<string>();
@@ -506,15 +511,43 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
       scene,
     };
   });
-  const c2 = outdoor.portals.find((p) => p.buildingId === "C2")!,
-    spawn = nearest(
-      outdoor,
-      outsideSpace,
-      c2,
-      (p) =>
-        Math.hypot(p.x - c2.x, p.y - c2.y) >= 40 &&
-        Math.hypot(p.x - c2.x, p.y - c2.y) <= 64,
-    );
+  const c2 = outdoor.portals.find((p) => p.buildingId === "C2")!;
+  const activity = outdoor.art.roofs.find((r) => r.id === "activity")!;
+  const away = {
+    x: c2.x - (activity.x + activity.width / 2),
+    y: c2.y - (activity.y + activity.height / 2),
+  };
+  const distance = Math.hypot(away.x, away.y);
+  const approach = {
+    x: c2.x + (away.x * 72) / distance,
+    y: c2.y + (away.y * 72) / distance,
+  };
+  const softscape = outdoor.surfaces
+    .filter((s) => s.kind === "garden" || s.kind === "water")
+    .flatMap((s) => s.polygons);
+  // Start on the public promenade in front of C2, clear of both the plan
+  // footprint and the roof's northward projection into the initial camera view.
+  const rise =
+    getFeature(campus, groups.find((g) => g.key === "activity")!.featureId)
+      .properties.height *
+    config.transform.pixelsPerProjectedUnit *
+    config.roofHeightFactor;
+  const spawn = nearest(outdoor, outsideSpace, approach, (p) => {
+    if (
+      Math.hypot(p.x - approach.x, p.y - approach.y) > 80 ||
+      !canStand(outdoor, p, 4)
+    )
+      return false;
+    if (softscape.some((poly) => inPolygon(p, poly))) return false;
+    for (let y = 0; y <= rise + 8; y += 4)
+      if (
+        activity.footprint.some((poly) =>
+          inPolygon({ x: p.x, y: p.y + y }, poly),
+        )
+      )
+        return false;
+    return true;
+  });
   outdoor.spawns.push({ ...spawn, id: "campus_spawn" });
   const excluded = (p: Point) =>
       outdoor.portals.some((q) => Math.hypot(p.x - q.x, p.y - q.y) < 64),
@@ -577,14 +610,24 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
       "passages",
       "fixtures",
       "walls",
+      ...(scene.id === "campus_core" ? ["shadows"] : []),
     ].map((id) => ({
       id,
       image: `${scene.art.ground.replace(/\.png$/, "")}-${id}.png`,
     }));
+  const fixtureOccupancy = topology.scenes.map((scene) =>
+    fitSourceFixtures(scene, sources[scene.sourceMap]),
+  );
+  const publicSpace = reachableWorld(world);
+  for (const scene of topology.scenes)
+    fitRoomDoors(scene, sources[scene.sourceMap], publicSpace.get(scene.id)!);
+  for (const scene of topology.scenes)
+    fitRoomCasework(scene, sources[scene.sourceMap]);
   validateWorld(world);
   const report = {
     mapVersion: world.mapVersion,
     status: "source-geometry-reconstructed",
+    fixtureOccupancy,
     sourceSha256: createHash("sha256").update(sourceBytes).digest("hex"),
     sourceMapVersion: campus.map.mversion,
     transform: { ...config.transform, offset },
@@ -603,6 +646,8 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
     },
     buildings: evidence.map(({ scene, ...e }) => e),
     connections: topology.connections,
+    galleries: topology.galleryPairs,
+    plazaCollision,
     checks: {
       scenes: world.scenes.length,
       sourceFloors: new Set(
@@ -742,6 +787,10 @@ export function validateWorld(world: WorldMap): void {
         !reverse ||
         reverse.targetScene !== scene.id ||
         reverse.targetPortal !== portal.id ||
+        reverse.kind !== portal.kind ||
+        (portal.kind === "gallery" &&
+          (target!.sourceMap === scene.sourceMap ||
+            target!.floor.elevation !== scene.floor.elevation)) ||
         reverse.buildingId !== portal.buildingId
       )
         throw new Error(`Unpaired portal: ${portal.id}`);
@@ -750,15 +799,23 @@ export function validateWorld(world: WorldMap): void {
   }
 }
 export function tiledMap(scene: SceneMap, mapVersion: string) {
+  // Tiled image layers display PNGs at native size. Object positions, paths and
+  // offsets therefore share the PNG pixel grid; world.json retains logical units.
+  const ratio = scene.art.pixelRatio ?? 1;
+  const imagePoint = ({ x, y }: Point): Point => ({
+    x: x * ratio,
+    y: y * ratio,
+  });
+  const ringProperty = (rings: Point[][]) =>
+    JSON.stringify(rings.map((r) => r.map(imagePoint)));
   let nextObject = 1;
   const objects = (items: (Point & Record<string, any>)[]) =>
     items.map((o) => ({
       id: nextObject++,
       name: String(o.id ?? o.buildingId ?? ""),
-      x: o.x,
-      y: o.y,
-      width: o.width ?? 0,
-      height: o.height ?? 0,
+      ...imagePoint(o),
+      width: (o.width ?? 0) * ratio,
+      height: (o.height ?? 0) * ratio,
       ...(!("width" in o) ? { point: true } : {}),
       rotation: 0,
       visible: true,
@@ -767,7 +824,16 @@ export function tiledMap(scene: SceneMap, mapVersion: string) {
         .map(([name, value]) => ({
           name,
           type: typeof value === "number" ? "float" : "string",
-          value: typeof value === "object" ? JSON.stringify(value) : value,
+          value:
+            typeof value === "object"
+              ? JSON.stringify(
+                  value &&
+                    typeof value.x === "number" &&
+                    typeof value.y === "number"
+                    ? imagePoint(value)
+                    : value,
+                )
+              : value,
         })),
     }));
   const layers: any[] = [
@@ -783,7 +849,9 @@ export function tiledMap(scene: SceneMap, mapVersion: string) {
       objects: collisionRuns(scene).map((r) => ({
         id: nextObject++,
         name: "blocked",
-        ...r,
+        ...imagePoint(r),
+        width: r.width * ratio,
+        height: r.height * ratio,
         rotation: 0,
         visible: true,
       })),
@@ -803,12 +871,86 @@ export function tiledMap(scene: SceneMap, mapVersion: string) {
       type: "objectgroup",
       objects: objects(scene[name]),
     })),
-    ...scene.art.roofs.map((r) => ({
+    ...(scene.fixtureCollision
+      ? [
+          {
+            name: "fixture_collision",
+            type: "objectgroup",
+            visible: false,
+            objects: scene.surfaces
+              .filter(
+                (s) =>
+                  s.kind === "detail" &&
+                  scene.fixtureCollision!.sourceIds.includes(s.sourceId),
+              )
+              .flatMap((s) =>
+                s.polygons.map((p) => ({
+                  id: nextObject++,
+                  name: String(s.sourceId),
+                  x: 0,
+                  y: 0,
+                  polygon: p[0].map(imagePoint),
+                  properties: [
+                    {
+                      name: "holes",
+                      type: "string",
+                      value: ringProperty(p.slice(1)),
+                    },
+                  ],
+                })),
+              ),
+          },
+        ]
+      : []),
+    ...(scene.roomCasework?.length
+      ? [
+          {
+            name: "room_casework",
+            type: "objectgroup",
+            visible: false,
+            objects: scene.roomCasework.map((f) => ({
+              id: nextObject++,
+              name: String(f.sourceId),
+              x: 0,
+              y: 0,
+              polygon: f.footprint.map(imagePoint),
+              properties: [
+                { name: "kind", type: "string", value: f.kind },
+                { name: "sourceId", type: "int", value: f.sourceId },
+                {
+                  name: "cells",
+                  type: "string",
+                  value: JSON.stringify(f.cells),
+                },
+              ],
+            })),
+          },
+        ]
+      : []),
+    ...(scene.pointFixtures?.length
+      ? [
+          {
+            name: "point_fixtures",
+            type: "objectgroup",
+            visible: false,
+            objects: objects(
+              scene.pointFixtures.map((f) => ({
+                ...f,
+                id: String(f.sourceId),
+              })),
+            ),
+          },
+        ]
+      : []),
+    ...(scene.doors?.length
+      ? [{ name: "doors", type: "objectgroup", objects: objects(scene.doors) }]
+      : []),
+    ...[...(scene.art.landmarks ?? []), ...scene.art.roofs].map((r) => ({
       name: `model_${r.id}`,
       type: "imagelayer",
       image: r.image,
-      offsetx: r.x,
-      offsety: r.y,
+      offsetx: r.x * ratio,
+      offsety: r.y * ratio,
     })),
     ...[
       ...new Set(
@@ -832,7 +974,7 @@ export function tiledMap(scene: SceneMap, mapVersion: string) {
                   name: String(s.sourceId),
                   x: 0,
                   y: 0,
-                  polyline: s.line,
+                  polyline: s.line.map(imagePoint),
                   properties: [{ name: "kind", type: "string", value: s.kind }],
                 },
               ]
@@ -841,13 +983,13 @@ export function tiledMap(scene: SceneMap, mapVersion: string) {
                 name: String(s.sourceId),
                 x: 0,
                 y: 0,
-                polygon: p[0],
+                polygon: p[0].map(imagePoint),
                 properties: [
                   { name: "kind", type: "string", value: s.kind },
                   {
                     name: "holes",
                     type: "string",
-                    value: JSON.stringify(p.slice(1)),
+                    value: ringProperty(p.slice(1)),
                   },
                 ],
               })),
@@ -864,7 +1006,7 @@ export function tiledMap(scene: SceneMap, mapVersion: string) {
         y: 0,
         width: 0,
         height: 0,
-        polygon: s.points,
+        polygon: s.points.map(imagePoint),
       })),
     },
   ].map((l, i) => ({ visible: true, opacity: 1, x: 0, y: 0, ...l, id: i + 1 }));
@@ -876,8 +1018,8 @@ export function tiledMap(scene: SceneMap, mapVersion: string) {
     infinite: false,
     width: scene.width,
     height: scene.height,
-    tilewidth: 16,
-    tileheight: 16,
+    tilewidth: scene.tileSize * ratio,
+    tileheight: scene.tileSize * ratio,
     nextlayerid: layers.length + 1,
     nextobjectid: nextObject,
     properties: [
@@ -887,23 +1029,42 @@ export function tiledMap(scene: SceneMap, mapVersion: string) {
       { name: "floor", type: "string", value: scene.floor.name },
       { name: "artStyle", type: "string", value: scene.art.style },
       { name: "elevation", type: "float", value: scene.floor.elevation },
-      { name: "collisionResolution", type: "int", value: 4 },
+      { name: "imagePixelsPerWorldPixel", type: "int", value: ratio },
+      { name: "logicalTileSize", type: "int", value: scene.tileSize },
+      {
+        name: "logicalCollisionResolution",
+        type: "int",
+        value: scene.collisionSize,
+      },
+      {
+        name: "collisionResolution",
+        type: "int",
+        value: scene.collisionSize * ratio,
+      },
+      { name: "fixtureResolution", type: "int", value: ratio },
+      {
+        name: "coordinateSystem",
+        type: "string",
+        value:
+          "All geometry and point properties are in baked image pixels. Divide by imagePixelsPerWorldPixel for world.json coordinates. Door cells are logical grid indices.",
+      },
       {
         name: "collisionSource",
         type: "string",
         value:
-          "world.json (4px authoritative occupancy; polygon holes preserved)",
+          "world.json (structural and door cells at logicalCollisionResolution, imported fixtures at one world pixel; polygon holes preserved)",
       },
     ],
     tilesets: [],
     layers,
   };
 }
+
 export function referenceSvg(world: WorldMap): string {
   const scene = world.scenes[0],
     w = scene.width * 16,
     h = scene.height * 16;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"><image href="terrain-campus.png" width="${w}" height="${h}"/>${scene.art.roofs.map((r) => `<image href="${r.image}" x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}"/>`).join("")}${world.buildings.map((b) => `<g><rect x="${b.label.x - 19}" y="${b.label.y - 17}" width="38" height="28" rx="4" fill="#f8efd7" stroke="#587e6b"/><text x="${b.label.x}" y="${b.label.y + 4}" font-family="sans-serif" font-size="19" text-anchor="middle" fill="#345846">${b.id}</text></g>`).join("")}</svg>\n`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"><image href="terrain-campus.png" width="${w}" height="${h}"/>${[...(scene.art.landmarks ?? []), ...scene.art.roofs].map((r) => `<image href="${r.image}" x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}"/>`).join("")}${world.buildings.map((b) => `<g><rect x="${b.label.x - 19}" y="${b.label.y - 17}" width="38" height="28" rx="4" fill="#f8efd7" stroke="#587e6b"/><text x="${b.label.x}" y="${b.label.y + 4}" font-family="sans-serif" font-size="19" text-anchor="middle" fill="#345846">${b.id}</text></g>`).join("")}</svg>\n`;
 }
 
 function collisionRuns(

@@ -1,9 +1,21 @@
+import { makeStudentAvatar } from "./avatar-art";
 import Phaser from "phaser";
-import { passageLabel, passageMarkers } from "../shared/passages";
+import { actorOcclusion } from "./occlusion";
+import {
+  doorCollision,
+  nearbyDoors,
+  toggleDoor,
+  type RoomDoor,
+} from "../shared/doors";
+import { drawRoomDoor } from "./room-door-art";
+import {
+  crossedGallery,
+  passageLabel,
+  passageMarkers,
+} from "../shared/passages";
 import {
   contains,
   move,
-  nearbyPortal,
   nearbyPortals,
   type Point,
   type SceneMap,
@@ -11,7 +23,7 @@ import {
   type Roof,
 } from "../shared/world";
 
-export const CAMERA_ZOOM = { min: 1, initial: 4, max: 10 } as const;
+const CAMERA_STOPS = [12.5, 25, 50, 75, 100, 125, 150, 175, 200];
 
 export type Snapshot = {
   sceneId: string;
@@ -19,7 +31,10 @@ export type Snapshot = {
   discovered: string[];
   target?: string;
   passages?: { id: string; label: string }[];
-  zoom: number;
+  zoomPercent: number;
+  canZoomOut: boolean;
+  canZoomIn: boolean;
+  cameraZoom?: number;
   avatarSize?: { width: number; height: number };
   floorImages?: string[];
   stairMarkers?: number;
@@ -34,7 +49,9 @@ export class GameBridge extends EventTarget {
     sceneId: "campus_core",
     position: { x: 0, y: 0 },
     discovered: [],
-    zoom: CAMERA_ZOOM.initial,
+    zoomPercent: 100,
+    canZoomOut: false,
+    canZoomIn: false,
   };
   clear() {
     this.keys.clear();
@@ -60,22 +77,36 @@ export class GameBridge extends EventTarget {
     this.references = !this.references;
     this.scene?.drawReferences();
   }
-  zoom(value: number) {
-    this.scene?.setZoom(value);
+  zoom(direction: -1 | 1) {
+    this.scene?.stepZoom(direction);
   }
 }
 
 export class CampusScene extends Phaser.Scene {
   private current!: SceneMap;
   private player!: Phaser.GameObjects.Image;
+  private occlusion?: ReturnType<typeof actorOcclusion>;
+  private footShadow!: Phaser.GameObjects.Ellipse;
   private referenceLayer!: Phaser.GameObjects.Graphics;
   private discovered = new Set<string>();
+  private openDoors = new Set<string>();
+  private doorSprites = new Map<string, Phaser.GameObjects.Graphics>();
   private position: Point = { x: 0, y: 0 };
   private lastEmit = 0;
   private loading = false;
   private pendingReset = false;
   private direction = "down";
-  private scaleFactor: number = CAMERA_ZOOM.initial;
+  private cues: {
+    object: Phaser.GameObjects.Graphics | Phaser.GameObjects.Text;
+    x: number;
+    y: number;
+    offsetX: number;
+    offsetY: number;
+    maxScale: number;
+  }[] = [];
+  private preferredZoom = 100;
+  private zoomPercent = 100;
+  private zoomStops = CAMERA_STOPS;
   constructor(
     private world: WorldMap,
     private bridge: GameBridge,
@@ -93,6 +124,8 @@ export class CampusScene extends Phaser.Scene {
     // Static source layers are baked into one ground texture; roofs remain dynamic.
     return [
       scene.art.ground,
+      ...(scene.art.riseMap ? [scene.art.riseMap] : []),
+      ...(scene.art.landmarks ?? []).map((l) => l.image),
       ...(scene.id === "campus_core"
         ? scene.art.roofs.map((r) => r.image)
         : []),
@@ -106,8 +139,12 @@ export class CampusScene extends Phaser.Scene {
     )
       return;
     this.bridge.scene = this;
+    this.scale.on(Phaser.Scale.Events.RESIZE, this.frameCamera, this);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () =>
+      this.scale.off(Phaser.Scale.Events.RESIZE, this.frameCamera, this),
+    );
 
-    this.makeAvatar();
+    makeStudentAvatar(this);
     this.restartWalk();
   }
   restartWalk() {
@@ -117,33 +154,11 @@ export class CampusScene extends Phaser.Scene {
       return;
     }
     this.discovered.clear();
+    this.openDoors.clear();
     const scene = this.world.scenes.find((s) => s.id === "campus_core")!;
     this.enterScene(scene.id, scene.spawns[0]);
   }
-  private makeAvatar() {
-    for (const dir of ["down", "up", "left", "right"])
-      for (let frame = 0; frame < 4; frame++) {
-        const g = this.make.graphics({ x: 0, y: 0 });
-        const step = frame % 2 ? 1 : 0;
-
-        g.fillStyle(0x344655)
-          .fillRect(4, 23, 3, 9 - step)
-          .fillRect(9, 23, 3, 8 + step);
-        g.fillStyle(0xc86b42).fillRect(3, 13, 10, 11);
-        g.fillStyle(0xdfa473)
-          .fillRect(0, 15 + step, 2, 7)
-          .fillRect(14, 15 - step, 2, 7);
-        g.fillStyle(0xe8b98c).fillRect(3, 3, 10, 10);
-        g.fillStyle(0x45382c)
-          .fillRect(2, 0, 12, 7)
-          .fillRect(dir === "right" ? 2 : 12, 6, 2, 4);
-        if (dir === "up") g.fillRect(3, 5, 10, 6);
-        else g.fillStyle(0x343b35).fillRect(dir === "left" ? 4 : 9, 8, 2, 2);
-        g.generateTexture(`avatar-${dir}-${frame}`, 16, 32);
-        g.destroy();
-      }
-  }
-  private enterScene(id: string, point: Point) {
+  private enterScene(id: string, point: Point, keepWalking = false) {
     const next = this.world.scenes.find((s) => s.id === id)!;
     const missing = this.assets(next).filter(
       (asset) => !this.textures.exists(asset),
@@ -151,7 +166,7 @@ export class CampusScene extends Phaser.Scene {
     if (missing.length) {
       if (this.loading) return;
       this.loading = true;
-      this.bridge.clear();
+      if (!keepWalking) this.bridge.clear();
       this.publish();
       this.load.once(Phaser.Loader.Events.COMPLETE, () => {
         this.loading = false;
@@ -162,40 +177,61 @@ export class CampusScene extends Phaser.Scene {
           return;
         }
         if (this.assets(next).every((asset) => this.textures.exists(asset)))
-          this.enterScene(id, point);
+          this.enterScene(id, point, keepWalking);
       });
       for (const asset of missing) this.load.image(asset, `/maps/${asset}`);
       this.load.start();
       return;
     }
-    this.bridge.clear();
+    if (!keepWalking) this.bridge.clear();
+    this.occlusion?.dispose();
+    this.occlusion = undefined;
+    this.cues = [];
     this.children.removeAll(true);
     if (this.current && this.current !== next) {
       const keep = new Set(this.assets(next));
       for (const asset of this.assets(this.current))
         if (!keep.has(asset)) this.textures.remove(asset);
     }
-    this.current = next;
+    this.current = doorCollision(next, this.openDoors);
     this.position = { ...point };
     const s = this.current;
     this.add
       .image(0, 0, s.art.ground)
       .setOrigin(0)
+      .setDisplaySize(s.width * s.tileSize, s.height * s.tileSize)
       .setDepth(-100)
       .setName("floor-plan");
+    for (const landmark of s.art.landmarks ?? []) {
+      this.add
+        .image(landmark.x, landmark.y, landmark.image)
+        .setOrigin(0)
+        .setDisplaySize(landmark.width, landmark.height)
+        .setDepth(landmark.frontY < 0 ? -90 : 6000 + landmark.frontY);
+    }
     this.roofSprites = (s.id === "campus_core" ? s.art.roofs : []).map(
       (roof) => ({
         roof,
         sprite: this.add
           .image(roof.x, roof.y, roof.image)
           .setOrigin(0)
+          .setDisplaySize(roof.width, roof.height)
           .setDepth(8000),
       }),
     );
+    this.doorSprites.clear();
+    for (const door of s.doors ?? []) {
+      const g = this.add
+        .graphics({ x: door.x, y: door.y })
+        .setDepth(6000 + door.y)
+        .setName("room-door");
+      this.doorSprites.set(door.id, g);
+      this.paintDoor(door);
+    }
     const g = this.add.graphics().setDepth(5500);
     for (const b of s.buildings) {
-      this.add
-        .text(b.label.x, b.label.y - 18, b.id, {
+      const label = this.add
+        .text(b.label.x, b.label.y, b.id, {
           fontFamily: "monospace",
           fontSize: "10px",
           color: "#243e34",
@@ -204,10 +240,11 @@ export class CampusScene extends Phaser.Scene {
         })
         .setOrigin(0.5)
         .setDepth(10000);
+      this.mapCue(label, 2.1, -12);
     }
     for (const z of s.exploration) {
-      g.fillStyle(0x87a899, 0.6).fillRect(z.x, z.y, z.width, z.height);
-      this.add
+      g.fillStyle(0x87a899, 0.16).fillRect(z.x, z.y, z.width, z.height);
+      const label = this.add
         .text(
           z.x + z.width / 2,
           z.y + z.height / 2,
@@ -216,9 +253,8 @@ export class CampusScene extends Phaser.Scene {
         )
         .setOrigin(0.5)
         .setDepth(-40);
+      this.mapCue(label, 3);
     }
-    for (const z of s.note_zones)
-      g.lineStyle(1, 0x9a7f51, 0.5).strokeRect(z.x, z.y, z.width, z.height);
     for (const c of s.chests) {
       const dimensions = this.world.chest,
         ppm = s.units.pixelsPerMeter;
@@ -237,36 +273,42 @@ export class CampusScene extends Phaser.Scene {
       chest.fillStyle(0xf4d677).fillRect(-1, -5, 3, 4);
     }
     for (const p of s.portals.filter((p) => p.kind === "entrance")) {
-      g.fillStyle(
-        p.kind === "entrance"
-          ? 0xf0d893
-          : p.kind === "lift"
-            ? 0x86b6d3
-            : 0xa5c9af,
-        0.9,
-      ).fillRect(p.x - 4, p.y - 2, 8, 4);
-      if (id !== "campus_core" && p.kind === "entrance")
-        this.add
-          .text(p.x, p.y - 12, `↓ ${p.label}`, {
+      const threshold = this.add
+        .graphics({ x: p.x, y: p.y })
+        .setDepth(5500)
+        .fillStyle(0xf0d893, 0.9)
+        .fillRect(-4, -2, 8, 4);
+      this.mapCue(threshold, 2.5);
+      if (id !== "campus_core") {
+        const label = this.add
+          .text(p.x, p.y, `↓ ${p.label}`, {
             fontSize: "4px",
             color: "#365545",
+            backgroundColor: "#f5edd3",
           })
-          .setOrigin(0.5)
-          .setDepth(-40);
+          .setOrigin(0.5, 1)
+          .setDepth(5500);
+        this.mapCue(label, 3, -3);
+      }
     }
     for (const marker of passageMarkers(this.world, s)) {
-      const lift = marker.kind === "lift";
+      const lift = marker.kind === "lift",
+        gallery = marker.kind === "gallery";
+      const ink = gallery ? 0x96572d : lift ? 0x397e9f : 0x3e7350;
       const icon = this.add
         .graphics({ x: marker.x, y: marker.y })
         .setDepth(5600)
-        .setName(lift ? "lift-marker" : "stair-marker");
+        .setName(
+          gallery ? "gallery-marker" : lift ? "lift-marker" : "stair-marker",
+        );
       icon
-        .fillStyle(lift ? 0xe2edf4 : 0xe4efdc, 0.98)
+        .fillStyle(gallery ? 0xffe4b3 : lift ? 0xe2edf4 : 0xe4efdc, 0.98)
         .fillRoundedRect(-5, -5, 10, 10, 1);
-      icon
-        .lineStyle(0.7, lift ? 0x397e9f : 0x3e7350)
-        .strokeRoundedRect(-5, -5, 10, 10, 1);
-      if (lift) {
+      icon.lineStyle(0.7, ink).strokeRoundedRect(-5, -5, 10, 10, 1);
+      if (gallery) {
+        icon.lineBetween(-3.5, -2, 3.5, -2).lineBetween(-3.5, 2, 3.5, 2);
+        for (const x of [-3, 0, 3]) icon.lineBetween(x, -2, x, 2);
+      } else if (lift) {
         icon.strokeRect(-2.5, -3, 5, 6);
         icon.lineBetween(0, -3, 0, 3);
       } else {
@@ -283,35 +325,48 @@ export class CampusScene extends Phaser.Scene {
           .strokePath();
       }
       icon.setData("portalIds", marker.portalIds);
-      this.add
-        .text(marker.x, marker.y + 7, marker.label, {
+      this.mapCue(icon, 1.8, -8, 12);
+      const label = this.add
+        .text(marker.x, marker.y, marker.label, {
           fontFamily: "sans-serif",
           fontSize: "3px",
-          color: lift ? "#28627c" : "#315e3e",
+          color: gallery ? "#774522" : lift ? "#28627c" : "#315e3e",
           backgroundColor: "#f2f3e4",
           padding: { x: 1, y: 1 },
         })
-        .setOrigin(0.5, 0)
+        .setOrigin(0, 1)
         .setDepth(5600);
+      this.mapCue(label, 4.25, -6, 3);
     }
     this.referenceLayer = this.add.graphics().setDepth(11000);
     this.drawReferences();
+    this.footShadow = this.add.ellipse(
+      point.x,
+      point.y,
+      s.player.width * 1.45,
+      Math.max(1, s.player.groundDepth),
+      0x253b40,
+      0.34,
+    );
+    this.occlusion = actorOcclusion(this, s);
     this.player = this.add
       .image(point.x, point.y, "avatar-down-0")
       .setOrigin(0.5, 1)
       .setDisplaySize(s.player.width, s.player.height);
     this.cameras.main
       .setBounds(0, 0, s.width * 16, s.height * 16)
-      .setZoom(this.scaleFactor)
-      .startFollow(this.player, true, 1, 1);
-    this.cameras.main.roundPixels = true;
-    this.publish();
+      .startFollow(this.player, false, 1, 1);
+    this.cameras.main.roundPixels = false;
+    this.frameCamera();
   }
   private roofSprites: { roof: Roof; sprite: Phaser.GameObjects.Image }[] = [];
   drawReferences() {
     if (!this.referenceLayer) return;
     const g = this.referenceLayer.clear();
     if (!this.bridge.references) return;
+    // Note zones reserve future content. Show their bounds with the source overlay.
+    for (const z of this.current.note_zones)
+      g.lineStyle(0.5, 0x9a7f51, 0.5).strokeRect(z.x, z.y, z.width, z.height);
     g.lineStyle(1, 0x416c78, 0.55);
     for (const line of this.current.sourceRoads) g.strokePoints(line, false);
     g.lineStyle(1, 0x80565a, 0.6);
@@ -320,18 +375,103 @@ export class CampusScene extends Phaser.Scene {
     for (const p of this.current.sourceEntries)
       g.fillStyle(0xb26053).fillCircle(p.x, p.y, 3);
   }
-  setZoom(value: number) {
-    this.scaleFactor = Math.max(
-      CAMERA_ZOOM.min,
-      Math.min(CAMERA_ZOOM.max, Math.round(value)),
+  private mapCue(
+    object: Phaser.GameObjects.Graphics | Phaser.GameObjects.Text,
+    maxScale: number,
+    offsetY = 0,
+    offsetX = 0,
+  ) {
+    if (object instanceof Phaser.GameObjects.Text) object.setResolution(5);
+    this.cues.push({ object, x: object.x, y: object.y, maxScale, offsetX, offsetY });
+  }
+  private frameCamera() {
+    if (!this.current || !this.player) return;
+    const { width, height } = this.scale.gameSize;
+    if (!width || !height) return;
+    const compactLandscape = width > height && height <= 550;
+    // Frame the physical avatar in CSS pixels. A narrow portrait viewport also
+    // needs enough room on either side to see a turn before reaching it.
+    const screenHeight = Math.min(
+      height * (compactLandscape ? 0.075 : 0.0875),
+      width / 7,
     );
-    this.cameras.main.setZoom(this.scaleFactor);
+    // A percentage means the same view in every building. Choose the common
+    // limit from each scene's source texture density and physical avatar size.
+    const nativeAvatarHeight = Math.min(
+      ...this.world.scenes.map(
+        (s) => s.player.height * (s.art.pixelRatio ?? 1),
+      ),
+    );
+    const maximum = Math.max(
+      100,
+      Math.min(
+        200,
+        Math.floor((600 * nativeAvatarHeight) / screenHeight / 5) * 5,
+      ),
+    );
+    this.zoomStops = [...CAMERA_STOPS.filter((p) => p < maximum), maximum];
+    this.zoomPercent = Math.min(this.preferredZoom, maximum);
+    this.cameras.main.setZoom(
+      ((screenHeight / this.player.displayHeight) * this.zoomPercent) / 100,
+    );
+    for (const cue of this.cues) {
+      const scale = Math.min(1, cue.maxScale / this.cameras.main.zoom);
+      cue.object.setScale(scale).setPosition(cue.x + cue.offsetX * scale, cue.y + cue.offsetY * scale);
+    }
     this.publish();
   }
-  interact(portalId?: string) {
+  stepZoom(direction: -1 | 1) {
+    const next =
+      direction > 0
+        ? this.zoomStops.find((p) => p > this.zoomPercent)
+        : this.zoomStops.findLast((p) => p < this.zoomPercent);
+    if (next === undefined) return;
+    this.preferredZoom = next;
+    this.frameCamera();
+  }
+  private paintDoor(door: RoomDoor) {
+    drawRoomDoor(
+      this.doorSprites.get(door.id)!,
+      door,
+      this.openDoors.has(door.id),
+      this.current.units.pixelsPerMeter,
+      this.current.units.heightProjection,
+    );
+  }
+  private nearbyActions() {
+    const portals = nearbyPortals(this.current, this.position).map(
+      (portal) => ({
+        id: portal.id,
+        label: passageLabel(this.world, this.current, portal),
+        point: portal,
+        portal,
+        door: undefined as RoomDoor | undefined,
+      }),
+    );
+    const doors = nearbyDoors(this.current, this.position).map((door) => ({
+      id: door.id,
+      label: `${this.openDoors.has(door.id) ? "关门" : "开门"} · ${door.room}`,
+      point: door,
+      door,
+      portal: undefined,
+    }));
+    const distance = (p: Point) =>
+      Math.hypot(p.x - this.position.x, p.y - this.position.y);
+    return [...portals, ...doors].sort(
+      (a, b) => distance(a.point) - distance(b.point),
+    );
+  }
+  interact(actionId?: string) {
     if (this.loading) return;
-    const nearby = nearbyPortals(this.current, this.position);
-    const p = portalId ? nearby.find((p) => p.id === portalId) : nearby[0];
+    const nearby = this.nearbyActions();
+    const action = actionId ? nearby.find((a) => a.id === actionId) : nearby[0];
+    if (action?.door) {
+      if (toggleDoor(this.current, action.door, this.openDoors, this.position))
+        this.paintDoor(action.door);
+      this.publish();
+      return;
+    }
+    const p = action?.portal;
     if (!p) return;
     const target = this.world.scenes.find((s) => s.id === p.targetScene)!;
     const reverse = target.portals.find((q) => q.id === p.targetPortal)!;
@@ -339,32 +479,23 @@ export class CampusScene extends Phaser.Scene {
   }
   publish() {
     if (!this.current) return;
-    const portal = nearbyPortal(
-      this.current,
-      this.position,
-      this.current.player.interactionRadius,
-    );
+    const actions = this.loading ? [] : this.nearbyActions();
     this.bridge.emit({
       sceneId: this.current.id,
       position: { ...this.position },
       discovered: [...this.discovered],
-      target:
-        this.loading || !portal
-          ? undefined
-          : passageLabel(this.world, this.current, portal),
-      passages: this.loading
-        ? []
-        : nearbyPortals(this.current, this.position).map((p) => ({
-            id: p.id,
-            label: passageLabel(this.world, this.current, p),
-          })),
+      target: actions[0]?.label,
+      passages: actions.map(({ id, label }) => ({ id, label })),
       floorImages: this.children.list
         .filter((object) => object.name === "floor-plan")
         .map((object) => (object as Phaser.GameObjects.Image).texture.key),
       stairMarkers: this.children.list.filter(
         (object) => object.name === "stair-marker",
       ).length,
-      zoom: this.cameras.main.zoom,
+      zoomPercent: this.zoomPercent,
+      canZoomOut: this.zoomPercent > this.zoomStops[0],
+      canZoomIn: this.zoomPercent < this.zoomStops.at(-1)!,
+      cameraZoom: this.cameras.main.zoom,
       avatarSize: {
         width: this.player.displayWidth,
         height: this.player.displayHeight,
@@ -399,6 +530,13 @@ export class CampusScene extends Phaser.Scene {
       running ? this.current.player.runSpeed : this.current.player.speed,
       this.current.player.radius,
     );
+    const gate = crossedGallery(this.current, before, this.position);
+    if (gate) {
+      const target = this.world.scenes.find((s) => s.id === gate.targetScene)!;
+      const reverse = target.portals.find((p) => p.id === gate.targetPortal)!;
+      this.enterScene(target.id, reverse.spawn, true);
+      return;
+    }
     const moving =
       Math.hypot(before.x - this.position.x, before.y - this.position.y) > 0.01;
     if (moving)
@@ -410,12 +548,20 @@ export class CampusScene extends Phaser.Scene {
           : input.y > 0
             ? "down"
             : "up";
+    const density = this.current.art.pixelRatio ?? 1;
     this.player
-      .setPosition(Math.round(this.position.x), Math.round(this.position.y))
-      .setDepth(6000)
+      .setPosition(
+        Math.round(this.position.x * density) / density,
+        Math.round(this.position.y * density) / density,
+      )
+      .setDepth(6000 + this.position.y + 0.1)
       .setTexture(
         `avatar-${this.direction}-${moving ? Math.floor(time / (running ? 80 : 130)) % 4 : 0}`,
       );
+    this.footShadow
+      .setPosition(this.player.x, this.player.y)
+      .setDepth(this.player.depth - 0.1);
+    this.occlusion?.update(this.player.x, this.player.y, this.player.depth);
     for (const { roof, sprite } of this.roofSprites) {
       const within = roof.footprint.some((poly) =>
         inPolygon(this.position, poly),
@@ -436,7 +582,11 @@ export class CampusScene extends Phaser.Scene {
         y >= 0 &&
         x < roof.width &&
         y < roof.height &&
-        this.textures.getPixelAlpha(x, y, roof.image) > 0;
+        this.textures.getPixelAlpha(
+          Math.floor((this.position.x - roof.x) * density),
+          Math.floor((this.position.y - roof.y) * density),
+          roof.image,
+        ) > 0;
       const alpha = within || nearDoor || covered ? 0.32 : 1;
       sprite.setAlpha(
         Phaser.Math.Linear(sprite.alpha, alpha, Math.min(1, delta / 100)),
@@ -456,8 +606,18 @@ export function createGame(
   world: WorldMap,
   bridge: GameBridge,
 ) {
+  // On older mobile GPUs the largest HD floor exceeds the texture-size limit.
+  // Phaser's canvas renderer can draw the same native image and coordinates.
+  const probe = document.createElement("canvas").getContext("webgl");
+  const limit = probe?.getParameter(probe.MAX_TEXTURE_SIZE) ?? 0;
+  probe?.getExtension("WEBGL_lose_context")?.loseContext();
+  const fitsGpu = world.scenes.every(
+    (s) =>
+      Math.max(s.width, s.height) * s.tileSize * (s.art.pixelRatio ?? 1) <=
+      limit,
+  );
   const game = new Phaser.Game({
-    type: Phaser.AUTO,
+    type: fitsGpu ? Phaser.AUTO : Phaser.CANVAS,
     parent,
     backgroundColor: "#88a56c",
     pixelArt: true,
@@ -478,7 +638,7 @@ export function createGame(
   });
   const observer = new ResizeObserver(() => {
     if (parent.clientWidth && parent.clientHeight)
-      game.scale.resize(parent.clientWidth, parent.clientHeight);
+      game.scale.setParentSize(parent.clientWidth, parent.clientHeight);
   });
   observer.observe(parent);
   const abort = new AbortController();

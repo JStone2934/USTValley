@@ -1,15 +1,10 @@
 import { test, expect, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
-import {
-  canStand,
-  tileIndex,
-  type SceneMap,
-  type WorldMap,
-  type Point,
-} from "../../src/shared/world";
+import sharp from "sharp";
+import { canStand, type SceneMap, type WorldMap } from "../../src/shared/world";
 
-const position = (page: Page, axis: "x" | "y") =>
-  page.locator("main").getAttribute(`data-${axis}`).then(Number);
+import { driveTo, position } from "./walking";
+
 async function walk(page: Page, key: string, ms: number) {
   await page.keyboard.down(key);
   await page.waitForTimeout(ms);
@@ -302,6 +297,7 @@ test("touch joystick stops on pointer cancellation and landscape UI fits", async
   await expect(
     page.getByRole("button", { name: "地图", exact: true }),
   ).toBeVisible();
+  await assertFraming(page, 0.075);
   const joystick = page.getByLabel("移动摇杆");
   await expect(joystick).toBeVisible();
   const bounds = await joystick.boundingBox();
@@ -327,79 +323,6 @@ test("touch joystick stops on pointer cancellation and landscape UI fits", async
   await page.screenshot({ path: "test-results/campus-mobile.png" });
   await context.close();
 });
-
-async function driveTo(page: Page, scene: SceneMap, target: Point) {
-  const start = { x: await position(page, "x"), y: await position(page, "y") },
-    step = scene.collisionSize,
-    width = (scene.width * 16) / step;
-  const first = tileIndex(scene, start),
-    last = tileIndex(scene, target),
-    parents = new Map<number, number>([[first, -1]]),
-    queue = [first];
-  for (let head = 0; head < queue.length && !parents.has(last); head++) {
-    const i = queue[head],
-      x = i % width,
-      y = Math.floor(i / width);
-    for (const [nx, ny] of [
-      [x - 1, y],
-      [x + 1, y],
-      [x, y - 1],
-      [x, y + 1],
-    ]) {
-      if (nx < 0 || ny < 0 || nx >= width || ny >= (scene.height * 16) / step)
-        continue;
-      const n = ny * width + nx;
-      if (
-        parents.has(n) ||
-        !canStand(
-          scene,
-          { x: (nx + 0.5) * step, y: (ny + 0.5) * step },
-          scene.player.radius,
-        )
-      )
-        continue;
-      parents.set(n, i);
-      queue.push(n);
-    }
-  }
-  expect(
-    parents.has(last),
-    "target must be reachable through actual source walls",
-  ).toBe(true);
-  const path: number[] = [];
-  for (let i = last; i !== -1; i = parents.get(i)!) path.push(i);
-  path.reverse();
-  const waypoints = path
-    .filter(
-      (id, i) =>
-        i === path.length - 1 ||
-        (i > 0 && path[i + 1] - id !== id - path[i - 1]),
-    )
-    .map((i) => ({
-      x: ((i % width) + 0.5) * step,
-      y: (Math.floor(i / width) + 0.5) * step,
-    }));
-  for (const p of waypoints) {
-    for (const axis of ["x", "y"] as const) {
-      const current = await position(page, axis),
-        delta = p[axis] - current;
-      if (Math.abs(delta) < 0.9) continue;
-      const key =
-        axis === "x" ? (delta > 0 ? "d" : "a") : delta > 0 ? "s" : "w";
-      await page.keyboard.down(key);
-      await page.clock.runFor(
-        Math.max(16, Math.round((Math.abs(delta) / scene.player.speed) * 1000)),
-      );
-      await page.keyboard.up(key);
-      await page.clock.runFor(120);
-    }
-  }
-  const actual = { x: await position(page, "x"), y: await position(page, "y") };
-  expect(
-    Math.hypot(actual.x - target.x, actual.y - target.y),
-    JSON.stringify({ actual, target }),
-  ).toBeLessThan(6);
-}
 
 async function assertAvatarScale(page: Page, scene: SceneMap) {
   const width = Number(
@@ -494,7 +417,7 @@ test("Shift runs at twice the new base speed, releases correctly and clears on b
   expect(Math.abs((await measure()) - scene.player.speed)).toBeLessThan(2);
 });
 
-test("camera defaults to 4x, supports 1–10x, and has no scale bar", async ({
+test("camera adapts to the rendered player and viewport with manual scale retained", async ({
   page,
 }) => {
   await page.goto("/");
@@ -509,19 +432,134 @@ test("camera defaults to 4x, supports 1–10x, and has no scale bar", async ({
   const zoom = page.locator(".zoom-controls span"),
     plus = page.getByRole("button", { name: "放大视野" }),
     minus = page.getByRole("button", { name: "缩小视野" });
-  await expect(zoom).toHaveText("4×");
+  await expect(zoom).toHaveText("100%");
+  await assertFraming(page, 0.0875);
   await expect(page.locator(".world-scale")).toHaveCount(0);
   await assertAvatarScale(page, scene);
-  await page.screenshot({ path: "test-results/default-zoom-4x.png" });
-  for (let i = 0; i < 6; i++) await plus.click();
-  await expect(zoom).toHaveText("10×");
+  await page.screenshot({ path: "test-results/default-camera.png" });
+  const maximum = await maximumFraming(page, scene);
   await expect(plus).toBeDisabled();
   await assertAvatarScale(page, scene);
-  await page.screenshot({ path: "test-results/maximum-zoom-10x.png" });
+  await page.screenshot({ path: "test-results/maximum-camera.png" });
   await page.getByRole("button", { name: /回到广场/ }).click();
-  await expect(zoom).toHaveText("10×");
-  for (let i = 0; i < 9; i++) await minus.click();
-  await expect(zoom).toHaveText("1×");
+  await expect(zoom).toHaveText(maximum);
+  while (await minus.isEnabled()) await minus.click();
+  await expect(zoom).toHaveText("12.5%");
   await expect(minus).toBeDisabled();
   await assertAvatarScale(page, scene);
+});
+
+/** Every enabled step changes the actual view. Compare the closest view to the
+ * native PNG dimensions served to this browser, independently of art metadata. */
+async function maximumFraming(page: Page, scene: SceneMap) {
+  const plus = page.getByRole("button", { name: "放大视野" });
+  const main = page.locator("main");
+  let previous = Number(await main.getAttribute("data-camera-zoom"));
+  for (let i = 0; i < 10 && (await plus.isEnabled()); i++) {
+    await plus.click();
+    const actual = Number(await main.getAttribute("data-camera-zoom"));
+    expect(actual).toBeGreaterThan(previous);
+    previous = actual;
+  }
+  await expect(plus).toBeDisabled();
+  const label = await page.locator(".zoom-controls span").innerText();
+  const maximum = parseFloat(label);
+  expect(maximum).toBeGreaterThan(100);
+  expect(maximum).toBeLessThanOrEqual(200);
+  const naturalWidth = await page.evaluate(async (image) => {
+    const native = new Image();
+    native.src = `/maps/${image}`;
+    await native.decode();
+    return native.naturalWidth;
+  }, scene.art.ground);
+  const density = naturalWidth / (scene.width * scene.tileSize);
+  expect(previous / density).toBeLessThanOrEqual(6.001);
+  return label;
+}
+
+/** In these scenes the foot-follow camera is clear of the map edge. Measure the
+ * rendered hairline above the camera center; foreground can cover the shoes. */
+async function assertFraming(page: Page, fraction: number) {
+  const canvas = page.locator(".canvas-host canvas");
+  const main = page.locator("main");
+  await expect
+    .poll(async () => {
+      const rect = await canvas.boundingBox();
+      return (
+        (Number(await main.getAttribute("data-avatar-height")) *
+          Number(await main.getAttribute("data-camera-zoom"))) /
+        (rect?.height ?? 1)
+      );
+    })
+    .toBeCloseTo(fraction, 3);
+  const { data, info } = await sharp(await canvas.screenshot())
+    .removeAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const foot = info.height / 2;
+  const center = info.width / 2;
+  let top = foot;
+  for (let y = Math.floor(foot - info.height * 0.2); y < foot; y++) {
+    for (
+      let x = Math.floor(center - info.width * 0.025);
+      x <= center + info.width * 0.025;
+      x++
+    ) {
+      const k = (y * info.width + x) * 3;
+      if (data[k] === 0x45 && data[k + 1] === 0x38 && data[k + 2] === 0x2c)
+        top = Math.min(top, y);
+    }
+  }
+  expect(top).toBeLessThan(foot);
+  const actual = (foot - top) / info.height;
+  expect(Math.abs(actual - fraction)).toBeLessThan(0.012);
+}
+
+test("manual framing follows the player indoors up to the native pixel detail limit", async ({
+  page,
+}) => {
+  test.setTimeout(120_000);
+  await page.clock.install();
+  await page.goto("/");
+  await expect.poll(() => position(page, "x")).toBeGreaterThan(0);
+  await page.clock.pauseAt(new Date(Date.now() + 1000));
+  const world = JSON.parse(
+    readFileSync(
+      new URL("../../public/maps/world.json", import.meta.url),
+      "utf8",
+    ),
+  ) as WorldMap;
+  const campus = world.scenes[0],
+    c2 = campus.portals.find((p) => p.buildingId === "C2")!;
+  const plus = page.getByRole("button", { name: "放大视野" });
+  await plus.click();
+  await page.clock.runFor(160);
+  await assertFraming(page, 0.0875 * 1.25);
+  await driveTo(page, campus, c2);
+  await page.keyboard.press("e");
+  await expect(page.locator("main")).toHaveAttribute(
+    "data-scene",
+    c2.targetScene,
+  );
+  await page.clock.runFor(150);
+  await expect(page.locator(".zoom-controls span")).toHaveText("125%");
+  await assertFraming(page, 0.0875 * 1.25);
+  const indoor = world.scenes.find((s) => s.id === c2.targetScene)!;
+  const maximum = await maximumFraming(page, indoor);
+  await page.keyboard.press("m");
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".zoom-controls span")).toHaveText(maximum);
+});
+
+test("resizing a live canvas recalculates the camera at the user's selected zoom", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect.poll(() => position(page, "x")).toBeGreaterThan(0);
+  await page.getByRole("button", { name: "放大视野" }).click();
+  await page.setViewportSize({ width: 740, height: 410 });
+  await expect
+    .poll(async () => (await page.locator("canvas").boundingBox())!.height)
+    .toBeLessThan(400);
+  await assertFraming(page, 0.075 * 1.25);
 });

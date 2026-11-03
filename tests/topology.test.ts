@@ -8,7 +8,15 @@ import {
   walkPassages,
   type Sources,
 } from "../scripts/source-geometry.ts";
-import { reachableWorld, tileIndex } from "../src/shared/world.ts";
+import {
+  canStand,
+  move,
+  project,
+  reachable,
+  reachableWorld,
+  tileIndex,
+  type Point,
+} from "../src/shared/world.ts";
 
 const bytes = readFileSync(
   new URL("../data/maps/all-maps.json", import.meta.url),
@@ -153,4 +161,159 @@ test("Tiled source layers retain hole rings and ordered runtime image layers", (
     }
   }
   assert.ok(holes > 0);
+});
+
+test("surveyed F2 and F3 skybridges connect separate building maps at the same elevation", () => {
+  assert.equal(report.galleries.length, 15);
+  assert.equal(report.galleries.filter((g) => g.elevation === 3).length, 10);
+  assert.equal(report.galleries.filter((g) => g.elevation === 6).length, 5);
+  for (const g of report.galleries) {
+    const [a, b] = [g.from, g.to].map(
+      (id) => world.scenes.find((s) => s.id === id)!,
+    );
+    assert.notEqual(a.sourceMap, b.sourceMap);
+    assert.equal(a.floor.elevation, b.floor.elevation);
+    const sourceEntries = [a, b].map(
+      (scene, i) =>
+        sources[scene.sourceMap].map.mapinfo.regions.find(
+          (r) => String(r.region) === scene.floor.key,
+        )!.entries![g.sourceEntries[i]],
+    );
+    const [from, to] = sourceEntries;
+    assert.equal(from.out.z, to.in.z);
+    assert.equal(to.out.z, from.in.z);
+    assert.ok(
+      Math.hypot(from.out.x - to.in.x, from.out.y - to.in.y) *
+        a.units.metersPerProjectedUnit <=
+        0.75,
+    );
+    for (const [i, scene] of [a, b].entries()) {
+      const portal = scene.portals.find(
+        (p) => p.kind === "gallery" && p.id.endsWith(`_${g.sourceEntries[i]}`),
+      )!;
+      const other = i === 0 ? b : a;
+      assert.equal(portal.targetScene, other.id);
+      assert.equal(
+        other.portals.find((p) => p.id === portal.targetPortal)?.targetPortal,
+        portal.id,
+      );
+      assert.ok(g.landingOffsets[i] < scene.units.pixelsPerMeter * 1.5);
+      const walk = reachable(scene, portal);
+      assert.ok(
+        scene.portals.some(
+          (p) =>
+            ["stairs", "lift", "escalator"].includes(p.kind) &&
+            walk.has(tileIndex(scene, p)),
+        ),
+      );
+    }
+  }
+});
+
+test("the source crossings north of Red Bird Plaza walk bank to bank and the adjacent pools remain blocked", () => {
+  const campus = world.scenes[0],
+    graph = sources.xgkdgz_all.road;
+  const pixel = (raw: number[]) => {
+    const q = project(raw, config.transform);
+    return { x: q.x + campus.sourceOffset.x, y: q.y + campus.sourceOffset.y };
+  };
+  const vertex = (id: number) => {
+    const { x, y } = graph.points[id];
+    return pixel([x, y]);
+  };
+  const mid = (a: number, b: number) => ({
+    x: (vertex(a).x + vertex(b).x) / 2,
+    y: (vertex(a).y + vertex(b).y) / 2,
+  });
+  const walk = (a: Point, b: Point) => {
+    const direction = { x: b.x - a.x, y: b.y - a.y };
+    const distance = Math.hypot(direction.x, direction.y);
+    const ticks = Math.ceil(distance / (campus.player.speed / 60));
+    let at = a;
+    for (let i = 0; i < ticks; i++)
+      at = move(
+        campus,
+        at,
+        direction,
+        distance / (ticks * campus.player.speed),
+      );
+    assert.ok(Math.hypot(at.x - b.x, at.y - b.y) < 0.01);
+  };
+  // The map leaves gaps between individual water polygons at the footbridges.
+  for (const id of [1001, 1004, 1138, 1139]) {
+    const road = graph.roads["0"][id];
+    assert.ok(road.mode.includes("walk"));
+    const [a, b] = (road.vertexes as number[]).map(vertex);
+    walk(a, b);
+    walk(b, a);
+  }
+  const plazaCrossing = campus.surfaces.find(
+    (s) =>
+      s.sourceMap === campus.sourceMap &&
+      s.sourceLayer === "walk-passages" &&
+      s.sourceId === 1855,
+  )!;
+  const a = mid(741, 543),
+    b = mid(233, 748);
+  for (let i = 0; i <= 100; i++)
+    assert.ok(
+      plazaCrossing.polygons.some((poly) =>
+        inPolygon(
+          {
+            x: a.x + ((b.x - a.x) * i) / 100,
+            y: a.y + ((b.y - a.y) * i) / 100,
+          },
+          poly,
+        ),
+      ),
+    );
+  walk(a, b);
+  walk(b, a);
+  for (const [id, raw] of [
+    [48605, [12632163.63336, 2618740.51343]],
+    [46043, [12632214.99696, 2618832.59939]],
+  ] as const) {
+    const probe = pixel([...raw]);
+    assert.ok(
+      campus.surfaces.some(
+        (s) =>
+          s.sourceId === id &&
+          s.kind === "water" &&
+          s.polygons.some((poly) => inPolygon(probe, poly)),
+      ),
+    );
+    assert.equal(canStand(campus, probe), false);
+  }
+});
+
+test("the plaza's visible pool and sculpture stop feet, and its stone rim and inset crossing remain walkable", () => {
+  const scene = world.scenes[0],
+    src = sources.xgkdgz_all.map.mapdata["0"];
+  const model = Object.values(src)
+    .flatMap((l) => l.data?.features ?? [])
+    .find((f) => f.properties.id === 43597)!;
+  const q = project(model.properties.tarray.slice(12, 14), config.transform);
+  const center = {
+    x: q.x + scene.sourceOffset.x,
+    y: q.y + scene.sourceOffset.y,
+  };
+  const polar = (r: number, deg: number) => ({
+    x: center.x + r * Math.cos((deg * Math.PI) / 180),
+    y: center.y + r * Math.sin((deg * Math.PI) / 180),
+  });
+  assert.equal(canStand(scene, center), false);
+  assert.equal(canStand(scene, polar(60, -90)), false);
+  for (let deg = 0; deg < 360; deg++) {
+    assert.ok(canStand(scene, polar(78, deg)), `outer rim ${deg}°`);
+    assert.ok(canStand(scene, polar(30, deg)), `inner stone steps ${deg}°`);
+  }
+  // This source stone slab crosses SHUI at 210 degrees and is physically above it.
+  for (let r = 20; r <= 84; r += 0.25)
+    assert.ok(canStand(scene, polar(r, 210)), `stone crossing radius ${r}`);
+  assert.equal(report.plazaCollision.waterNode, "SHUI");
+  assert.equal(report.plazaCollision.sculptureNode, "柱体");
+  assert.ok(
+    report.plazaCollision.visibleWaterCells > 290 &&
+      report.plazaCollision.plinthCells < 32,
+  );
 });

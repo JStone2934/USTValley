@@ -277,6 +277,7 @@ export async function renderModel(
   project: (v: number[]) => { x: number; y: number },
   scale: number,
   rise = 0.55,
+  pixelRatio = 1,
 ) {
   const images = await textures(glb);
   return renderPrimitives(
@@ -285,6 +286,10 @@ export async function renderModel(
     project,
     scale,
     rise,
+    undefined,
+    false,
+    true,
+    pixelRatio,
   );
 }
 export function modelMaterials(glb: Glb, images: Texture[]): RasterMaterial[] {
@@ -309,26 +314,40 @@ export async function renderPrimitives(
   scale: number,
   rise = 0.55,
   viewport?: { x: number; y: number; width: number; height: number },
+  includeRiseMap = false,
+  identifyMaterials = false,
+  pixelRatio = 1,
 ) {
   const projected = parts.map((p) =>
     p.vertices.map((v) => {
       const q = project(v);
       return {
-        x: q.x,
-        y: q.y - v[2] * scale * rise,
-        depth: v[2] * scale + q.y * rise,
+        x: q.x * pixelRatio,
+        y: (q.y - v[2] * scale * rise) * pixelRatio,
+        depth: (v[2] * scale + q.y * rise) * pixelRatio,
       };
     }),
   );
   const all = projected.flat(),
-    x = viewport?.x ?? Math.floor(Math.min(...all.map((p) => p.x))) - 2,
-    y = viewport?.y ?? Math.floor(Math.min(...all.map((p) => p.y))) - 2;
-  const width =
-      viewport?.width ?? Math.ceil(Math.max(...all.map((p) => p.x))) - x + 3,
-    height =
-      viewport?.height ?? Math.ceil(Math.max(...all.map((p) => p.y))) - y + 3;
+    x = viewport
+      ? viewport.x * pixelRatio
+      : Math.floor(Math.min(...all.map((p) => p.x))) - 2,
+    y = viewport
+      ? viewport.y * pixelRatio
+      : Math.floor(Math.min(...all.map((p) => p.y))) - 2;
+  const width = viewport
+      ? viewport.width * pixelRatio
+      : Math.ceil(Math.max(...all.map((p) => p.x))) - x + 3,
+    height = viewport
+      ? viewport.height * pixelRatio
+      : Math.ceil(Math.max(...all.map((p) => p.y))) - y + 3;
   const rgba = Buffer.alloc(width * height * 4),
     depth = new Float32Array(width * height).fill(-Infinity);
+  // High bit marks near-horizontal faces. The palette pass can paint roof
+  // finishes without adding pavement joints to vertical facades or windows.
+  const surfaceIds = identifyMaterials
+    ? new Uint16Array(width * height)
+    : undefined;
   let triangleCount = 0;
   parts.forEach((part, pi) => {
     const { factor, texture } = materials[part.material] ?? {
@@ -394,6 +413,11 @@ export async function renderPrimitives(
             alpha = (texture ? texture.data[offset + 3] : 255) * factor[3];
           if (alpha < 100) continue;
           depth[index] = z;
+          if (surfaceIds)
+            surfaceIds[index] =
+              part.material +
+              1 +
+              (Math.abs(normal[2]) / len > 0.92 ? 0x8000 : 0);
           for (let channel = 0; channel < 3; channel++) {
             const raw =
               (texture ? texture.data[offset + channel] : 220) *
@@ -406,6 +430,26 @@ export async function renderPrimitives(
         }
     }
   });
+  // At the nearest surface, depth = height + groundY * rise and screenY =
+  // groundY - height * rise. Encode the projected height for avatar occlusion.
+  let riseMap: Buffer | undefined;
+  if (includeRiseMap) {
+    const heights = Buffer.alloc(width * height);
+    for (let i = 0; i < depth.length; i++) {
+      if (!Number.isFinite(depth[i])) continue;
+      const screenY = y + Math.floor(i / width) + 0.5;
+      const projected =
+        ((depth[i] - screenY * rise) * rise) / (1 + rise * rise);
+      heights[i] = Math.max(
+        0,
+        Math.min(255, Math.round((projected * 8) / pixelRatio)),
+      );
+    }
+    riseMap = await sharp(heights, { raw: { width, height, channels: 1 } })
+      .toColourspace("b-w")
+      .png({ compressionLevel: 9 })
+      .toBuffer();
+  }
   // A one-pixel contour makes the low-resolution roof profile readable.
   const copy = Buffer.from(rgba);
   for (let py = 1; py < height - 1; py++)
@@ -421,6 +465,8 @@ export async function renderPrimitives(
     y,
     width,
     height,
+    riseMap,
+    surfaceIds,
     png: await sharp(rgba, { raw: { width, height, channels: 4 } })
       .png({ compressionLevel: 9 })
       .toBuffer(),

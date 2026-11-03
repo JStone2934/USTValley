@@ -1,4 +1,6 @@
+import { clearOfFixtures, type FixtureCollision } from "./fixtures.ts";
 import type { HumanDimensions, MetricScale, ScenePlayer } from "./scale";
+import type { RoomDoor } from "./doors";
 export type Point = { x: number; y: number };
 export type Rect = Point & { width: number; height: number };
 export type BuildingId =
@@ -10,11 +12,15 @@ export type Portal = Point & {
   targetScene: string;
   targetPortal: string;
   spawn: Point;
-  buildingId: BuildingId;
-  kind: "entrance" | "stairs" | "lift" | "escalator";
   label: string;
   sourceRoadId?: string;
-};
+} & (
+    | {
+        kind: "entrance" | "stairs" | "lift" | "escalator";
+        buildingId: BuildingId;
+      }
+    | { kind: "gallery"; buildingId?: never }
+  );
 export type Building = Rect & {
   id: BuildingId;
   name: string;
@@ -53,12 +59,19 @@ export type SceneMap = {
   art: {
     style: "pixel-3d";
     ground: string;
+    pixelRatio?: number;
+    riseMap?: string;
+    landmarks?: (Rect & { id: number; image: string; frontY: number })[];
     layers: { id: string; image: string }[];
     roofs: Roof[];
   };
   decoration: Rect[];
   foreground: Rect[];
   portals: Portal[];
+  doors?: RoomDoor[];
+  pointFixtures?: import("./casework").SourcePointFixture[];
+  fixtureCollision?: FixtureCollision;
+  roomCasework?: import("./casework").RoomCasework[];
   exploration: (Rect & { buildingId: BuildingId })[];
   note_zones: Rect[];
   chests: (Point & { id: string })[];
@@ -134,7 +147,32 @@ export function canStand(
       x++
     )
       if (scene.collision[y * w + x] !== 0) return false;
-  return true;
+  return clearOfFixtures(
+    scene,
+    point.x - radius,
+    point.y - radius,
+    point.x + radius,
+    point.y + radius,
+  );
+}
+
+/** Fixture footprints can be narrower than the structural grid. Validate the whole axis-aligned step. */
+export function clearFixtureStep(
+  scene: SceneMap,
+  x: number,
+  y: number,
+  nx: number,
+  ny: number,
+  radius = scene.player.radius,
+) {
+  const s = scene.collisionSize;
+  return clearOfFixtures(
+    scene,
+    (Math.min(x, nx) + 0.5) * s - radius,
+    (Math.min(y, ny) + 0.5) * s - radius,
+    (Math.max(x, nx) + 0.5) * s + radius,
+    (Math.max(y, ny) + 0.5) * s + radius,
+  );
 }
 
 export function move(
@@ -211,7 +249,10 @@ export function hasLineOfSight(
 ): boolean {
   const steps = Math.max(
     1,
-    Math.ceil(Math.hypot(to.x - from.x, to.y - from.y) / 4),
+    Math.ceil(
+      Math.hypot(to.x - from.x, to.y - from.y) /
+        (scene.fixtureCollision ? 1 : 4),
+    ),
   );
   for (let i = 0; i <= steps; i++) {
     if (
@@ -257,6 +298,8 @@ export function reachable(
       const n = ny * width + nx;
       if (
         visited.has(n) ||
+        (scene.fixtureCollision &&
+          !clearFixtureStep(scene, x, y, nx, ny, radius)) ||
         !canStand(scene, { x: (nx + 0.5) * size, y: (ny + 0.5) * size }, radius)
       )
         continue;

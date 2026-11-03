@@ -14,7 +14,14 @@ export type Layer = {
 export type SourceMap = {
   map: {
     mversion: number;
-    mapinfo: { regions: { region: number; name: string; z: number }[] };
+    mapinfo: {
+      regions: {
+        region: number;
+        name: string;
+        z: number;
+        entries?: { in: Point & { z: number }; out: Point & { z: number } }[];
+      }[];
+    };
     mapdata: Record<string, Record<string, Layer>>;
   };
   road: {

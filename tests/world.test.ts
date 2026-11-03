@@ -168,10 +168,12 @@ test("all Tiled maps expose required layers, numeric unique object IDs and match
     const restored = Array(scene.collision.length).fill(0),
       step = scene.collisionSize,
       width = (scene.width * 16) / step;
+    const pixelRatio = scene.art.pixelRatio ?? 1;
+    const cell = step * pixelRatio;
     for (const rect of collision.objects)
-      for (let y = rect.y; y < rect.y + rect.height; y += step)
-        for (let x = rect.x; x < rect.x + rect.width; x += step)
-          restored[(y / step) * width + x / step] = 1;
+      for (let y = rect.y; y < rect.y + rect.height; y += cell)
+        for (let x = rect.x; x < rect.x + rect.width; x += cell)
+          restored[(y / cell) * width + x / cell] = 1;
     assert.deepEqual(restored, scene.collision);
   }
 });

@@ -18,7 +18,7 @@ const files = new Map<string, string | Uint8Array>([
   ["public/maps/world.json", json(world)],
   [
     "content/map-build-report.json",
-    `${JSON.stringify({ ...report, models: baked.models, interiors: baked.interiors }, null, 2)}\n`,
+    `${JSON.stringify({ ...report, models: baked.models, landmarks: baked.landmarks, interiors: baked.interiors }, null, 2)}\n`,
   ],
   ["public/maps/campus-reference.svg", referenceSvg(world)],
   ...world.scenes.map(

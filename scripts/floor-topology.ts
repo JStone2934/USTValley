@@ -226,6 +226,98 @@ export function reconstructFloors(
       });
     }
   }
+  // The source splits skybridges between separate building maps. Match both survey
+  // records in projected coordinates, never floor names or overlap of map extents.
+  const boundaries = placed.flatMap(({ scene, convert, group }) => {
+    const floor = sources[scene.sourceMap].map.mapinfo.regions.find(
+      (r) => String(r.region) === scene.floor.key,
+    )!;
+    if (floor.z <= 0) return [];
+    return (floor.entries ?? []).flatMap((entry, index) =>
+      entry.in.z === floor.z && entry.out.z === floor.z
+        ? [
+            {
+              scene,
+              convert,
+              group,
+              entry,
+              index,
+              id: `gallery_${group}_${floor.region}_${index}`,
+            },
+          ]
+        : [],
+    );
+  });
+  const galleryPairs: {
+    from: string;
+    to: string;
+    sourceEntries: number[];
+    elevation: number;
+    matchMeters: number;
+    landingOffsets: number[];
+  }[] = [];
+  type Boundary = (typeof boundaries)[number];
+  const separation = (a: Boundary, b: Boundary) =>
+    Math.max(
+      Math.hypot(a.entry.out.x - b.entry.in.x, a.entry.out.y - b.entry.in.y),
+      Math.hypot(b.entry.out.x - a.entry.in.x, b.entry.out.y - a.entry.in.y),
+    ) * a.scene.units.metersPerProjectedUnit;
+  const counterparts = boundaries.map((a) =>
+    boundaries.filter(
+      (b) =>
+        a.scene.sourceMap !== b.scene.sourceMap &&
+        a.scene.floor.elevation === b.scene.floor.elevation &&
+        separation(a, b) <= 0.75,
+    ),
+  );
+  const circulation = new Map<string, Set<number>>();
+  const landing = (end: Boundary) => {
+    let component = circulation.get(end.scene.id);
+    if (!component) {
+      component = new Set<number>();
+      for (const p of end.scene.portals) {
+        if (p.kind !== "gallery" && !component.has(tileIndex(end.scene, p)))
+          for (const i of reachable(end.scene, p)) component.add(i);
+      }
+      circulation.set(end.scene.id, component);
+    }
+    const at = end.convert([end.entry.in.x, end.entry.in.y]);
+    const safe = nearest(end.scene, component, at);
+    if (safe.distance > end.scene.units.pixelsPerMeter * 1.5)
+      throw new Error(`Gallery outside its local walking component: ${end.id}`);
+    return safe;
+  };
+  for (const [i, a] of boundaries.entries()) {
+    const matches = counterparts[i];
+    if (matches.length !== 1) continue;
+    const b = matches[0],
+      j = boundaries.indexOf(b);
+    if (i >= j || counterparts[j].length !== 1) continue;
+    const pa = landing(a),
+      pb = landing(b);
+    for (const [from, to, point] of [
+      [a, b, pa.point],
+      [b, a, pb.point],
+    ] as const) {
+      from.scene.portals.push({
+        ...point,
+        id: from.id,
+        kind: "gallery",
+        label: `穿过连廊至${to.scene.name}`,
+        targetScene: to.scene.id,
+        targetPortal: to.id,
+        spawn: point,
+      });
+    }
+    galleryPairs.push({
+      from: a.scene.id,
+      to: b.scene.id,
+      sourceEntries: [a.index, b.index],
+      elevation: a.scene.floor.elevation,
+      matchMeters: separation(a, b),
+      landingOffsets: [pa.distance, pb.distance],
+    });
+  }
   // Each incoming landing establishes a reachable component. Keep original F1 content
   // reachable and require every retained portal to have an actual local walkable landing.
   for (const scene of scenes) {
@@ -269,5 +361,5 @@ export function reconstructFloors(
         );
     }
   }
-  return { scenes, connections };
+  return { scenes, connections, galleryPairs };
 }

@@ -1,5 +1,5 @@
 {
-  "mapVersion": "core-pixel-3d-0.4.0",
+  "mapVersion": "core-pixel-3d-0.5.0",
   "protocolVersion": 2,
   "source": "data/maps/all-maps.json",
   "transform": {
@@ -150,7 +150,7 @@
   ],
   "adjustments": [
     "保留源EPSG:3857建筑轮廓、道路、绿化、水体及连廊；统一旋转30度、缩放和Y轴翻转，不重新排列建筑",
-    "逐节点应用T/R/S、地图tarray的XY放置与源height的竖向尺度后，正交烘焙真实GLB；Z高度投影系数0.55，保留材质与轮廓",
+    "逐节点应用T/R/S、地图tarray的XY放置与源height的竖向尺度后，正交烘焙真实GLB；Z高度投影系数0.74，保留材质与轮廓",
     "取消64×64通用建筑和网格最短路步道；室外碰撞来自真实F1房间、墙体、水体，公共连廊保留通行",
     "室内采用六组建筑全部31个源楼层平面，缩放6；F1按真实分离翼楼共享场景，高层保留整层连廊；保留房间、墙体和孔洞",
     "游戏入口从源entry与出入口点选择，在同一连通公共空间内寻找最近安全点；偏移量记录并受48像素上限约束；未发现额外入口不捏造",
@@ -163,7 +163,7 @@
   ],
   "collisionSize": 4,
   "interiorScale": 6,
-  "roofHeightFactor": 0.55,
+  "roofHeightFactor": 0.74,
   "lineWallWidth": 4,
   "human": {
     "heightMeters": 1.75,

@@ -1,4 +1,11 @@
 import sharp from "sharp";
+import {
+  campusLayerSvg,
+  gradeCampusModel,
+  castShadow,
+  shadowSvg,
+} from "./campus-art.ts";
+import { bakeLandmarks } from "./campus-landmarks.ts";
 import { createIndoorBaker } from "./indoor-art.ts";
 import { resolve } from "node:path";
 import { createHash } from "node:crypto";
@@ -51,6 +58,14 @@ export async function bakeMaps(
     const q = project(p, config.transform);
     return { x: q.x + offset.x, y: q.y + offset.y };
   };
+  const campus = world.scenes[0];
+  const density = campus.art.pixelRatio ?? 1;
+  const shadows: string[] = [];
+  const props = await bakeLandmarks(root, sources.xgkdgz_all, campus, convert);
+  campus.art.landmarks = props.landmarks.map(
+    ({ modelSha256, sourceLayer, ...art }) => art,
+  );
+  for (const [path, bytes] of props.files) files.set(path, bytes);
   for (const group of config.groups) {
     const f = getFeature(sources.xgkdgz_all, group.featureId),
       path = resolve(
@@ -70,15 +85,28 @@ export async function bakeMaps(
         convert,
         config.transform.pixelsPerProjectedUnit,
         config.roofHeightFactor,
+        density,
       );
     const roof = world.scenes[0].art.roofs.find((r) => r.id === group.key)!;
     Object.assign(roof, {
-      x: baked.x,
-      y: baked.y,
-      width: baked.width,
-      height: baked.height,
+      x: baked.x / density,
+      y: baked.y / density,
+      width: baked.width / density,
+      height: baked.height / density,
     });
-    files.set(`public/maps/${roof.image}`, baked.png);
+    const graded = await gradeCampusModel(
+      baked.png,
+      baked.surfaceIds,
+      glb.json.materials?.map((m) => m.name ?? ""),
+    );
+    files.set(`public/maps/${roof.image}`, graded);
+    shadows.push(
+      castShadow(
+        primitives(glb, placement),
+        convert,
+        config.transform.pixelsPerProjectedUnit,
+      ),
+    );
     const vertices = primitives(glb, placement).flatMap((p) => p.vertices);
     models.push({
       group: group.key,
@@ -99,52 +127,59 @@ export async function bakeMaps(
         width: baked.width,
         height: baked.height,
       },
-      pixelSha256: createHash("sha256").update(baked.png).digest("hex"),
+      pixelSha256: createHash("sha256").update(graded).digest("hex"),
     });
   }
   for (const scene of world.scenes) {
     if (scene.id !== "campus_core") {
       const baked = await bakeInterior(scene);
       interiors.push(baked.report);
+      scene.art.riseMap = scene.art.ground.replace(".png", "-height.png");
+      files.set(`public/maps/${scene.art.riseMap}`, baked.riseMap);
       files.set(`public/maps/${scene.art.ground}`, baked.ground);
       for (const layer of scene.art.layers)
         files.set(`public/maps/${layer.image}`, baked.layers.get(layer.id)!);
       continue;
     }
+    const layers = [];
     for (const layer of scene.art.layers) {
-      const path = `public/maps/${layer.image}`;
-      if (!files.has(path))
-        files.set(
-          path,
-          await sharp(Buffer.from(terrainSvg(scene, layer.id)))
-            .png({ compressionLevel: 9 })
-            .toBuffer(),
-        );
+      const svg =
+        layer.id === "shadows"
+          ? shadowSvg(scene, shadows)
+          : campusLayerSvg(scene, layer.id);
+      const png = await sharp(Buffer.from(svg), { density: 72 * density })
+        .png({ compressionLevel: 9 })
+        .toBuffer();
+      files.set(`public/maps/${layer.image}`, png);
+      layers.push(png);
     }
-    const path = `public/maps/${scene.art.ground}`;
-    if (files.has(path)) continue;
-    const image = await sharp(Buffer.from(terrainSvg(scene)))
-      .png({ compressionLevel: 9 })
-      .toBuffer();
-    files.set(path, image);
-  }
-  const campus = world.scenes[0],
-    composite = await sharp(files.get("public/maps/terrain-campus.png")!)
-      .ensureAlpha()
-      .composite(
-        campus.art.roofs.map((r) => ({
-          input: Buffer.from(files.get(`public/maps/${r.image}`)!),
-          left: r.x,
-          top: r.y,
-        })),
-      )
+    const ground = await sharp(layers[0])
+      .composite(layers.slice(1).map((input) => ({ input })))
       .png()
       .toBuffer();
-  files.set("public/maps/campus-reconstruction.png", composite);
+    files.set(`public/maps/${scene.art.ground}`, ground);
+  }
+  const composite = await sharp(files.get("public/maps/terrain-campus.png")!)
+    .composite(
+      [...(campus.art.landmarks ?? []), ...campus.art.roofs].map((r) => ({
+        input: Buffer.from(files.get(`public/maps/${r.image}`)!),
+        left: Math.round(r.x * density),
+        top: Math.round(r.y * density),
+      })),
+    )
+    .png()
+    .toBuffer();
+  // The overview is a separate lightweight navigation asset. Gameplay keeps
+  // every high-density source texel in its separate ground and model images.
+  const overview = await sharp(composite)
+    .resize(campus.width * 16, campus.height * 16)
+    .png()
+    .toBuffer();
+  files.set("public/maps/campus-reconstruction.png", overview);
   const labels = `<svg xmlns="http://www.w3.org/2000/svg" width="${campus.width * 16}" height="${campus.height * 16}">${world.buildings.map((b) => `<g><rect x="${b.label.x - 20}" y="${b.label.y - 18}" width="40" height="30" rx="4" fill="#f9eed6" stroke="#456b55" stroke-width="1.5"/><text x="${b.label.x}" y="${b.label.y + 4}" fill="#2d503c" font-family="sans-serif" font-size="18" text-anchor="middle">${b.id}</text></g>`).join("")}</svg>`;
   files.set(
     "public/maps/campus-labeled.png",
-    await sharp(composite)
+    await sharp(overview)
       .composite([{ input: Buffer.from(labels) }])
       .png()
       .toBuffer(),
@@ -189,5 +224,5 @@ export async function bakeMaps(
       .png({ compressionLevel: 9 })
       .toBuffer(),
   );
-  return { files, models, interiors };
+  return { files, models, interiors, landmarks: props.landmarks };
 }

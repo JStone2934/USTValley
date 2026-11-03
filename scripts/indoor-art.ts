@@ -11,6 +11,7 @@ import {
 } from "../src/shared/world.ts";
 import {
   bounds,
+  inPolygon,
   layers,
   type Polygon,
   type Sources,
@@ -24,9 +25,17 @@ import {
   transformPoint,
   type Primitive,
   type RasterMaterial,
-  type Texture,
   type Vec3,
 } from "./gltf.ts";
+import {
+  interiorMaterials,
+  roomFinish,
+  type InteriorInk,
+} from "./interior-materials.ts";
+
+import type { RoomCasework } from "../src/shared/casework.ts";
+import { roomPanel, wallFootprint } from "./room-fittings.ts";
+
 const earcut = createRequire(import.meta.url)(
   "phaser/src/geom/polygon/Earcut.js",
 ) as (vertices: number[], holes: number[], dimensions: number) => number[];
@@ -59,7 +68,7 @@ export function polygonMesh(
   const topMesh: Primitive = {
     node: "polygon-top",
     vertices: flat.map((p) => [p.x, p.y, top]),
-    uv: flat.map((p) => [p.x / 6, p.y / 6]),
+    uv: flat.map((p) => [p.x / 16, p.y / 16]),
     indices: earcut(
       flat.flatMap((p) => [p.x, p.y]),
       holes,
@@ -81,7 +90,7 @@ export function polygonMesh(
         const a = ring[i],
           b = ring[(i + 1) % ring.length],
           n = side.vertices.length,
-          length = Math.hypot(b.x - a.x, b.y - a.y) / 6;
+          length = Math.hypot(b.x - a.x, b.y - a.y) / 16;
         side.vertices.push(
           [a.x, a.y, bottom],
           [b.x, b.y, bottom],
@@ -91,8 +100,8 @@ export function polygonMesh(
         side.uv.push(
           [0, 0],
           [length, 0],
-          [length, (top - bottom) / 6],
-          [0, (top - bottom) / 6],
+          [length, (top - bottom) / 16],
+          [0, (top - bottom) / 16],
         );
         side.indices.push(n, n + 1, n + 2, n, n + 2, n + 3);
       }
@@ -100,49 +109,10 @@ export function polygonMesh(
   }
   return result;
 }
-function tileTexture(kind: string): Texture {
-  const width = 16,
-    data = Buffer.alloc(width * width * 4);
-  const palette: Record<string, number[]> = {
-    stone: [231, 229, 216],
-    concrete: [222, 221, 209],
-    wood: [190, 161, 117],
-    carpet: [163, 182, 176],
-    grass: [140, 168, 119],
-    water: [119, 167, 175],
-    books: [180, 151, 111],
-  };
-  for (let y = 0; y < width; y++)
-    for (let x = 0; x < width; x++) {
-      const noise = (((x * 17 + y * 31 + x * y * 7) % 7) - 3) * 1.5;
-      let color = [...palette[kind]],
-        shade = noise;
-      if (kind === "stone" && (x < 1 || y < 1)) shade -= 30;
-      if (kind === "wood")
-        shade += (x % 7 === 0 ? -18 : 0) + ((x * 3 + y) % 11 === 0 ? 9 : 0);
-      if (kind === "books") {
-        color = [
-          [167, 151, 110],
-          [113, 142, 136],
-          [169, 113, 85],
-          [191, 177, 136],
-        ][Math.floor(x / 3) % 4];
-        if (y % 7 === 0) shade -= 43;
-      }
-      if (kind === "water") shade += (x + y * 2) % 9 < 2 ? 16 : 0;
-      for (let c = 0; c < 3; c++)
-        data[(y * width + x) * 4 + c] = Math.max(
-          0,
-          Math.min(255, color[c] + shade),
-        );
-      data[(y * width + x) * 4 + 3] = 255;
-    }
-  return { width, height: width, data };
-}
 const kindLayer = (s: Surface) =>
   s.kind === "floor"
     ? "floor"
-    : ["road", "garden", "crosswalk"].includes(s.kind)
+    : ["road", "garden", "water", "crosswalk"].includes(s.kind)
       ? "terrain"
       : s.kind === "room"
         ? "rooms"
@@ -171,28 +141,57 @@ function clipRing(
   }
   return result;
 }
+function rotate(p: Point, angle: number): Point {
+  const c = Math.cos(angle),
+    s = Math.sin(angle);
+  return { x: p.x * c - p.y * s, y: p.x * s + p.y * c };
+}
 export function stairMesh(
   polygon: Polygon,
   scale: number,
   material: number,
   sideMaterial: number,
+  edgeMaterial = material,
 ): Primitive[] {
-  const box = bounds(polygon.flat()),
-    axis = box.width >= box.height ? "x" : "y",
-    start = box[axis],
-    length = axis === "x" ? box.width : box.height;
+  // Recover the flight bearing from its footprint. The buildings are rotated
+  // relative to screen axes, and the drawing does not record an uphill arrow.
+  const ring = polygon[0];
+  let bearing = 0,
+    smallestArea = Infinity;
+  for (let i = 0; i < ring.length; i++) {
+    const a = ring[i],
+      b = ring[(i + 1) % ring.length];
+    if (Math.hypot(b.x - a.x, b.y - a.y) < 0.01) continue;
+    const angle = Math.atan2(b.y - a.y, b.x - a.x);
+    const box = bounds(ring.map((p) => rotate(p, -angle)));
+    const area = box.width * box.height;
+    if (area + 0.001 < smallestArea) {
+      smallestArea = area;
+      bearing = angle + (box.width < box.height ? Math.PI / 2 : 0);
+    }
+  }
+  if (
+    Math.sin(bearing) > 0.001 ||
+    (Math.abs(Math.sin(bearing)) <= 0.001 && Math.cos(bearing) < 0)
+  )
+    bearing += Math.PI;
+  const local = polygon.map((r) => r.map((p) => rotate(p, -bearing)));
+  const box = bounds(local[0]),
+    start = box.x,
+    length = box.width;
+  const axis = "x";
   const count = Math.max(3, Math.min(12, Math.round(length / 2))),
     result: Primitive[] = [];
   for (let i = 0; i < count; i++) {
-    const clipped = polygon.map((r) =>
+    const clipped = local.map((r) =>
       clipRing(
         clipRing(r, axis, start + (length * i) / count, true),
         axis,
         start + (length * (i + 1)) / count,
         false,
-      ),
+      ).map((p) => rotate(p, bearing)),
     );
-    if (clipped[0]?.length >= 3)
+    if (clipped[0]?.length >= 3) {
       result.push(
         ...polygonMesh(
           clipped,
@@ -202,6 +201,188 @@ export function stairMesh(
           sideMaterial,
         ),
       );
+      const left = start + (length * i) / count;
+      const nose = local.map((r) =>
+        clipRing(
+          clipRing(r, axis, left, true),
+          axis,
+          left + Math.min(1.05, (length / count) * 0.54),
+          false,
+        ).map((p) => rotate(p, bearing)),
+      );
+      if (nose[0].length >= 3) {
+        const z = (0.08 + ((i + 1) / count) * 0.75) * scale + 0.01;
+        result.push(...polygonMesh(nose, z, z, edgeMaterial));
+      }
+    }
+  }
+  // The source flight supplies the envelope. Keep a slender rail only on
+  // long, near-rectangular flights where it stays completely above the steps.
+  const posts = [0.12, 0.5, 0.88],
+    thickness = scale * 0.12;
+  if (length > 2.5 * scale && box.height > 1.4 * scale) {
+    for (const side of [
+      box.y + thickness,
+      box.y + box.height - 2 * thickness,
+    ]) {
+      const at = (run: number, across: number) => ({
+        x: start + length * run,
+        y: side + across * thickness,
+      });
+      if (
+        !Array.from({ length: 12 }, (_, i) => 0.1 + (i * 0.8) / 11).every((t) =>
+          [0, 1].every((d) => inPolygon(at(t, d), local)),
+        )
+      )
+        continue;
+      const rail = [at(0.1, 0), at(0.9, 0), at(0.9, 1), at(0.1, 1)];
+      const height = (x: number) =>
+        (0.08 + (0.75 * (x - start)) / length) * scale;
+      const railParts = polygonMesh(
+        [rail],
+        0.84 * scale,
+        0.7 * scale,
+        edgeMaterial,
+        sideMaterial,
+      );
+      for (const part of railParts) {
+        part.node = "stair-rail";
+        part.vertices = part.vertices.map(([x, y, z]) => {
+          const p = rotate({ x, y }, bearing);
+          return [p.x, p.y, z + height(x)];
+        });
+      }
+      result.push(...railParts);
+      for (const t of posts) {
+        const half = thickness / length / 2;
+        const footprint = [
+          at(t - half, 0),
+          at(t + half, 0),
+          at(t + half, 1),
+          at(t - half, 1),
+        ].map((p) => rotate(p, bearing));
+        const z = height(at(t, 0).x);
+        result.push(
+          ...polygonMesh([footprint], z + 0.73 * scale, z, sideMaterial),
+        );
+      }
+    }
+  }
+  return result;
+}
+
+// Stylised fixtures use only explicit source point locations. Their sizes and
+// finishes are illustrative. The source-centred footprint is reserved during the world build.
+function pointFixture(
+  point: Point,
+  scale: number,
+  coffee: boolean,
+  ink: Record<InteriorInk, number>,
+) {
+  const result: Primitive[] = [];
+  function box(
+    x: number,
+    y: number,
+    w: number,
+    d: number,
+    z: number,
+    top: number,
+    cap: InteriorInk,
+    side: InteriorInk,
+  ) {
+    const ring = [
+      [x, y],
+      [x + w, y],
+      [x + w, y + d],
+      [x, y + d],
+    ].map(([a, b]) => ({ x: point.x + a * scale, y: point.y + b * scale }));
+    result.push(
+      ...polygonMesh([ring], top * scale, z * scale, ink[cap], ink[side]),
+    );
+  }
+  if (coffee) {
+    box(-0.58, -0.34, 1.16, 0.68, 0, 1.75, "bronze", "enamel");
+    box(-0.36, 0.34, 0.72, 0.06, 0.63, 1.34, "bronze", "pine");
+    box(-0.12, 0.41, 0.27, 0.17, 0.64, 0.91, "porcelain", "porcelain");
+    box(0.13, 0.35, 0.22, 0.02, 1.41, 1.58, "porcelain", "porcelain");
+  } else {
+    box(-0.51, -0.18, 1.02, 0.36, 0.64, 1.55, "porcelain", "pine");
+    box(-0.13, 0.18, 0.26, 0.02, 0.79, 1.38, "porcelain", "porcelain");
+    box(-0.34, 0.18, 0.68, 0.02, 0.97, 1.19, "porcelain", "porcelain");
+  }
+  return result;
+}
+
+// Subpieces use the very same four corners used to stamp the floor's collision.
+function caseworkMesh(
+  item: RoomCasework,
+  scale: number,
+  ink: Record<InteriorInk, number>,
+) {
+  const [a, b, , d] = item.footprint;
+  const point = (u: number, v: number) => ({
+    x: a.x + (b.x - a.x) * u + (d.x - a.x) * v,
+    y: a.y + (b.y - a.y) * u + (d.y - a.y) * v,
+  });
+  const result: Primitive[] = [];
+  function block(
+    u0: number,
+    v0: number,
+    u1: number,
+    v1: number,
+    lo: number,
+    hi: number,
+    top: InteriorInk,
+    side: InteriorInk,
+  ) {
+    const ring = [point(u0, v0), point(u1, v0), point(u1, v1), point(u0, v1)];
+    result.push(
+      ...polygonMesh([ring], hi * scale, lo * scale, ink[top], ink[side]),
+    );
+  }
+  // Recessed toe-kick, frame, worktop and front edge give the silhouette
+  // a separate highlight, shaded face and foot at normal walking zoom.
+  const lab = item.kind === "lab-bench",
+    desk = item.kind === "lectern";
+  block(0.07, 0.08, 0.93, 0.9, 0, 0.18, "riser", "enamel");
+  block(
+    0.03,
+    0.03,
+    0.97,
+    0.94,
+    0.18,
+    0.87,
+    lab ? "pine" : "oak",
+    lab ? "office" : "oak",
+  );
+  block(
+    0,
+    0,
+    1,
+    1,
+    0.87,
+    0.99,
+    lab ? "enamel" : "bindingGold",
+    lab ? "riser" : "bronze",
+  );
+  block(0.12, 0.94, 0.36, 0.98, 0.65, 0.72, "porcelain", "enamel");
+  if (lab) {
+    block(0.06, 0.15, 0.3, 0.62, 0.99, 1.08, "porcelain", "riser");
+    block(0.44, 0.12, 0.61, 0.48, 0.99, 1.42, "glass", "bindingTeal");
+    block(0.48, 0.19, 0.57, 0.38, 1.42, 1.58, "porcelain", "glass");
+    block(0.72, 0.2, 0.88, 0.6, 0.99, 1.24, "porcelain", "bindingRust");
+  } else if (desk) {
+    block(0.09, 0.14, 0.47, 0.68, 0.99, 1.08, "porcelain", "bindingRust");
+    block(0.6, 0.24, 0.9, 0.48, 0.99, 1.1, "enamel", "riser");
+    block(0.55, 0.17, 0.94, 0.29, 1.04, 1.48, "enamel", "glass");
+  } else {
+    block(0.08, 0.15, 0.49, 0.65, 0.99, 1.14, "porcelain", "bindingTeal");
+    for (const [u, h, material] of [
+      [0.57, 1.39, "bindingRust"],
+      [0.69, 1.46, "bindingTeal"],
+      [0.81, 1.36, "bindingGold"],
+    ] as const)
+      block(u, 0.15, u + 0.105, 0.68, 0.99, h, material, material);
   }
   return result;
 }
@@ -249,30 +430,7 @@ export function createIndoorBaker(root: string, sources: Sources) {
       });
       return { x: q.x + scene.sourceOffset.x, y: q.y + scene.sourceOffset.y };
     };
-    const materials: RasterMaterial[] = [
-      "stone",
-      "concrete",
-      "wood",
-      "carpet",
-      "grass",
-      "water",
-      "books",
-    ].map((kind) => ({ factor: [1, 1, 1, 1], texture: tileTexture(kind) }));
-    const material = {
-      stone: 0,
-      concrete: 1,
-      wood: 2,
-      carpet: 3,
-      grass: 4,
-      water: 5,
-      books: 6,
-      glass: materials.length,
-      shadow: materials.length + 1,
-    };
-    materials.push(
-      { factor: [0.65, 0.8, 0.82, 1] },
-      { factor: [0.68, 0.71, 0.64, 1] },
-    );
+    const { materials, id: material } = interiorMaterials();
     const groups = new Map<string, Primitive[]>(
       ["floor", "terrain", "rooms", "passages", "fixtures", "walls"].map(
         (id) => [id, []],
@@ -306,15 +464,18 @@ export function createIndoorBaker(root: string, sources: Sources) {
     };
     const addShadow = (polygon: Polygon, elevation: number, group: string) => {
       if (elevation < 1) return;
-      const shadow = polygon.map((r) =>
-        r.map((p) => ({
-          x: p.x + elevation * 0.32,
-          y: p.y + elevation * 0.24,
-        })),
-      );
-      groups
-        .get(group)!
-        .push(...polygonMesh(shadow, 0.14, 0.14, material.shadow));
+      for (const [distance, z, ink] of [
+        [1.0, 0.14, material.shadow],
+        [0.55, 0.15, material.contact],
+      ]) {
+        const shadow = polygon.map((r) =>
+          r.map((p) => ({
+            x: p.x + distance * elevation * 0.37,
+            y: p.y + distance * elevation * 0.27,
+          })),
+        );
+        groups.get(group)!.push(...polygonMesh(shadow, z, z, ink));
+      }
     };
     for (const s of scene.surfaces) {
       const info = featureInfo.get(s.sourceId),
@@ -345,7 +506,7 @@ export function createIndoorBaker(root: string, sources: Sources) {
         (p): Primitive => ({
           ...p,
           node: `feature-${s.sourceId}:${p.node}`,
-          material: p.material < 0 ? material.concrete : p.material + offset,
+          material: p.material < 0 ? material.masonry : p.material + offset,
           vertices: p.vertices.map((v): Vec3 => {
             const placed = transformPoint(matrix, v),
               q = convert(placed);
@@ -364,6 +525,28 @@ export function createIndoorBaker(root: string, sources: Sources) {
         triangles: parts.reduce((n, p) => n + p.indices.length / 3, 0),
       });
     }
+    for (const item of scene.roomCasework ?? []) {
+      addShadow([item.footprint], 1.05 * scale, "fixtures");
+      groups.get("fixtures")!.push(...caseworkMesh(item, scale, material));
+    }
+    const pointFixtures = scene.pointFixtures ?? [];
+    for (const f of pointFixtures) {
+      groups
+        .get("fixtures")!
+        .push(...pointFixture(f, scale, f.kind === "coffee", material));
+    }
+    const walls = scene.surfaces
+      .filter((s) => s.kind === "wall" && !/玻璃/.test(s.sourceLayer))
+      .flatMap((s) =>
+        s.polygons.filter((p) => visible(p.flat())).map(wallFootprint),
+      );
+    const inferredFittings: {
+      featureId: number;
+      kind: string;
+      x: number;
+      y: number;
+    }[] = [];
+    const roomFinishes: Partial<Record<InteriorInk, number>> = {};
     let extruded = 0,
       steps = 0;
     for (const s of scene.surfaces) {
@@ -381,11 +564,9 @@ export function createIndoorBaker(root: string, sources: Sources) {
           info?.feature.properties.height ??
           info?.layer.layerStyle?.height ??
           0;
-      const floorMaterial = /洗手间/.test(s.sourceLayer)
-        ? material.stone
-        : /实验室|办公室/.test(s.sourceLayer)
-          ? material.carpet
-          : material.wood;
+      const finish = roomFinish(s.sourceLayer, info?.feature.properties ?? {});
+      if (s.kind === "room")
+        roomFinishes[finish] = (roomFinishes[finish] ?? 0) + 1;
       for (const polygon of s.polygons) {
         if (s.kind === "floor")
           target.push(
@@ -393,23 +574,68 @@ export function createIndoorBaker(root: string, sources: Sources) {
               polygon,
               0,
               -scale * 0.35,
-              material.stone,
-              material.concrete,
+              material.slab,
+              material.riser,
             ),
           );
         else if (s.kind === "corridor")
-          target.push(...polygonMesh(polygon, 0.08, 0.08, material.stone));
-        else if (s.kind === "room")
-          target.push(...polygonMesh(polygon, 0.04, 0.04, floorMaterial));
-        else if (s.kind === "garden")
+          target.push(...polygonMesh(polygon, 0.08, 0.08, material.passage));
+        else if (s.kind === "room") {
+          const roomFloor = polygonMesh(polygon, 0.04, 0.04, material[finish]);
+          if (roomFloor[0]) {
+            // Lay boards, acoustic tiles and ceramic joints parallel to a
+            // real room edge rather than running a screen-space texture across walls.
+            const ring = polygon[0];
+            let longest = 0,
+              angle = 0;
+            for (let i = 1; i < ring.length; i++) {
+              const a = ring[i - 1],
+                b = ring[i],
+                length = Math.hypot(b.x - a.x, b.y - a.y);
+              if (length > longest) {
+                longest = length;
+                angle = Math.atan2(b.y - a.y, b.x - a.x);
+              }
+            }
+            roomFloor[0].uv = roomFloor[0].vertices.map(([x, y]) => {
+              const p = rotate({ x: x - ring[0].x, y: y - ring[0].y }, -angle);
+              return [p.x / 16, p.y / 16];
+            });
+          }
+          target.push(...roomFloor);
+          const entries = (info?.feature.properties.entry ?? []) as number[][];
+          const panel = roomPanel(
+            polygon,
+            finish,
+            entries.filter((p) => Array.isArray(p)).map(convert),
+            walls,
+            scale,
+            material,
+          );
+          if (panel) {
+            groups.get("fixtures")!.push(...panel.parts);
+            inferredFittings.push({
+              featureId: s.sourceId,
+              kind: panel.kind,
+              x: panel.center.x,
+              y: panel.center.y,
+            });
+          }
+        } else if (s.kind === "garden")
           target.push(
-            ...polygonMesh(polygon, 0.16, 0, material.grass, material.concrete),
+            ...polygonMesh(polygon, 0.16, 0, material.grass, material.masonry),
           );
         else if (s.kind === "water")
           target.push(...polygonMesh(polygon, 0.03, 0.03, material.water));
         else if (s.kind === "stairs") {
           target.push(
-            ...stairMesh(polygon, scale, material.concrete, material.concrete),
+            ...stairMesh(
+              polygon,
+              scale,
+              material.tread,
+              material.riser,
+              material.porcelain,
+            ),
           );
           steps++;
         } else {
@@ -427,13 +653,23 @@ export function createIndoorBaker(root: string, sources: Sources) {
                   : lift
                     ? 2
                     : Math.min(1.2, Math.max(0.25, sourceHeight))) * scale;
+          // Bookcase polygons are supplied by the library floor plan. A small
+          // set of cloth bindings distinguishes neighbouring stacks at game scale.
+          const bindings = [
+            material.bindingRust,
+            material.bindingTeal,
+            material.bindingGold,
+            material.oak,
+          ];
           const mat = /玻璃/.test(s.sourceLayer)
             ? material.glass
-            : shelf
-              ? material.wood
-              : seat
-                ? material.wood
-                : material.concrete;
+            : wall
+              ? material.wallCap
+              : shelf
+                ? bindings[Math.abs(s.sourceId) % bindings.length]
+                : seat
+                  ? material.oak
+                  : material.masonry;
           addShadow(polygon, elevation, group);
           target.push(
             ...polygonMesh(
@@ -441,16 +677,38 @@ export function createIndoorBaker(root: string, sources: Sources) {
               elevation,
               0,
               mat,
-              shelf ? material.books : mat,
+              wall && mat !== material.glass
+                ? material.masonry
+                : shelf
+                  ? material.books
+                  : mat,
             ),
           );
+          if (wall && mat !== material.glass) {
+            // A projecting skirting and a light timber picture rail give even
+            // angled cut faces two readable horizontal height references.
+            const band = (lo: number, hi: number, ink: number) => {
+              const side = polygonMesh(
+                polygon,
+                elevation * hi,
+                elevation * lo,
+                ink,
+              )[1];
+              if (side) target.push(side);
+            };
+            band(0, 0.11, material.riser);
+            band(0.11, 0.42, material.dado);
+            band(0.42, 0.49, material.moulding);
+            band(0.9, 0.975, material.wallCap);
+          }
           extruded++;
         }
       }
     }
     const viewport = { x: 0, y: 0, width, height },
       projection = (v: number[]) => ({ x: v[0], y: v[1] });
-    const render = async (parts: Primitive[]) =>
+    const pixelRatio = scene.art.pixelRatio ?? 1;
+    const render = async (parts: Primitive[], includeRise = false) =>
       renderPrimitives(
         parts,
         materials,
@@ -458,22 +716,31 @@ export function createIndoorBaker(root: string, sources: Sources) {
         1,
         config.roofHeightFactor,
         viewport,
+        includeRise,
+        false,
+        pixelRatio,
       );
     const base = await sharp({
-      create: { width, height, channels: 4, background: "#596a5b" },
+      create: {
+        width: width * pixelRatio,
+        height: height * pixelRatio,
+        channels: 4,
+        background: "#414f52",
+      },
     })
-      .png({ compressionLevel: 9 })
+      .png({ compressionLevel: 6 })
       .toBuffer();
     const images = new Map<string, Uint8Array>([["base", base]]);
     for (const [id, parts] of groups) images.set(id, (await render(parts)).png);
     const all = [...groups.values()].flat(),
-      rendered = await render(all);
+      rendered = await render(all, true);
     const ground = await sharp(base)
       .composite([{ input: rendered.png }])
-      .png({ compressionLevel: 9 })
+      .png({ compressionLevel: 6 })
       .toBuffer();
     return {
       ground,
+      riseMap: rendered.riseMap!,
       layers: images,
       report: {
         sceneId: scene.id,
@@ -481,7 +748,13 @@ export function createIndoorBaker(root: string, sources: Sources) {
         floor: scene.floor.key,
         renderer: "shared-outdoor-orthographic-pixel-rasterizer",
         projectionRise: config.roofHeightFactor,
-        pixels: { width, height },
+        pixels: { width: width * pixelRatio, height: height * pixelRatio },
+        pixelRatio,
+        logicalPixels: { width, height },
+        roomFinishes,
+        inferredFittings,
+        inferredCasework: scene.roomCasework?.length ?? 0,
+        pointFixtures,
         sourceModelInstances: models.length,
         sourceModels: models,
         extrudedPolygons: extruded,

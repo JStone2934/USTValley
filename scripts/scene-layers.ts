@@ -57,7 +57,7 @@ export function emptyScene(
       name: id === "campus_core" ? "室外" : "F1",
       elevation: 0,
     },
-    art: { style: "pixel-3d", ground, layers: [], roofs: [] },
+    art: { style: "pixel-3d", pixelRatio: 3, ground, layers: [], roofs: [] },
     decoration: [],
     foreground: [],
     portals: [],

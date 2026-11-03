@@ -5,7 +5,7 @@ import React, {
   useSyncExternalStore,
 } from "react";
 import { createRoot } from "react-dom/client";
-import { createGame, GameBridge, CAMERA_ZOOM } from "./game";
+import { createGame, GameBridge } from "./game";
 import {
   passageLabel,
   passageMarkers,
@@ -166,7 +166,9 @@ function Overview({ world }: { world: WorldMap }) {
         {indoors ? (
           <div className="floor-plan-heading">
             <strong>当前楼层 · {plan.floor.name}</strong>
-            <p>{plan.name} · 通过楼梯上下楼，平面随角色切换。</p>
+            <p>
+              {plan.name} · 楼梯与电梯通往其他楼层，走过连廊标记可到达相邻建筑。
+            </p>
           </div>
         ) : (
           <label>
@@ -208,6 +210,7 @@ function Overview({ world }: { world: WorldMap }) {
                     passages: "通道",
                     fixtures: "设施",
                     walls: "墙体",
+                    shadows: "投影",
                   }[l.id]
                 }
               </label>
@@ -260,10 +263,28 @@ function Overview({ world }: { world: WorldMap }) {
                 width="12"
                 height="12"
                 rx="2"
-                fill={marker.kind === "lift" ? "#e2edf4" : "#e4efdc"}
-                stroke={marker.kind === "lift" ? "#397e9f" : "#3e7350"}
+                fill={
+                  marker.kind === "gallery"
+                    ? "#ffe4b3"
+                    : marker.kind === "lift"
+                      ? "#e2edf4"
+                      : "#e4efdc"
+                }
+                stroke={
+                  marker.kind === "gallery"
+                    ? "#96572d"
+                    : marker.kind === "lift"
+                      ? "#397e9f"
+                      : "#3e7350"
+                }
               />
-              {marker.kind === "lift" ? (
+              {marker.kind === "gallery" ? (
+                <path
+                  d="M-4-2H4M-4 2H4M-3-2V2M0-2V2M3-2V2"
+                  fill="none"
+                  stroke="#96572d"
+                />
+              ) : marker.kind === "lift" ? (
                 <path d="M-3-4H3V4H-3ZM0-4V4" fill="none" stroke="#397e9f" />
               ) : (
                 <path
@@ -288,7 +309,7 @@ function Overview({ world }: { world: WorldMap }) {
         </svg>
         <p className="muted">
           {plan.floor.name} · 源标高 {plan.floor.elevation} · 金色：出入口 ·
-          蓝色：电梯 · 绿色：楼梯／扶梯
+          蓝色：电梯 · 绿色：楼梯／扶梯 · 琥珀色：跨楼连廊
         </p>
       </div>
       {!indoors && (
@@ -351,6 +372,7 @@ function App() {
       data-scene={snapshot.sceneId}
       data-avatar-width={snapshot.avatarSize?.width}
       data-avatar-height={snapshot.avatarSize?.height}
+      data-camera-zoom={snapshot.cameraZoom}
       data-x={Math.round(snapshot.position.x)}
       data-y={Math.round(snapshot.position.y)}
       data-floor={current?.floor.name}
@@ -365,7 +387,7 @@ function App() {
           </span>
         </a>
         <div className="chapter">
-          <span className="eyebrow">BUILD 0.4 / 3D 像素重建</span>
+          <span className="eyebrow">BUILD 0.5 / 立体像素校园</span>
           <h1>
             从校园，
             <br />
@@ -451,16 +473,18 @@ function App() {
               <div className="zoom-controls">
                 <button
                   aria-label="缩小视野"
-                  disabled={snapshot.zoom <= CAMERA_ZOOM.min}
-                  onClick={() => bridge.zoom(snapshot.zoom - 1)}
+                  disabled={!snapshot.canZoomOut}
+                  onClick={() => bridge.zoom(-1)}
                 >
                   −
                 </button>
-                <span>{snapshot.zoom}×</span>
+                <span title="相对于当前视口默认镜头的倍率">
+                  {snapshot.zoomPercent}%
+                </span>
                 <button
                   aria-label="放大视野"
-                  disabled={snapshot.zoom >= CAMERA_ZOOM.max}
-                  onClick={() => bridge.zoom(snapshot.zoom + 1)}
+                  disabled={!snapshot.canZoomIn}
+                  onClick={() => bridge.zoom(1)}
                 >
                   ＋
                 </button>
@@ -474,14 +498,14 @@ function App() {
                   <>
                     {current?.id === "campus_core"
                       ? "靠近建筑金色入口，按"
-                      : "靠近蓝色／绿色通道，按"}{" "}
+                      : "靠近房门或通道，按"}{" "}
                     <kbd>E</kbd>{" "}
-                    {current?.id === "campus_core" ? "进入" : "换层"}
+                    {current?.id === "campus_core" ? "进入" : "交互"}
                   </>
                 )}
               </div>
               {Boolean(snapshot.passages?.length) && (
-                <div className="passage-options" aria-label="附近通道">
+                <div className="passage-options" aria-label="附近的门与通道">
                   {snapshot.passages!.map((p) => (
                     <button
                       key={p.id}
@@ -575,6 +599,10 @@ function App() {
               </li>
               <li>
                 进入建筑后，漫游画面与地图只显示当前楼层平面；上下楼后自动同步。室外校园总览可预览各建筑楼层。
+              </li>
+              <li>
+                沿同层连廊走过交界点即可进入相邻楼。在房门两侧按 E
+                或点击房间名称开关门。
               </li>
               <li>到达室内绿色探索区后，本次探索计数增加；再从出口返回。</li>
               <li>

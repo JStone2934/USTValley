@@ -6,6 +6,11 @@ import React, {
 } from "react";
 import { createRoot } from "react-dom/client";
 import { createGame, GameBridge, CAMERA_ZOOM } from "./game";
+import {
+  passageLabel,
+  passageMarkers,
+  visibleFloorPlan,
+} from "../shared/passages";
 import type { WorldMap } from "../shared/world";
 import "./style.css";
 
@@ -73,77 +78,224 @@ function Overview({ world }: { world: WorldMap }) {
   const campus = world.scenes[0];
   const [selected, select] = useState("C2");
   const b = world.buildings.find((b) => b.id === selected)!;
+  const [floorId, setFloorId] = useState("");
+  const [hiddenLayers, setHiddenLayers] = useState<string[]>([]);
+  const entry = campus.portals.find((p) => p.buildingId === b.id)!;
+  const initial = world.scenes.find((s) => s.id === entry.targetScene)!;
+  const floors = world.scenes.filter((s) => s.sourceMap === initial.sourceMap);
+  const current = world.scenes.find((s) => s.id === snapshot.sceneId)!;
+  const indoors = current.id !== "campus_core";
+  const plan = visibleFloorPlan(world, current.id, floorId || initial.id);
   return (
     <>
-      <div className="overview-map">
-        <svg
-          viewBox={`0 0 ${campus.width * 16} ${campus.height * 16}`}
-          role="img"
-          aria-label="源模型重建的核心校园总览"
-        >
-          <rect width="100%" height="100%" fill="#dfe5cf" />
-          <image
-            href="/maps/campus-reconstruction.png"
-            width={campus.width * 16}
-            height={campus.height * 16}
-          />
-          {world.buildings.map((b) => (
-            <g
-              key={b.id}
-              role="button"
-              tabIndex={0}
-              aria-label={`查看 ${b.id}`}
-              onClick={() => select(b.id)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  select(b.id);
-                }
-              }}
+      {!indoors && (
+        <>
+          <div className="overview-map">
+            <svg
+              viewBox={`0 0 ${campus.width * 16} ${campus.height * 16}`}
+              role="img"
+              aria-label="源模型重建的核心校园总览"
             >
-              <rect
-                x={b.label.x - 30}
-                y={b.label.y - 30}
-                width="60"
-                height="60"
-                rx="6"
-                fill={b.id === selected ? "#365e4c" : "#f3e9ce"}
-                stroke="#688374"
-                strokeWidth="3"
+              <rect width="100%" height="100%" fill="#dfe5cf" />
+              <image
+                href="/maps/campus-reconstruction.png"
+                width={campus.width * 16}
+                height={campus.height * 16}
               />
-              <text
-                x={b.label.x}
-                y={b.label.y + 11}
-                fontSize="30"
-                textAnchor="middle"
-                fill={b.id === selected ? "#fff9e8" : "#365e4c"}
+              {world.buildings.map((b) => (
+                <g
+                  key={b.id}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`查看 ${b.id}`}
+                  onClick={() => {
+                    select(b.id);
+                    setFloorId("");
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      select(b.id);
+                      setFloorId("");
+                    }
+                  }}
+                >
+                  <rect
+                    x={b.label.x - 30}
+                    y={b.label.y - 30}
+                    width="60"
+                    height="60"
+                    rx="6"
+                    fill={b.id === selected ? "#365e4c" : "#f3e9ce"}
+                    stroke="#688374"
+                    strokeWidth="3"
+                  />
+                  <text
+                    x={b.label.x}
+                    y={b.label.y + 11}
+                    fontSize="30"
+                    textAnchor="middle"
+                    fill={b.id === selected ? "#fff9e8" : "#365e4c"}
+                  >
+                    {b.id}
+                  </text>
+                </g>
+              ))}
+              {snapshot.sceneId === "campus_core" && (
+                <circle
+                  cx={snapshot.position.x}
+                  cy={snapshot.position.y}
+                  r="12"
+                  fill="#d17b4b"
+                  stroke="#fff9e8"
+                  strokeWidth="5"
+                />
+              )}
+            </svg>
+          </div>
+          <div className="map-detail">
+            <strong>
+              {b.id} · {b.name}
+            </strong>
+            <span className="tag">待人工核对</span>
+            <p>{`定位依据：${({ "room-label-median": "F1 房间编号标签", "model-center": "总图建筑模型中心", poi: "源地图 POI", "feature-center": "F1 演讲厅编号属性" } as Record<string, string>)[b.anchorMethod]}。各楼层与公共通道已重建，入口编号关联待现场确认。`}</p>
+          </div>
+        </>
+      )}
+      <div className={`floor-plans${indoors ? " current-floor-plan" : ""}`}>
+        {indoors ? (
+          <div className="floor-plan-heading">
+            <strong>当前楼层 · {plan.floor.name}</strong>
+            <p>{plan.name} · 通过楼梯上下楼，平面随角色切换。</p>
+          </div>
+        ) : (
+          <label>
+            楼层平面
+            <select
+              aria-label="查看楼层平面"
+              value={plan.id}
+              onChange={(e) => setFloorId(e.target.value)}
+            >
+              {floors.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+        <div className="layer-switches" aria-label="地图图层">
+          {plan.art.layers
+            .filter((l) => l.id !== "base")
+            .map((l) => (
+              <label key={l.id}>
+                <input
+                  type="checkbox"
+                  checked={!hiddenLayers.includes(l.id)}
+                  onChange={() =>
+                    setHiddenLayers((hidden) =>
+                      hidden.includes(l.id)
+                        ? hidden.filter((id) => id !== l.id)
+                        : [...hidden, l.id],
+                    )
+                  }
+                />
+                {
+                  {
+                    floor: "地面",
+                    terrain: "地形",
+                    rooms: "房间",
+                    passages: "通道",
+                    fixtures: "设施",
+                    walls: "墙体",
+                  }[l.id]
+                }
+              </label>
+            ))}
+        </div>
+        <svg
+          viewBox={`0 0 ${plan.width * 16} ${plan.height * 16}`}
+          role="img"
+          aria-label={`${plan.name}通道平面`}
+        >
+          {plan.art.layers
+            .filter((l) => !hiddenLayers.includes(l.id))
+            .map((l) => (
+              <image
+                key={l.id}
+                href={`/maps/${l.image}`}
+                width={plan.width * 16}
+                height={plan.height * 16}
+              />
+            ))}
+          {plan.portals
+            .filter((p) => p.kind === "entrance")
+            .map((p) => (
+              <circle
+                key={p.id}
+                cx={p.x}
+                cy={p.y}
+                r="4"
+                fill={
+                  p.kind === "entrance"
+                    ? "#edbe60"
+                    : p.kind === "lift"
+                      ? "#408fc2"
+                      : "#3b9b70"
+                }
               >
-                {b.id}
-              </text>
+                <title>{passageLabel(world, plan, p)}</title>
+              </circle>
+            ))}
+          {passageMarkers(world, plan).map((marker) => (
+            <g
+              key={marker.portalIds.join(":")}
+              transform={`translate(${marker.x} ${marker.y})`}
+              data-passage-kind={marker.kind}
+            >
+              <title>{marker.label}</title>
+              <rect
+                x="-6"
+                y="-6"
+                width="12"
+                height="12"
+                rx="2"
+                fill={marker.kind === "lift" ? "#e2edf4" : "#e4efdc"}
+                stroke={marker.kind === "lift" ? "#397e9f" : "#3e7350"}
+              />
+              {marker.kind === "lift" ? (
+                <path d="M-3-4H3V4H-3ZM0-4V4" fill="none" stroke="#397e9f" />
+              ) : (
+                <path
+                  d="M-4 4H-2V2H0V0H2V-2H4V-4"
+                  fill="none"
+                  stroke="#3e7350"
+                  strokeWidth="1.3"
+                />
+              )}
             </g>
           ))}
-          {snapshot.sceneId === "campus_core" && (
+          {snapshot.sceneId === plan.id && (
             <circle
               cx={snapshot.position.x}
               cy={snapshot.position.y}
-              r="12"
+              r="5"
               fill="#d17b4b"
-              stroke="#fff9e8"
-              strokeWidth="5"
+              stroke="white"
+              strokeWidth="2"
             />
           )}
         </svg>
+        <p className="muted">
+          {plan.floor.name} · 源标高 {plan.floor.elevation} · 金色：出入口 ·
+          蓝色：电梯 · 绿色：楼梯／扶梯
+        </p>
       </div>
-      <div className="map-detail">
-        <strong>
-          {b.id} · {b.name}
-        </strong>
-        <span className="tag">待人工核对</span>
-        <p>{`定位依据：${({ "room-label-median": "F1 房间编号标签", "model-center": "总图建筑模型中心", poi: "源地图 POI", "feature-center": "F1 演讲厅编号属性" } as Record<string, string>)[b.anchorMethod]}。真实 F1 轮廓已重建，入口编号关联待现场确认。`}</p>
-      </div>
-      <p className="muted">
-        建筑：GLB 节点和材质烘焙 · 地形：源道路、绿化和水体 · 橙点：你
-      </p>
+      {!indoors && (
+        <p className="muted">
+          建筑：GLB 节点和材质烘焙 · 地形：源道路、绿化和水体 · 橙点：你
+        </p>
+      )}
     </>
   );
 }
@@ -173,9 +325,10 @@ function App() {
       })
       .then((data: WorldMap) => {
         if (
-          data.protocolVersion !== 1 ||
+          data.protocolVersion !== 2 ||
           data.status !== "reconstructed" ||
-          data.scenes?.length !== 16
+          data.scenes?.[0]?.id !== "campus_core" ||
+          !data.scenes.every((s) => s.floor && s.art?.layers?.length)
         )
           throw new Error("地图版本不匹配，请重新构建后刷新");
         setWorld(data);
@@ -200,6 +353,9 @@ function App() {
       data-avatar-height={snapshot.avatarSize?.height}
       data-x={Math.round(snapshot.position.x)}
       data-y={Math.round(snapshot.position.y)}
+      data-floor={current?.floor.name}
+      data-floor-images={JSON.stringify(snapshot.floorImages ?? [])}
+      data-stair-markers={snapshot.stairMarkers ?? 0}
     >
       <aside className="sidebar">
         <a href="/" className="brand">
@@ -209,7 +365,7 @@ function App() {
           </span>
         </a>
         <div className="chapter">
-          <span className="eyebrow">BUILD 0.2 / 源地图重建</span>
+          <span className="eyebrow">BUILD 0.4 / 3D 像素重建</span>
           <h1>
             从校园，
             <br />
@@ -287,7 +443,10 @@ function App() {
           {world && (
             <>
               <div className="world-badge">
-                <span className="status-dot" /> 核心区 · 源模型重建
+                <span className="status-dot" />{" "}
+                {current?.floor.name === "室外"
+                  ? "核心区 · 源模型重建"
+                  : `${current?.floor.name} · 楼层与通道`}
               </div>
               <div className="zoom-controls">
                 <button
@@ -313,10 +472,27 @@ function App() {
                   </>
                 ) : (
                   <>
-                    靠近建筑金色入口，按 <kbd>E</kbd> 进入
+                    {current?.id === "campus_core"
+                      ? "靠近建筑金色入口，按"
+                      : "靠近蓝色／绿色通道，按"}{" "}
+                    <kbd>E</kbd>{" "}
+                    {current?.id === "campus_core" ? "进入" : "换层"}
                   </>
                 )}
               </div>
+              {Boolean(snapshot.passages?.length) && (
+                <div className="passage-options" aria-label="附近通道">
+                  {snapshot.passages!.map((p) => (
+                    <button
+                      key={p.id}
+                      data-portal={p.id}
+                      onClick={() => bridge.interact(p.id)}
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              )}
               <div className="touch-controls">
                 <Joystick />
                 <button
@@ -359,7 +535,7 @@ function App() {
         <div className="caption">
           <span>01 — CORE CAMPUS</span>
           <p>15 栋建筑 · 同一座校园</p>
-          <span>基于源模型与 F1 平面</span>
+          <span>31 个室内楼层 · 3D 像素重建</span>
         </div>
       </section>
       <dialog
@@ -372,7 +548,13 @@ function App() {
         <div className="dialog-heading">
           <div>
             <span className="eyebrow">UST VALLEY / FIELD NOTES</span>
-            <h2>{panel === "map" ? "校园地图" : "漫游指南"}</h2>
+            <h2>
+              {panel === "map"
+                ? current?.id !== "campus_core"
+                  ? `当前楼层地图 · ${current?.floor.name}`
+                  : "校园地图"
+                : "漫游指南"}
+            </h2>
           </div>
           <button aria-label="关闭面板" onClick={() => setPanel(null)}>
             ×
@@ -387,17 +569,24 @@ function App() {
               <li>使用 WASD、方向键或左侧触摸摇杆移动。</li>
               <li>电脑按住 Shift 奔跑，松开后恢复基础移动速度。</li>
               <li>靠近金色入口标记，按 E 或右侧交互键进入建筑。</li>
+              <li>
+                靠近绿色台阶图标，按 E
+                上下楼；同处有多个方向时，点击“上楼至”或“下楼至”按钮。蓝色图标为电梯。
+              </li>
+              <li>
+                进入建筑后，漫游画面与地图只显示当前楼层平面；上下楼后自动同步。室外校园总览可预览各建筑楼层。
+              </li>
               <li>到达室内绿色探索区后，本次探索计数增加；再从出口返回。</li>
               <li>
-                开启「源地图参考」可对照真实 F1 地面轮廓、步行路网和入口候选点。
+                开启「源地图参考」可对照当前楼层地面轮廓、步行路网和入口候选点。
               </li>
             </ol>
             <p>
               本次探索只保存在当前页面内存中。宝箱为点位预览，纸条区仅显示范围；领取、留言、货币、注册与多人功能尚未开放。
             </p>
             <p>
-              建筑依据源 GLB 重建，室内采用真实 F1
-              平面；入口编号关联仍待现场确认。
+              建筑依据源 GLB 重建，室内采用全部 31
+              个真实楼层平面；入口编号关联仍待现场确认。
             </p>
           </div>
         )}

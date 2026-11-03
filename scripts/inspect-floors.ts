@@ -2,7 +2,7 @@ import { readFile, mkdir, writeFile, readdir, rm } from "node:fs/promises";
 import { resolve } from "node:path";
 import sharp from "sharp";
 import { buildWorld } from "./map-builder.ts";
-import { reachable } from "../src/shared/world.ts";
+import { reachableWorld } from "../src/shared/world.ts";
 import { terrainSvg } from "./bake-maps.ts";
 const root = resolve(import.meta.dirname, ".."),
   bytes = await readFile(resolve(root, "data/maps/all-maps.json")),
@@ -19,16 +19,18 @@ for (const name of await readdir(folder))
   if (/^(floor-|collision-)/.test(name) && !expected.has(name))
     await rm(resolve(folder, name));
 const completed = new Set<string>();
+const globalSpace = reachableWorld(world);
 for (const scene of world.scenes.slice(1)) {
   if (completed.has(scene.art.ground)) continue;
   completed.add(scene.art.ground);
   const name = scene.art.ground.replace(/\.png$/, ""),
     svg = terrainSvg(scene);
   await writeFile(resolve(folder, `${name}.svg`), svg);
-  await sharp(Buffer.from(svg))
-    .png()
-    .toFile(resolve(folder, `${name}.png`));
-  const space = reachable(scene, scene.spawns[0]),
+  await writeFile(
+    resolve(folder, `${name}.png`),
+    await readFile(resolve(root, "public/maps", scene.art.ground)),
+  );
+  const space = globalSpace.get(scene.id)!,
     w = scene.width * 4,
     h = scene.height * 4,
     mask = Buffer.alloc(w * h * 3);

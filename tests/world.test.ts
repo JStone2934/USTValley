@@ -14,6 +14,7 @@ import {
   nearbyPortal,
   project,
   reachable,
+  reachableWorld,
   tileIndex,
 } from "../src/shared/world.ts";
 
@@ -25,7 +26,7 @@ const result = buildWorld(sources, bytes),
   world = result.world;
 test("build is deterministic and keeps all 15 buildings within tile budgets", () => {
   assert.deepEqual(buildWorld(sources, bytes), result);
-  assert.equal(world.scenes.length, 16);
+  assert.equal(world.scenes.length, 34);
   assert.equal(world.buildings.length, 15);
   assert.doesNotThrow(() => validateWorld(world));
   assert.ok(
@@ -82,8 +83,9 @@ test("export allowlist excludes original location, beacon and model resources", 
   assert.deepEqual(buildWorld(poisoned, bytes).world, world);
 });
 test("every portal has a reciprocal exit and both scenes have reachable return positions", () => {
+  const globalSpace = reachableWorld(world);
   for (const scene of world.scenes) {
-    const visited = reachable(scene, scene.spawns[0], scene.player.radius);
+    const visited = globalSpace.get(scene.id)!;
     for (const p of scene.portals) {
       assert.ok(visited.has(tileIndex(scene, p)));
       assert.ok(visited.has(tileIndex(scene, p.spawn)));
@@ -121,6 +123,12 @@ test("validation rejects duplicate IDs, broken references, wall spawns and remov
     (w: typeof world) => {
       w.scenes[0].player.width = 16;
     },
+    (w: typeof world) => {
+      const s = w.scenes.find((s) => s.floor.name === "F8")!;
+      for (const other of w.scenes)
+        other.portals = other.portals.filter((p) => p.targetScene !== s.id);
+      s.portals = [];
+    },
   ];
   for (const mutate of cases) {
     const copy = structuredClone(world);
@@ -135,6 +143,12 @@ test("all Tiled maps expose required layers, numeric unique object IDs and match
     assert.equal(tiled.infinite, false);
     for (const layer of [
       "ground",
+      "floor",
+      "terrain",
+      "rooms",
+      "passages",
+      "fixtures",
+      "walls",
       "decoration",
       "collision",
       "foreground",

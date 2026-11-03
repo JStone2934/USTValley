@@ -691,3 +691,92 @@ dialog::backdrop {
     bottom: 15px;
   }
 }
+
+.floor-plans {
+  margin-top: 20px;
+  border-top: 1px solid #caceb9;
+  padding-top: 16px;
+}
+.floor-plans label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+.floor-plans select {
+  max-width: 100%;
+  padding: 8px;
+  color: #365545;
+  background: #f5eedb;
+  border: 1px solid #9bac97;
+  border-radius: 6px;
+}
+.floor-plans svg {
+  display: block;
+  width: 100%;
+  max-height: 340px;
+  margin-top: 12px;
+  background: #596a5b;
+}
+.passage-options {
+  position: absolute;
+  bottom: 64px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  width: min(70%, 480px);
+  max-height: 120px;
+  overflow-y: auto;
+  z-index: 3;
+}
+.passage-options button {
+  min-height: 44px;
+  border: 1px solid #6f917d;
+  border-radius: 6px;
+  background: #f5eedbf2;
+  color: #365545;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+@media (pointer: coarse) {
+  .passage-options {
+    bottom: 130px;
+    width: min(60%, 480px);
+  }
+}
+
+.layer-switches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 12px 0;
+}
+.layer-switches label {
+  gap: 4px;
+  font-size: 12px;
+}
+.layer-switches input {
+  accent-color: #456b55;
+}
+
+.current-floor-plan {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+.current-floor-plan svg {
+  max-height: 62vh;
+}
+.floor-plan-heading strong {
+  color: #315e3e;
+}
+.floor-plan-heading p {
+  font-size: 12px;
+  color: #6a7b66;
+  line-height: 1.6;
+}

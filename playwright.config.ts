@@ -13,7 +13,7 @@ export default defineConfig({
     command: "npm run dev -- --port 4317",
     url: "http://127.0.0.1:4317",
     reuseExistingServer: false,
-    timeout: 30_000,
+    timeout: 120_000,
   },
   projects: [
     {

@@ -183,12 +183,12 @@ test("reconstruction uses real floor wings and source entrances with measured bo
   );
   const east = new Set(
     world.scenes
-      .filter((s) => /^interior_e/.test(s.id))
+      .filter((s) => /^interior_e/.test(s.id) && s.floor.key === "0")
       .map((s) => s.art.ground),
   );
   assert.equal(east.size, 2);
   for (const s of world.scenes.slice(1))
-    assert.ok(s.width <= 64 && s.height <= 64);
+    assert.ok(s.width <= 128 && s.height <= 128);
 });
 
 test("source line walls become thin collision strips without filling their courtyards", () => {

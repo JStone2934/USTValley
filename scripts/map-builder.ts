@@ -5,13 +5,13 @@ import {
   contains,
   project,
   reachable,
+  reachableWorld,
   tileIndex,
   type Point,
   type SceneMap,
   type WorldMap,
   type Building,
   type BuildingId,
-  type Surface,
 } from "../src/shared/world.ts";
 import {
   bounds,
@@ -22,18 +22,25 @@ import {
   layers,
   polygons,
   distanceSegment,
-  bufferLine,
+  walkPassages,
   type Feature,
   type Polygon,
   type Sources,
 } from "./source-geometry.ts";
 export type { Sources } from "./source-geometry.ts";
-import { metricScale, scenePlayer } from "../src/shared/scale.ts";
+import { scenePlayer } from "../src/shared/scale.ts";
+import {
+  emptyScene,
+  gridPoint,
+  stamp,
+  border,
+  surface,
+  floorFeatures,
+  sourceFloor,
+} from "./scene-layers.ts";
+export { emptyScene, gridPoint, sourceFloor } from "./scene-layers.ts";
+import { reconstructFloors } from "./floor-topology.ts";
 const size = config.collisionSize;
-export function gridPoint(scene: SceneMap, id: number): Point {
-  const w = (scene.width * 16) / size;
-  return { x: ((id % w) + 0.5) * size, y: (Math.floor(id / w) + 0.5) * size };
-}
 function median(values: number[]): number {
   const s = values.toSorted((a, b) => a - b),
     i = Math.floor(s.length / 2);
@@ -43,73 +50,6 @@ function median(values: number[]): number {
 function center(f: Feature): number[] {
   const p = coordinates(f.geometry.coordinates);
   return [0, 1].map((i) => p.reduce((n, v) => n + v[i], 0) / p.length);
-}
-export function emptyScene(
-  id: string,
-  name: string,
-  width: number,
-  height: number,
-  ground: string,
-): SceneMap {
-  const units = metricScale(
-    config.transform.origin[1],
-    id === "campus_core"
-      ? config.transform.pixelsPerProjectedUnit
-      : config.interiorScale,
-    config.roofHeightFactor,
-  );
-  return {
-    id,
-    name,
-    width,
-    height,
-    tileSize: 16,
-    collisionSize: size,
-    units,
-    player: scenePlayer(units, config.human),
-    ground: Array(width * height).fill(1),
-    collision: Array((((width * 16) / size) * height * 16) / size).fill(
-      id === "campus_core" ? 0 : 1,
-    ),
-    surfaces: [],
-    art: { ground, roofs: [] },
-    decoration: [],
-    foreground: [],
-    portals: [],
-    exploration: [],
-    note_zones: [],
-    chests: [],
-    spawns: [],
-    buildings: [],
-    sourceOutlines: [],
-    sourceRoads: [],
-    sourceEntries: [],
-  };
-}
-function stamp(scene: SceneMap, poly: Polygon, value: number) {
-  const b = bounds(poly.flat()),
-    w = (scene.width * 16) / size,
-    h = (scene.height * 16) / size;
-  for (
-    let y = Math.max(0, Math.floor(b.y / size));
-    y < Math.min(h, Math.ceil((b.y + b.height) / size));
-    y++
-  )
-    for (
-      let x = Math.max(0, Math.floor(b.x / size));
-      x < Math.min(w, Math.ceil((b.x + b.width) / size));
-      x++
-    )
-      if (inPolygon({ x: x * size + size / 2, y: y * size + size / 2 }, poly))
-        scene.collision[y * w + x] = value;
-}
-function border(scene: SceneMap) {
-  const w = (scene.width * 16) / size,
-    h = (scene.height * 16) / size;
-  for (let y = 0; y < h; y++)
-    for (let x = 0; x < w; x++)
-      if (x < 4 || y < 4 || x >= w - 4 || y >= h - 4)
-        scene.collision[y * w + x] = 1;
 }
 export function largestPublicSpace(scene: SceneMap): Set<number> {
   const count = scene.collision.length,
@@ -166,81 +106,6 @@ function nearest(
   if (!best) throw new Error(`No safe point in ${scene.id}`);
   return best;
 }
-function surface(
-  f: Feature,
-  kind: string,
-  color: string,
-  convert: (p: number[]) => Point,
-): Surface {
-  return {
-    sourceId: f.properties.id ?? -1,
-    kind,
-    color,
-    polygons: polygons(f, convert),
-  };
-}
-function floorFeatures(source: Sources[string]): Feature[] {
-  return layers(source)
-    .filter((l) => /^(floor|1_floor)/i.test(l.name))
-    .flatMap((l) => l.data?.features ?? []);
-}
-function blocks(name: string): boolean {
-  return /墙|实验室|办公室|房间|洗手间|电梯|其他/.test(name);
-}
-export function sourceFloor(
-  scene: SceneMap,
-  source: Sources[string],
-  convert: (p: number[]) => Point,
-  indoor: boolean,
-) {
-  for (const f of floorFeatures(source)) {
-    const s = surface(f, "floor", "#deddd0", convert);
-    scene.surfaces.push(s);
-    if (indoor) s.polygons.forEach((p) => stamp(scene, p, 0));
-  }
-  for (const layer of layers(source)) {
-    if (/^(floor|1_floor)|roof|focusPolygon/i.test(layer.name)) continue;
-    const color = /墙/.test(layer.name)
-      ? "#bdb8a9"
-      : /实验室/.test(layer.name)
-        ? "#cad8d8"
-        : /办公室|房间/.test(layer.name)
-          ? "#d9d0bb"
-          : /池塘/.test(layer.name)
-            ? "#83b8bc"
-            : /绿化/.test(layer.name)
-              ? "#95b18a"
-              : /楼梯|电梯/.test(layer.name)
-                ? "#acb7b0"
-                : "#d2c8b4";
-    for (const f of layer.data?.features ?? []) {
-      const s = surface(
-        f,
-        /墙/.test(layer.name)
-          ? "wall"
-          : blocks(layer.name)
-            ? "room"
-            : /池塘/.test(layer.name)
-              ? "water"
-              : "detail",
-        color,
-        convert,
-      );
-      if (s.kind === "wall" && f.geometry.type === "LineString") {
-        s.line = coordinates(f.geometry.coordinates).map(convert);
-        s.strokeWidth = config.lineWallWidth;
-        s.polygons = bufferLine(s.line, config.lineWallWidth);
-      }
-      if (
-        (indoor || blocks(layer.name) || /池塘/.test(layer.name)) &&
-        s.polygons.length
-      )
-        scene.surfaces.push(s);
-      if (blocks(layer.name) || /池塘/.test(layer.name))
-        s.polygons.forEach((p) => stamp(scene, p, 1));
-    }
-  }
-}
 export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
   const campus = sources.xgkdgz_all,
     groups = config.groups.map((g) => ({
@@ -273,6 +138,7 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
       height,
       "terrain-campus.png",
     );
+  outdoor.sourceOffset = offset;
   const intersects = (p: Polygon) => {
     const b = bounds(p.flat());
     return (
@@ -309,6 +175,7 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
           }[kind],
           convert,
         );
+      s.sourceLayer = layer.name;
       s.polygons = s.polygons.filter(intersects);
       if (s.polygons.length) {
         outdoor.surfaces.push(s);
@@ -334,17 +201,19 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
       }
     }
   }
-  for (const road of Object.values(campus.road.roads["0"])) {
-    if (road.geometry !== "line" || !road.mode.includes("walk")) continue;
-    const points = road.vertexes.map((id) => campus.road.points[String(id)]);
-    if (points.some((p) => !p)) throw new Error("Missing road vertex");
-    const line = points.map((p) => convert([p.x, p.y]));
-    if (
-      line.every(
-        (p) => p.x >= 0 && p.y >= 0 && p.x < width * 16 && p.y < height * 16,
-      )
-    )
-      outdoor.sourceRoads.push(line);
+  for (const p of walkPassages(campus, "0", convert)) {
+    const polygons = p.polygons.filter(intersects);
+    if (p.line) outdoor.sourceRoads.push(p.line);
+    if (polygons.length)
+      outdoor.surfaces.push({
+        sourceId: Number(p.id),
+        sourceLayer: "walk-passages",
+        sourceMap: "xgkdgz_all",
+        sourceFloor: "0",
+        kind: "corridor",
+        color: "#dad7c5",
+        polygons,
+      });
   }
   const interiorGroups = new Map<
     string,
@@ -352,7 +221,7 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
   >();
   for (const group of groups) {
     const source = sources[group.sourceMap];
-    sourceFloor(outdoor, source, convert, false);
+    sourceFloor(outdoor, source, convert, false, "0", group.sourceMap);
     const footprint = floorFeatures(source).flatMap((f) =>
       polygons(f, convert),
     );
@@ -397,6 +266,8 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
         Math.ceil((floorBox.height + 64) / 16),
         `floor-${group.key}-${index}.png`,
       );
+      scene.sourceMap = group.sourceMap;
+      scene.sourceOffset = { x: 32 - floorBox.x, y: 32 - floorBox.y };
       sourceFloor(scene, source, innerConvert, true);
       border(scene);
       const space = new Set(
@@ -553,6 +424,8 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
       ...entry,
       id: `enter_${id}`,
       buildingId: b.id,
+      kind: "entrance",
+      label: `进入 ${b.id} · F1`,
       targetScene: scene.id,
       targetPortal: `exit_${id}`,
       spawn: outerSpawn,
@@ -561,6 +434,8 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
       ...innerEntry,
       id: `exit_${id}`,
       buildingId: b.id,
+      kind: "entrance",
+      label: `返回校园 · ${b.id}`,
       targetScene: outdoor.id,
       targetPortal: `enter_${id}`,
       spawn: innerSpawn,
@@ -623,9 +498,11 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
       entry,
       entryDisplacement: displacement,
       innerEntryDisplacement: innerDisplacement,
-      footprint: "F1 source polygons, no replacement rectangle",
+      footprint:
+        "F1 source polygons; physical wings shared by their numbered buildings",
       review: "pending",
       reason: "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认",
+      templateKey: `${group.key}:${floorIndex}`,
       scene,
     };
   });
@@ -676,15 +553,34 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
       id: `chest_outdoor_${outdoor.chests.length + 1}`,
     });
   }
+  const topology = reconstructFloors(
+    sources,
+    outdoor,
+    evidence,
+    interiorGroups,
+  );
   const world: WorldMap = {
     mapVersion: config.mapVersion,
     protocolVersion: config.protocolVersion,
     human: config.human,
     chest: config.chest,
     status: "reconstructed",
-    scenes: [outdoor, ...evidence.map((e) => e.scene)],
+    scenes: [outdoor, ...topology.scenes],
     buildings: outdoor.buildings,
   };
+  for (const scene of world.scenes)
+    scene.art.layers = [
+      "base",
+      "floor",
+      "terrain",
+      "rooms",
+      "passages",
+      "fixtures",
+      "walls",
+    ].map((id) => ({
+      id,
+      image: `${scene.art.ground.replace(/\.png$/, "")}-${id}.png`,
+    }));
   validateWorld(world);
   const report = {
     mapVersion: world.mapVersion,
@@ -706,11 +602,16 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
       })),
     },
     buildings: evidence.map(({ scene, ...e }) => e),
+    connections: topology.connections,
     checks: {
-      scenes: 16,
-      pairedPortals: 15,
+      scenes: world.scenes.length,
+      sourceFloors: new Set(
+        world.scenes.map((s) => `${s.sourceMap}:${s.floor.key}`),
+      ).size,
+      pairedPortals: world.scenes.reduce((n, s) => n + s.portals.length, 0) / 2,
       chests: 12,
-      reachability: "passed",
+      reachability:
+        "passed (walking components and cross-floor graph from campus spawn)",
     },
     unresolved: [
       "入口与编号的自动关联仍需现场确认；最大安全吸附48像素，实际偏移逐个记录",
@@ -754,8 +655,8 @@ export function validateWorld(world: WorldMap): void {
     JSON.stringify(expected)
   )
     throw new Error("Missing core building");
-  if (world.scenes.length !== 16)
-    throw new Error("Expected campus and 15 interiors");
+  if (world.scenes.length < 16)
+    throw new Error("Missing reconstructed source floors");
   unique(
     world.scenes.flatMap((s) => s.portals.map((p) => p.id)),
     "portal",
@@ -766,6 +667,7 @@ export function validateWorld(world: WorldMap): void {
   );
   if (world.scenes.reduce((n, s) => n + s.chests.length, 0) !== 12)
     throw new Error("Expected 12 chests");
+  const globalSpace = reachableWorld(world);
   for (const scene of world.scenes) {
     const expectedPlayer = scenePlayer(scene.units, world.human);
     if (
@@ -777,7 +679,7 @@ export function validateWorld(world: WorldMap): void {
       )
     )
       throw new Error(`Invalid physical player scale: ${scene.id}`);
-    const budget = scene.id === "campus_core" ? 256 : 64;
+    const budget = scene.id === "campus_core" ? 256 : 128;
     if (
       !Number.isInteger(scene.width) ||
       !Number.isInteger(scene.height) ||
@@ -795,11 +697,16 @@ export function validateWorld(world: WorldMap): void {
     )
       throw new Error(`Invalid grids: ${scene.id}`);
     if (!scene.spawns.length) throw new Error(`Missing spawn: ${scene.id}`);
-    const visited = reachable(scene, scene.spawns[0], scene.player.radius),
+    const visited = new Set(
+        scene.spawns.flatMap((p) => [
+          ...reachable(scene, p, scene.player.radius),
+        ]),
+      ),
       check = (p: Point) => {
         if (
           !canStand(scene, p, scene.player.radius) ||
-          !visited.has(tileIndex(scene, p))
+          !visited.has(tileIndex(scene, p)) ||
+          !globalSpace.get(scene.id)?.has(tileIndex(scene, p))
         )
           throw new Error(`Unreachable point: ${scene.id} (${p.x},${p.y})`);
       };
@@ -864,7 +771,11 @@ export function tiledMap(scene: SceneMap, mapVersion: string) {
         })),
     }));
   const layers: any[] = [
-    { name: "ground", type: "imagelayer", image: scene.art.ground },
+    ...scene.art.layers.map((l) => ({
+      name: l.id === "base" ? "ground" : l.id,
+      type: "imagelayer",
+      image: l.image,
+    })),
     {
       name: "collision",
       type: "objectgroup",
@@ -899,6 +810,49 @@ export function tiledMap(scene: SceneMap, mapVersion: string) {
       offsetx: r.x,
       offsety: r.y,
     })),
+    ...[
+      ...new Set(
+        scene.surfaces.map(
+          (s) => `${s.sourceMap}:${s.sourceFloor}:${s.sourceLayer}`,
+        ),
+      ),
+    ].map((key) => ({
+      name: `source_${key}`,
+      type: "objectgroup",
+      visible: false,
+      objects: scene.surfaces
+        .filter(
+          (s) => `${s.sourceMap}:${s.sourceFloor}:${s.sourceLayer}` === key,
+        )
+        .flatMap<any>((s) =>
+          s.line
+            ? [
+                {
+                  id: nextObject++,
+                  name: String(s.sourceId),
+                  x: 0,
+                  y: 0,
+                  polyline: s.line,
+                  properties: [{ name: "kind", type: "string", value: s.kind }],
+                },
+              ]
+            : s.polygons.map((p) => ({
+                id: nextObject++,
+                name: String(s.sourceId),
+                x: 0,
+                y: 0,
+                polygon: p[0],
+                properties: [
+                  { name: "kind", type: "string", value: s.kind },
+                  {
+                    name: "holes",
+                    type: "string",
+                    value: JSON.stringify(p.slice(1)),
+                  },
+                ],
+              })),
+        ),
+    })),
     {
       name: "source_footprints",
       type: "objectgroup",
@@ -929,6 +883,10 @@ export function tiledMap(scene: SceneMap, mapVersion: string) {
     properties: [
       { name: "mapVersion", type: "string", value: mapVersion },
       { name: "sceneId", type: "string", value: scene.id },
+      { name: "sourceMap", type: "string", value: scene.sourceMap },
+      { name: "floor", type: "string", value: scene.floor.name },
+      { name: "artStyle", type: "string", value: scene.art.style },
+      { name: "elevation", type: "float", value: scene.floor.elevation },
       { name: "collisionResolution", type: "int", value: 4 },
       {
         name: "collisionSource",

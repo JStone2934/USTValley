@@ -11,6 +11,9 @@ export type Portal = Point & {
   targetPortal: string;
   spawn: Point;
   buildingId: BuildingId;
+  kind: "entrance" | "stairs" | "lift" | "escalator";
+  label: string;
+  sourceRoadId?: string;
 };
 export type Building = Rect & {
   id: BuildingId;
@@ -25,6 +28,9 @@ export type Surface = {
   color: string;
   polygons: Point[][][];
   sourceId: number;
+  sourceLayer: string;
+  sourceMap: string;
+  sourceFloor: string;
   line?: Point[];
   strokeWidth?: number;
 };
@@ -41,7 +47,15 @@ export type SceneMap = {
   units: MetricScale;
   player: ScenePlayer;
   surfaces: Surface[];
-  art: { ground: string; roofs: Roof[] };
+  sourceMap: string;
+  sourceOffset: Point;
+  floor: { key: string; name: string; elevation: number };
+  art: {
+    style: "pixel-3d";
+    ground: string;
+    layers: { id: string; image: string }[];
+    roofs: Roof[];
+  };
   decoration: Rect[];
   foreground: Rect[];
   portals: Portal[];
@@ -165,11 +179,11 @@ export function contains(rect: Rect, p: Point): boolean {
   );
 }
 
-export function nearbyPortal(
+export function nearbyPortals(
   scene: SceneMap,
   point: Point,
   radius = scene.player.interactionRadius,
-): Portal | undefined {
+): Portal[] {
   return scene.portals
     .filter(
       (p) =>
@@ -180,7 +194,14 @@ export function nearbyPortal(
       (a, b) =>
         Math.hypot(a.x - point.x, a.y - point.y) -
         Math.hypot(b.x - point.x, b.y - point.y),
-    )[0];
+    );
+}
+export function nearbyPortal(
+  scene: SceneMap,
+  point: Point,
+  radius = scene.player.interactionRadius,
+): Portal | undefined {
+  return nearbyPortals(scene, point, radius)[0];
 }
 
 export function hasLineOfSight(
@@ -242,6 +263,33 @@ export function reachable(
       visited.add(n);
       queue.push(n);
     }
+  }
+  return visited;
+}
+
+/** Follow physical walking components and reciprocal source connectors from the campus. */
+export function reachableWorld(world: WorldMap): Map<string, Set<number>> {
+  const visited = new Map(world.scenes.map((s) => [s.id, new Set<number>()]));
+  const byId = new Map(world.scenes.map((s) => [s.id, s]));
+  const campus = byId.get("campus_core")!;
+  const queue: { scene: SceneMap; start: Point }[] = [
+    { scene: campus, start: campus.spawns[0] },
+  ];
+  for (let head = 0; head < queue.length; head++) {
+    const { scene, start } = queue[head],
+      seen = visited.get(scene.id)!;
+    if (seen.has(tileIndex(scene, start))) continue;
+    const component = reachable(scene, start);
+    component.forEach((i) => seen.add(i));
+    for (const portal of scene.portals)
+      if (component.has(tileIndex(scene, portal))) {
+        const target = byId.get(portal.targetScene);
+        const reverse = target?.portals.find(
+          (p) => p.id === portal.targetPortal,
+        );
+        if (target && reverse)
+          queue.push({ scene: target, start: reverse.spawn });
+      }
   }
   return visited;
 }

@@ -204,7 +204,10 @@ export function accessor(glb: Glb, index: number): number[][] {
     }),
   );
 }
-type Texture = { data: Buffer; width: number; height: number };
+export type Texture = { data: Buffer; width: number; height: number };
+export type RasterMaterial = { factor: number[]; texture?: Texture };
+export const pixelGrade = (raw: number, channel: number) =>
+  Math.min(248, Math.round((raw * 0.9 + [14, 12, 7][channel]) / 8) * 8);
 export type Primitive = {
   node: string;
   vertices: Vec3[];
@@ -275,8 +278,38 @@ export async function renderModel(
   scale: number,
   rise = 0.55,
 ) {
-  const parts = primitives(glb, placement),
-    images = await textures(glb);
+  const images = await textures(glb);
+  return renderPrimitives(
+    primitives(glb, placement),
+    modelMaterials(glb, images),
+    project,
+    scale,
+    rise,
+  );
+}
+export function modelMaterials(glb: Glb, images: Texture[]): RasterMaterial[] {
+  return (glb.json.materials ?? []).map((material) => {
+    const pbr = material.pbrMetallicRoughness,
+      index = pbr?.baseColorTexture?.index;
+    return {
+      factor: pbr?.baseColorFactor ?? [1, 1, 1, 1],
+      texture:
+        index === undefined
+          ? undefined
+          : images[glb.json.textures![index].source],
+    };
+  });
+}
+
+/** Shared with outdoor GLBs: identical projection, lighting, nearest texture sampling and palette. */
+export async function renderPrimitives(
+  parts: Primitive[],
+  materials: RasterMaterial[],
+  project: (v: number[]) => { x: number; y: number },
+  scale: number,
+  rise = 0.55,
+  viewport?: { x: number; y: number; width: number; height: number },
+) {
   const projected = parts.map((p) =>
     p.vertices.map((v) => {
       const q = project(v);
@@ -288,22 +321,19 @@ export async function renderModel(
     }),
   );
   const all = projected.flat(),
-    x = Math.floor(Math.min(...all.map((p) => p.x))) - 2,
-    y = Math.floor(Math.min(...all.map((p) => p.y))) - 2;
-  const width = Math.ceil(Math.max(...all.map((p) => p.x))) - x + 3,
-    height = Math.ceil(Math.max(...all.map((p) => p.y))) - y + 3;
+    x = viewport?.x ?? Math.floor(Math.min(...all.map((p) => p.x))) - 2,
+    y = viewport?.y ?? Math.floor(Math.min(...all.map((p) => p.y))) - 2;
+  const width =
+      viewport?.width ?? Math.ceil(Math.max(...all.map((p) => p.x))) - x + 3,
+    height =
+      viewport?.height ?? Math.ceil(Math.max(...all.map((p) => p.y))) - y + 3;
   const rgba = Buffer.alloc(width * height * 4),
     depth = new Float32Array(width * height).fill(-Infinity);
   let triangleCount = 0;
   parts.forEach((part, pi) => {
-    const material = glb.json.materials?.[part.material],
-      pbr = material?.pbrMetallicRoughness;
-    const textureIndex = pbr?.baseColorTexture?.index,
-      texture =
-        textureIndex === undefined
-          ? undefined
-          : images[glb.json.textures![textureIndex].source];
-    const factor = pbr?.baseColorFactor ?? [1, 1, 1, 1];
+    const { factor, texture } = materials[part.material] ?? {
+      factor: [1, 1, 1, 1],
+    };
     for (let i = 0; i < part.indices.length; i += 3) {
       const ids = part.indices.slice(i, i + 3),
         [a, b, c] = ids.map((id) => projected[pi][id]);
@@ -370,10 +400,7 @@ export async function renderModel(
               factor[channel] *
               light;
             // Restrained warm grading, quantized to a small pixel palette.
-            rgba[index * 4 + channel] = Math.min(
-              248,
-              Math.round((raw * 0.9 + [14, 12, 7][channel]) / 8) * 8,
-            );
+            rgba[index * 4 + channel] = pixelGrade(raw, channel);
           }
           rgba[index * 4 + 3] = 255;
         }

@@ -18,7 +18,7 @@ const files = new Map<string, string | Uint8Array>([
   ["public/maps/world.json", json(world)],
   [
     "content/map-build-report.json",
-    `${JSON.stringify({ ...report, models: baked.models }, null, 2)}\n`,
+    `${JSON.stringify({ ...report, models: baked.models, interiors: baked.interiors }, null, 2)}\n`,
   ],
   ["public/maps/campus-reference.svg", referenceSvg(world)],
   ...world.scenes.map(
@@ -57,7 +57,7 @@ for (const name of await readdir(resolve(root, "public/maps")))
     await rm(resolve(root, "public/maps", name));
   }
 console.log(
-  `${isCheck ? "Verified" : "Rebuilt"} ${world.mapVersion}: 6 source-model building groups, 15 source-floor interiors, 4px collision, 12 reachable chests.`,
+  `${isCheck ? "Verified" : "Rebuilt"} ${world.mapVersion}: 6 source-model building groups, ${world.scenes.length - 1} shared floor scenes, ${report.checks.pairedPortals} paired passages, 4px collision, 12 reachable chests.`,
 );
 console.log(
   "Source entrances retained; per-building safe-point offsets are recorded in content/map-build-report.json.",

@@ -12,18 +12,30 @@ export type Layer = {
   data?: { features: Feature[] };
 };
 export type SourceMap = {
-  map: { mversion: number; mapdata: Record<string, Record<string, Layer>> };
+  map: {
+    mversion: number;
+    mapinfo: { regions: { region: number; name: string; z: number }[] };
+    mapdata: Record<string, Record<string, Layer>>;
+  };
   road: {
-    points: Record<string, Point>;
+    points: Record<string, Point & { region: number }>;
     roads: Record<
       string,
-      Record<string, { geometry: string; mode: string[]; vertexes: number[] }>
+      Record<
+        string,
+        {
+          geometry: string;
+          mode: string[];
+          vertexes: number[] | number[][];
+          type?: string;
+        }
+      >
     >;
   };
 };
 export type Sources = Record<string, SourceMap>;
 export const layers = (s: SourceMap, floor = "0") =>
-  Object.values(s.map.mapdata[floor]);
+  Object.values(s.map.mapdata[floor] ?? {});
 export const features = (s: SourceMap, floor = "0") =>
   layers(s, floor).flatMap((l) => l.data?.features ?? []);
 export function getFeature(s: SourceMap, id: number) {
@@ -117,6 +129,43 @@ export function bufferLine(line: Point[], width: number): Polygon[] {
           { x: a.x + nx, y: a.y + ny },
         ],
       ],
+    ];
+  });
+}
+
+/** Source road polygons are rings (outer boundary followed by holes), not separate filled areas. */
+export function walkPassages(
+  source: SourceMap,
+  floor: string,
+  convert: (p: number[]) => Point,
+) {
+  return Object.entries(source.road.roads[floor] ?? {}).flatMap<{
+    id: string;
+    polygons: Polygon[];
+    line?: Point[];
+  }>(([id, road]) => {
+    if (!road.mode.includes("walk")) return [];
+    const point = (id: number) => {
+      const p = source.road.points[id];
+      if (!p) throw new Error(`Missing road vertex ${id}`);
+      return convert([p.x, p.y]);
+    };
+    if (road.geometry === "line")
+      return [
+        {
+          id,
+          polygons: [] as Polygon[],
+          line: (road.vertexes as number[]).map(point),
+        },
+      ];
+    const rings =
+      road.geometry === "polygon"
+        ? [road.vertexes as number[]]
+        : (road.vertexes as number[][]);
+    if (!["polygon", "multi-polygon"].includes(road.geometry))
+      throw new Error(`Unsupported road geometry ${road.geometry}`);
+    return [
+      { id, polygons: [rings.map((r) => r.map(point))], line: undefined },
     ];
   });
 }

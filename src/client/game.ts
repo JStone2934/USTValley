@@ -1,8 +1,10 @@
 import Phaser from "phaser";
+import { passageLabel, passageMarkers } from "../shared/passages";
 import {
   contains,
   move,
   nearbyPortal,
+  nearbyPortals,
   type Point,
   type SceneMap,
   type WorldMap,
@@ -16,8 +18,11 @@ export type Snapshot = {
   position: Point;
   discovered: string[];
   target?: string;
+  passages?: { id: string; label: string }[];
   zoom: number;
   avatarSize?: { width: number; height: number };
+  floorImages?: string[];
+  stairMarkers?: number;
 };
 export class GameBridge extends EventTarget {
   direction: Point = { x: 0, y: 0 };
@@ -44,8 +49,8 @@ export class GameBridge extends EventTarget {
     this.snapshot = snapshot;
     this.dispatchEvent(new Event("change"));
   }
-  interact() {
-    if (!this.paused) this.scene?.interact();
+  interact(portalId?: string) {
+    if (!this.paused) this.scene?.interact(portalId);
   }
   reset() {
     this.clear();
@@ -67,6 +72,8 @@ export class CampusScene extends Phaser.Scene {
   private discovered = new Set<string>();
   private position: Point = { x: 0, y: 0 };
   private lastEmit = 0;
+  private loading = false;
+  private pendingReset = false;
   private direction = "down";
   private scaleFactor: number = CAMERA_ZOOM.initial;
   constructor(
@@ -79,20 +86,22 @@ export class CampusScene extends Phaser.Scene {
     this.load.on(Phaser.Loader.Events.FILE_LOAD_ERROR, () =>
       this.bridge.dispatchEvent(new Event("loaderror")),
     );
-    const assets = new Set(
-      this.world.scenes.flatMap((s) => [
-        s.art.ground,
-        ...s.art.roofs.map((r) => r.image),
-      ]),
-    );
-    for (const asset of assets) this.load.image(asset, `/maps/${asset}`);
+    for (const asset of this.assets(this.world.scenes[0]))
+      this.load.image(asset, `/maps/${asset}`);
+  }
+  private assets(scene: SceneMap) {
+    // Static source layers are baked into one ground texture; roofs remain dynamic.
+    return [
+      scene.art.ground,
+      ...(scene.id === "campus_core"
+        ? scene.art.roofs.map((r) => r.image)
+        : []),
+    ];
   }
   create() {
     if (
-      !this.world.scenes.every(
-        (s) =>
-          this.textures.exists(s.art.ground) &&
-          s.art.roofs.every((r) => this.textures.exists(r.image)),
+      !this.assets(this.world.scenes[0]).every((asset) =>
+        this.textures.exists(asset),
       )
     )
       return;
@@ -102,6 +111,11 @@ export class CampusScene extends Phaser.Scene {
     this.restartWalk();
   }
   restartWalk() {
+    if (this.loading) {
+      this.pendingReset = true;
+      this.bridge.clear();
+      return;
+    }
     this.discovered.clear();
     const scene = this.world.scenes.find((s) => s.id === "campus_core")!;
     this.enterScene(scene.id, scene.spawns[0]);
@@ -130,19 +144,54 @@ export class CampusScene extends Phaser.Scene {
       }
   }
   private enterScene(id: string, point: Point) {
+    const next = this.world.scenes.find((s) => s.id === id)!;
+    const missing = this.assets(next).filter(
+      (asset) => !this.textures.exists(asset),
+    );
+    if (missing.length) {
+      if (this.loading) return;
+      this.loading = true;
+      this.bridge.clear();
+      this.publish();
+      this.load.once(Phaser.Loader.Events.COMPLETE, () => {
+        this.loading = false;
+        if (this.pendingReset) {
+          this.pendingReset = false;
+          for (const asset of missing) this.textures.remove(asset);
+          this.restartWalk();
+          return;
+        }
+        if (this.assets(next).every((asset) => this.textures.exists(asset)))
+          this.enterScene(id, point);
+      });
+      for (const asset of missing) this.load.image(asset, `/maps/${asset}`);
+      this.load.start();
+      return;
+    }
     this.bridge.clear();
     this.children.removeAll(true);
-    this.current = this.world.scenes.find((s) => s.id === id)!;
+    if (this.current && this.current !== next) {
+      const keep = new Set(this.assets(next));
+      for (const asset of this.assets(this.current))
+        if (!keep.has(asset)) this.textures.remove(asset);
+    }
+    this.current = next;
     this.position = { ...point };
     const s = this.current;
-    this.add.image(0, 0, s.art.ground).setOrigin(0).setDepth(-100);
-    this.roofSprites = s.art.roofs.map((roof) => ({
-      roof,
-      sprite: this.add
-        .image(roof.x, roof.y, roof.image)
-        .setOrigin(0)
-        .setDepth(5000),
-    }));
+    this.add
+      .image(0, 0, s.art.ground)
+      .setOrigin(0)
+      .setDepth(-100)
+      .setName("floor-plan");
+    this.roofSprites = (s.id === "campus_core" ? s.art.roofs : []).map(
+      (roof) => ({
+        roof,
+        sprite: this.add
+          .image(roof.x, roof.y, roof.image)
+          .setOrigin(0)
+          .setDepth(8000),
+      }),
+    );
     const g = this.add.graphics().setDepth(5500);
     for (const b of s.buildings) {
       this.add
@@ -163,7 +212,7 @@ export class CampusScene extends Phaser.Scene {
           z.x + z.width / 2,
           z.y + z.height / 2,
           `${z.buildingId}\n探索区`,
-          { fontSize: "10px", color: "#294b3c", align: "center" },
+          { fontSize: "4px", color: "#294b3c", align: "center" },
         )
         .setOrigin(0.5)
         .setDepth(-40);
@@ -187,16 +236,63 @@ export class CampusScene extends Phaser.Scene {
       chest.fillStyle(0xc9974d).fillRect(-6, -9, 12, 4);
       chest.fillStyle(0xf4d677).fillRect(-1, -5, 3, 4);
     }
-    for (const p of s.portals) {
-      g.fillStyle(0xf0d893, 0.8).fillRect(p.x - 6, p.y - 3, 12, 6);
-      if (id !== "campus_core")
+    for (const p of s.portals.filter((p) => p.kind === "entrance")) {
+      g.fillStyle(
+        p.kind === "entrance"
+          ? 0xf0d893
+          : p.kind === "lift"
+            ? 0x86b6d3
+            : 0xa5c9af,
+        0.9,
+      ).fillRect(p.x - 4, p.y - 2, 8, 4);
+      if (id !== "campus_core" && p.kind === "entrance")
         this.add
-          .text(p.x, p.y - 12, "↓ 返回校园", {
-            fontSize: "10px",
+          .text(p.x, p.y - 12, `↓ ${p.label}`, {
+            fontSize: "4px",
             color: "#365545",
           })
           .setOrigin(0.5)
           .setDepth(-40);
+    }
+    for (const marker of passageMarkers(this.world, s)) {
+      const lift = marker.kind === "lift";
+      const icon = this.add
+        .graphics({ x: marker.x, y: marker.y })
+        .setDepth(5600)
+        .setName(lift ? "lift-marker" : "stair-marker");
+      icon
+        .fillStyle(lift ? 0xe2edf4 : 0xe4efdc, 0.98)
+        .fillRoundedRect(-5, -5, 10, 10, 1);
+      icon
+        .lineStyle(0.7, lift ? 0x397e9f : 0x3e7350)
+        .strokeRoundedRect(-5, -5, 10, 10, 1);
+      if (lift) {
+        icon.strokeRect(-2.5, -3, 5, 6);
+        icon.lineBetween(0, -3, 0, 3);
+      } else {
+        icon
+          .beginPath()
+          .moveTo(-3.5, 3)
+          .lineTo(-1.5, 3)
+          .lineTo(-1.5, 1)
+          .lineTo(0.5, 1)
+          .lineTo(0.5, -1)
+          .lineTo(2.5, -1)
+          .lineTo(2.5, -3)
+          .lineTo(4, -3)
+          .strokePath();
+      }
+      icon.setData("portalIds", marker.portalIds);
+      this.add
+        .text(marker.x, marker.y + 7, marker.label, {
+          fontFamily: "sans-serif",
+          fontSize: "3px",
+          color: lift ? "#28627c" : "#315e3e",
+          backgroundColor: "#f2f3e4",
+          padding: { x: 1, y: 1 },
+        })
+        .setOrigin(0.5, 0)
+        .setDepth(5600);
     }
     this.referenceLayer = this.add.graphics().setDepth(11000);
     this.drawReferences();
@@ -232,12 +328,10 @@ export class CampusScene extends Phaser.Scene {
     this.cameras.main.setZoom(this.scaleFactor);
     this.publish();
   }
-  interact() {
-    const p = nearbyPortal(
-      this.current,
-      this.position,
-      this.current.player.interactionRadius,
-    );
+  interact(portalId?: string) {
+    if (this.loading) return;
+    const nearby = nearbyPortals(this.current, this.position);
+    const p = portalId ? nearby.find((p) => p.id === portalId) : nearby[0];
     if (!p) return;
     const target = this.world.scenes.find((s) => s.id === p.targetScene)!;
     const reverse = target.portals.find((q) => q.id === p.targetPortal)!;
@@ -254,11 +348,22 @@ export class CampusScene extends Phaser.Scene {
       sceneId: this.current.id,
       position: { ...this.position },
       discovered: [...this.discovered],
-      target: portal
-        ? this.current.id === "campus_core"
-          ? `进入 ${portal.buildingId}`
-          : "返回校园"
-        : undefined,
+      target:
+        this.loading || !portal
+          ? undefined
+          : passageLabel(this.world, this.current, portal),
+      passages: this.loading
+        ? []
+        : nearbyPortals(this.current, this.position).map((p) => ({
+            id: p.id,
+            label: passageLabel(this.world, this.current, p),
+          })),
+      floorImages: this.children.list
+        .filter((object) => object.name === "floor-plan")
+        .map((object) => (object as Phaser.GameObjects.Image).texture.key),
+      stairMarkers: this.children.list.filter(
+        (object) => object.name === "stair-marker",
+      ).length,
       zoom: this.cameras.main.zoom,
       avatarSize: {
         width: this.player.displayWidth,
@@ -269,18 +374,19 @@ export class CampusScene extends Phaser.Scene {
   update(time: number, delta: number) {
     if (!this.player) return;
     const k = this.bridge.keys;
-    const input = this.bridge.paused
-      ? { x: 0, y: 0 }
-      : {
-          x:
-            this.bridge.direction.x +
-            Number(k.has("d") || k.has("ArrowRight")) -
-            Number(k.has("a") || k.has("ArrowLeft")),
-          y:
-            this.bridge.direction.y +
-            Number(k.has("s") || k.has("ArrowDown")) -
-            Number(k.has("w") || k.has("ArrowUp")),
-        };
+    const input =
+      this.bridge.paused || this.loading
+        ? { x: 0, y: 0 }
+        : {
+            x:
+              this.bridge.direction.x +
+              Number(k.has("d") || k.has("ArrowRight")) -
+              Number(k.has("a") || k.has("ArrowLeft")),
+            y:
+              this.bridge.direction.y +
+              Number(k.has("s") || k.has("ArrowDown")) -
+              Number(k.has("w") || k.has("ArrowUp")),
+          };
     const before = this.position;
     const running =
       !this.bridge.paused &&

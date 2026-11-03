@@ -79,6 +79,171 @@ test("C2 exploration on the real F1 plan, paired return, dialog pause and blur",
   await page.screenshot({ path: "test-results/campus-desktop.png" });
   expect(errors).toEqual([]);
 });
+test("C2 source escalator reaches F2 and the reciprocal passage returns to F1", async ({
+  page,
+}) => {
+  test.setTimeout(180_000);
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.clock.install();
+  await page.goto("/");
+  await expect.poll(() => position(page, "x")).toBeGreaterThan(0);
+  await page.clock.pauseAt(new Date(Date.now() + 1000));
+  const world = JSON.parse(
+    readFileSync(
+      new URL("../../public/maps/world.json", import.meta.url),
+      "utf8",
+    ),
+  ) as WorldMap;
+  const outside = world.scenes[0];
+  await driveTo(
+    page,
+    outside,
+    outside.portals.find((p) => p.buildingId === "C2")!,
+  );
+  await page.keyboard.press("e");
+  await page.clock.runFor(150);
+  const f1 = world.scenes.find((s) => s.id === "interior_c2")!;
+  const up = f1.portals.find((p) => p.kind === "escalator")!;
+  await driveTo(page, f1, up);
+  await page.locator(`[data-portal="${up.id}"]`).click();
+  await page.clock.runFor(150);
+  await expect(page.locator("main")).toHaveAttribute(
+    "data-scene",
+    up.targetScene,
+  );
+  await expect(page.locator(".topbar strong")).toContainText("F2");
+  await page.screenshot({ path: "test-results/reconstructed-c2-f2.png" });
+  const f2 = world.scenes.find((s) => s.id === up.targetScene)!;
+  await assertAvatarScale(page, f2);
+  await page.locator(`[data-portal="${up.targetPortal}"]`).click();
+  await page.clock.runFor(150);
+  await expect(page.locator("main")).toHaveAttribute(
+    "data-scene",
+    "interior_c2",
+  );
+  await page.keyboard.press("m");
+  await expect(
+    page.getByRole("heading", { name: "当前楼层地图 · F1" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("img", { name: `${f1.name}通道平面`, exact: true }),
+  ).toBeVisible();
+  await expect(page.getByLabel("查看楼层平面")).toHaveCount(0);
+  await expect(
+    page.getByRole("img", { name: "源模型重建的核心校园总览" }),
+  ).toHaveCount(0);
+  await page.getByRole("button", { name: "关闭面板" }).click();
+  await page.getByRole("button", { name: "回到广场 ↺" }).click();
+  await expect(page.locator("main")).toHaveAttribute(
+    "data-scene",
+    "campus_core",
+  );
+  await page.keyboard.press("m");
+  await page.getByRole("button", { name: "查看 C1", exact: true }).click();
+  await page
+    .getByLabel("查看楼层平面")
+    .selectOption("interior_administration_f8");
+  await expect(
+    page.getByRole("img", { name: "行政办公楼 · F8通道平面", exact: true }),
+  ).toBeVisible();
+  const plan = page.getByRole("img", {
+    name: "行政办公楼 · F8通道平面",
+    exact: true,
+  });
+  await page.getByLabel("墙体", { exact: true }).uncheck();
+  await expect(plan.locator('image[href$="-walls.png"]')).toHaveCount(0);
+  await page.getByLabel("墙体", { exact: true }).check();
+  await expect(plan.locator('image[href$="-walls.png"]')).toHaveCount(1);
+  await page.screenshot({
+    path: "test-results/reconstructed-floor-overview.png",
+  });
+  expect(errors).toEqual([]);
+});
+test("visible stairs walk up and down while gameplay and maps show only the occupied floor", async ({
+  page,
+}) => {
+  test.setTimeout(180_000);
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.clock.install();
+  await page.goto("/");
+  await expect.poll(() => position(page, "x")).toBeGreaterThan(0);
+  await page.clock.pauseAt(new Date(Date.now() + 1000));
+  const world = JSON.parse(
+    readFileSync(
+      new URL("../../public/maps/world.json", import.meta.url),
+      "utf8",
+    ),
+  ) as WorldMap;
+  const outside = world.scenes[0];
+  await driveTo(
+    page,
+    outside,
+    outside.portals.find((p) => p.buildingId === "C2")!,
+  );
+  await page.keyboard.press("e");
+  await expect(page.locator("main")).toHaveAttribute(
+    "data-scene",
+    "interior_c2",
+  );
+  const f1 = world.scenes.find((s) => s.id === "interior_c2")!;
+  const stairs = f1.portals.find((p) => p.kind === "stairs")!;
+  await expect
+    .poll(() =>
+      page.locator("main").getAttribute("data-stair-markers").then(Number),
+    )
+    .toBeGreaterThan(0);
+  await driveTo(page, f1, stairs);
+  await expect(page.locator(`[data-portal="${stairs.id}"]`)).toHaveText(
+    "楼梯 ↑ 上楼至 F2",
+  );
+  await page.screenshot({ path: "test-results/stairs-up-f1.png" });
+  await page.keyboard.press("e");
+  const f2 = world.scenes.find((s) => s.id === stairs.targetScene)!;
+  await expect(page.locator("main")).toHaveAttribute("data-scene", f2.id);
+  await expect(page.locator("main")).toHaveAttribute("data-floor", "F2");
+  await expect(page.locator("main")).toHaveAttribute(
+    "data-floor-images",
+    JSON.stringify([f2.art.ground]),
+  );
+  await page.keyboard.press("m");
+  const dialog = page.getByRole("dialog");
+  await expect(
+    dialog.getByRole("heading", { name: "当前楼层地图 · F2" }),
+  ).toBeVisible();
+  const plan = dialog.getByRole("img", {
+    name: `${f2.name}通道平面`,
+    exact: true,
+  });
+  await expect(plan).toBeVisible();
+  await expect(dialog.getByRole("img")).toHaveCount(1);
+  await expect(dialog.getByLabel("查看楼层平面")).toHaveCount(0);
+  await expect(plan.locator("image")).toHaveCount(f2.art.layers.length);
+  const images = await plan
+    .locator("image")
+    .evaluateAll((items) => items.map((image) => image.getAttribute("href")));
+  expect(images).toEqual(f2.art.layers.map((l) => `/maps/${l.image}`));
+  await expect(plan.locator('[data-passage-kind="stairs"]')).not.toHaveCount(0);
+  await page.screenshot({ path: "test-results/current-floor-f2.png" });
+  await page.getByRole("button", { name: "关闭面板" }).click();
+  const down = page.locator(`[data-portal="${stairs.targetPortal}"]`);
+  await expect(down).toHaveText("楼梯 ↓ 下楼至 F1");
+  await down.click();
+  await expect(page.locator("main")).toHaveAttribute("data-scene", f1.id);
+  await expect(page.locator("main")).toHaveAttribute(
+    "data-floor-images",
+    JSON.stringify([f1.art.ground]),
+  );
+  await page.keyboard.press("m");
+  await expect(
+    page.getByRole("heading", { name: "当前楼层地图 · F1" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("img", { name: `${f2.name}通道平面`, exact: true }),
+  ).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
 test("overview shows hall evidence and raw source data cannot be served", async ({
   page,
   request,

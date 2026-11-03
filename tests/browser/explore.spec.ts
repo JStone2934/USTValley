@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import sharp from "sharp";
 import { canStand, type SceneMap, type WorldMap } from "../../src/shared/world";
 
-import { driveTo, position } from "./walking";
+import { driveTo, position, walkThroughEntrance } from "./walking";
 
 async function walk(page: Page, key: string, ms: number) {
   await page.keyboard.down(key);
@@ -30,8 +30,7 @@ test("C2 exploration on the real F1 plan, paired return, dialog pause and blur",
     c2 = outside.portals.find((p) => p.buildingId === "C2")!;
   await assertAvatarScale(page, outside);
   await page.screenshot({ path: "test-results/human-scale-outdoor.png" });
-  await driveTo(page, outside, c2);
-  await page.keyboard.press("e");
+  await walkThroughEntrance(page, outside, c2);
   await page.clock.runFor(150);
   await expect(page.locator("main")).toHaveAttribute(
     "data-scene",
@@ -64,8 +63,7 @@ test("C2 exploration on the real F1 plan, paired return, dialog pause and blur",
   await page.clock.runFor(400);
   expect(await position(page, "y")).toBe(stopped);
   await page.keyboard.up("s");
-  await driveTo(page, inside, inside.portals[0]);
-  await page.keyboard.press("e");
+  await walkThroughEntrance(page, inside, inside.portals[0]);
   await page.clock.runFor(150);
   await expect(page.locator("main")).toHaveAttribute(
     "data-scene",
@@ -91,12 +89,11 @@ test("C2 source escalator reaches F2 and the reciprocal passage returns to F1", 
     ),
   ) as WorldMap;
   const outside = world.scenes[0];
-  await driveTo(
+  await walkThroughEntrance(
     page,
     outside,
     outside.portals.find((p) => p.buildingId === "C2")!,
   );
-  await page.keyboard.press("e");
   await page.clock.runFor(150);
   const f1 = world.scenes.find((s) => s.id === "interior_c2")!;
   const up = f1.portals.find((p) => p.kind === "escalator")!;
@@ -172,12 +169,11 @@ test("visible stairs walk up and down while gameplay and maps show only the occu
     ),
   ) as WorldMap;
   const outside = world.scenes[0];
-  await driveTo(
+  await walkThroughEntrance(
     page,
     outside,
     outside.portals.find((p) => p.buildingId === "C2")!,
   );
-  await page.keyboard.press("e");
   await expect(page.locator("main")).toHaveAttribute(
     "data-scene",
     "interior_c2",
@@ -535,8 +531,7 @@ test("manual framing follows the player indoors up to the native pixel detail li
   await plus.click();
   await page.clock.runFor(160);
   await assertFraming(page, 0.0875 * 1.25);
-  await driveTo(page, campus, c2);
-  await page.keyboard.press("e");
+  await walkThroughEntrance(page, campus, c2);
   await expect(page.locator("main")).toHaveAttribute(
     "data-scene",
     c2.targetScene,

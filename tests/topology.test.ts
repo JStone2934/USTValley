@@ -94,7 +94,10 @@ test("building numbers in the same physical F1 wing share entrances and circulat
   assert.notEqual(target("E1"), target("E3"));
   const academic = world.scenes.find((s) => s.id === target("C3"))!;
   assert.equal(academic.exploration.length, 4);
-  assert.equal(academic.portals.filter((p) => p.kind === "entrance").length, 4);
+  assert.equal(
+    academic.portals.filter((p) => p.kind === "entrance").length,
+    13,
+  );
 });
 
 test("polygon and multi-polygon navigation preserve courtyard holes and reject missing vertices", () => {

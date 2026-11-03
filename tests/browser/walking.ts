@@ -106,3 +106,44 @@ export async function driveTo(
     JSON.stringify({ actual, target }),
   ).toBeLessThan(6);
 }
+
+// Walk through the door deliberately, perpendicular enough to cross its trigger.
+// Using real keyboard input also catches accidental transfers while walking along a facade.
+export async function walkThroughEntrance(
+  page: Page,
+  scene: SceneMap,
+  portal: import("../../src/shared/world").Portal,
+) {
+  const n = portal.entrance!.toward,
+    step = scene.collisionSize;
+  const directions = [
+    { x: 1, y: 0, key: "d" },
+    { x: -1, y: 0, key: "a" },
+    { x: 0, y: 1, key: "s" },
+    { x: 0, y: -1, key: "w" },
+  ].sort((a, b) => (b.x - a.x) * n.x + (b.y - a.y) * n.y);
+  const direction = directions.find(
+    (d) =>
+      d.x * n.x + d.y * n.y > 0.45 &&
+      [1, 2, 3, 4].every((k) =>
+        canStand(scene, {
+          x: portal.x - (d.x * k * step) / 2,
+          y: portal.y - (d.y * k * step) / 2,
+        }),
+      ),
+  );
+  expect(direction, "reachable side of " + portal.id).toBeDefined();
+  const d = direction!;
+  await driveTo(page, scene, {
+    x: portal.x - d.x * step * 2,
+    y: portal.y - d.y * step * 2,
+  });
+  await page.keyboard.down(d.key);
+  await page.clock.runFor((1000 * (step * 2 + 2)) / scene.player.speed);
+  await page.keyboard.up(d.key);
+  await page.clock.runFor(150);
+  await expect(page.locator("main")).toHaveAttribute(
+    "data-scene",
+    portal.targetScene,
+  );
+}

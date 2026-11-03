@@ -7,7 +7,7 @@
       "author": "Original campus map model/material authors; transformed by USTValley build scripts",
       "source": "6 core building GLBs referenced by data/maps/all-maps.json; full source checksums and transforms in content/map-build-report.json",
       "license": "Source-derived local development assets; original reuse permission is not established. These are not independently authored final pixel art.",
-      "version": "core-pixel-3d-0.5.1"
+      "version": "core-pixel-3d-0.5.2"
     },
     {
       "id": "campus-terrain-and-floor-plans",
@@ -15,7 +15,7 @@
       "author": "Original campus map data provider; reconstructed and styled by USTValley",
       "source": "All 31 core source floor planes, extruded walls and treads, 869 placed indoor GLB instances and embedded materials, procedural stone/wood/concrete surfaces, navigation polygons with holes and source cross-floor links; no beacon/location data",
       "license": "Source-derived local development reference; confirm source permissions before public distribution",
-      "version": "source mversion 271141 / core-pixel-3d-0.5.1"
+      "version": "source mversion 271141 / core-pixel-3d-0.5.2"
     },
     {
       "id": "avatar",
@@ -27,11 +27,11 @@
     },
     {
       "id": "campus-and-room-pixel-materials",
-      "path": "scripts/campus-art.ts, scripts/hub-bridge-finish.ts, scripts/campus-landmarks.ts, scripts/interior-materials.ts, scripts/room-fittings.ts, scripts/indoor-art.ts",
+      "path": "scripts/campus-art.ts, scripts/hub-bridge-finish.ts, scripts/campus-landmarks.ts, scripts/interior-materials.ts, scripts/room-fittings.ts, scripts/indoor-art.ts, scripts/doorway-art.ts, src/client/room-door-art.ts, src/client/entrance-art.ts",
       "author": "USTValley project contributors",
       "source": "Original pixel patterns and casework meshes. Mapped room use and source walls guide the finishes and inferred fittings. Built-campus photos guide material and fixture descriptions (docs/campus-photo-references.md). Original photographed pixels are not embedded. Existing geometry and original placed GLB furniture are attributed separately.",
       "license": "Project-authored finishes. Source map and GLB terms apply to the composite renders.",
-      "version": "0.5.1"
+      "version": "0.5.2"
     }
   ]
 }

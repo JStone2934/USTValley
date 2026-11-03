@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import type { WorldMap } from "../../src/shared/world";
-import { driveTo, position } from "./walking";
+import { driveTo, position, walkThroughEntrance } from "./walking";
 
 test("C7 F2 bookshelf stops the avatar; the adjoining aisle remains walkable", async ({
   page,
@@ -19,8 +19,7 @@ test("C7 F2 bookshelf stops the avatar; the adjoining aisle remains walkable", a
   ) as WorldMap;
   const campus = world.scenes[0],
     entry = campus.portals.find((p) => p.buildingId === "C7")!;
-  await driveTo(page, campus, entry);
-  await page.locator(`[data-portal="${entry.id}"]`).click();
+  await walkThroughEntrance(page, campus, entry);
   const f1 = world.scenes.find((s) => s.id === "interior_c7")!;
   await expect(page.locator("main")).toHaveAttribute("data-scene", f1.id);
   const up = f1.portals.find(

@@ -1,3 +1,9 @@
+import {
+  fixedGlazing,
+  inferredDoorReturns,
+  roomOpeningArt,
+  entranceOpeningArt,
+} from "./doorway-art.ts";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import { createHash } from "node:crypto";
@@ -444,6 +450,52 @@ export function createIndoorBaker(root: string, sources: Sources) {
         (id) => [id, []],
       ),
     );
+    const entries = scene.portals.flatMap((p) =>
+      p.kind === "entrance" && p.entrance ? [p.entrance] : [],
+    );
+    const glassBays = entries.flatMap((e) => (e.glazing ? [e.glazing] : []));
+    // The same jambs drive door animation, collision, the main texture,
+    // separate layer images, the map panel and pixel-height occlusion.
+    for (const door of scene.doors ?? []) {
+      const art = roomOpeningArt(
+        door,
+        scene.units.pixelsPerMeter,
+        material,
+        polygonMesh,
+      );
+      groups.get("rooms")!.push(...art.floor);
+      groups.get("walls")!.push(...art.walls);
+    }
+    const returns = inferredDoorReturns(scene);
+    for (const piece of returns) {
+      const target = groups.get("walls")!;
+      target.push(
+        ...polygonMesh(
+          piece,
+          1.1 * scale,
+          0,
+          material.wallCap,
+          material.masonry,
+        ),
+      );
+      const dado = polygonMesh(
+        piece,
+        0.52 * scale,
+        0.12 * scale,
+        material.dado,
+      )[1];
+      if (dado) target.push(dado);
+    }
+    for (const e of entries) {
+      const art = entranceOpeningArt(
+        e,
+        scene.units.pixelsPerMeter,
+        material,
+        polygonMesh,
+      );
+      groups.get("passages")!.push(...art.floor);
+      groups.get("walls")!.push(...art.walls);
+    }
     const sourceLayers = layers(sources[scene.sourceMap], scene.floor.key);
     const featureInfo = new Map(
       sourceLayers.flatMap((layer) =>
@@ -610,7 +662,9 @@ export function createIndoorBaker(root: string, sources: Sources) {
       const finish = roomFinish(s.sourceLayer, info?.feature.properties ?? {});
       if (s.kind === "room")
         roomFinishes[finish] = (roomFinishes[finish] ?? 0) + 1;
-      for (const polygon of s.polygons) {
+      const visiblePolygons =
+        s.kind === "wall" ? fixedGlazing(s, glassBays) : s.polygons;
+      for (const polygon of visiblePolygons) {
         const photoInk = photoFloorInk(scene, s);
         if (isLibraryTerrace(scene, s)) {
           target.push(...libraryTerrace(polygon, scale, material, polygonMesh));
@@ -831,6 +885,17 @@ export function createIndoorBaker(root: string, sources: Sources) {
         sourceModels: models,
         extrudedPolygons: extruded,
         steppedStairs: steps,
+        openings: {
+          sourceJambs:
+            scene.doors?.filter((d) => d.openingSource === "wall-ends")
+              .length ?? 0,
+          roomEdges:
+            scene.doors?.filter((d) => d.openingSource === "room-edge")
+              .length ?? 0,
+          entranceSills: entries.length,
+          inferredSolidReturns: returns.length,
+          activeGlassBays: glassBays,
+        },
         triangles: rendered.triangleCount,
         pixelSha256: createHash("sha256").update(ground).digest("hex"),
       },

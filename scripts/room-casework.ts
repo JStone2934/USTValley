@@ -109,16 +109,18 @@ export function fitRoomCasework(scene: SceneMap, source: SourceMap) {
   for (const d of scene.doors ?? []) {
     const dx = Math.sign(d.inside.x - d.outside.x),
       dy = Math.sign(d.inside.y - d.outside.y);
-    for (const c of [
-      ...d.cells,
-      tileIndex(scene, d.inside),
-      tileIndex(scene, d.outside),
-      tileIndex(scene, {
-        x: d.inside.x + dx * step,
-        y: d.inside.y + dy * step,
-      }),
-    ])
-      reserved.add(c);
+    for (const cell of d.cells) reserved.add(cell);
+    for (const lane of [d, ...(d.lanes ?? [])]) {
+      for (const p of [
+        lane.outside,
+        lane.inside,
+        {
+          x: lane.inside.x + dx * step,
+          y: lane.inside.y + dy * step,
+        },
+      ])
+        reserved.add(tileIndex(scene, p));
+    }
   }
   const featureInfo = new Map(
     layers(source, scene.floor.key).flatMap((l) =>

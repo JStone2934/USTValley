@@ -1,3 +1,10 @@
+import {
+  exteriorGates,
+  gateLanding,
+  openSourceGlass,
+  openSourceOffice,
+  fitDoorApron,
+} from "./exterior-entrances.ts";
 import { fitSourceFixtures } from "./fixture-collision.ts";
 import { fitRoomCasework } from "./room-casework.ts";
 import { fitRoomDoors } from "./room-doors.ts";
@@ -156,19 +163,20 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
     );
   };
   const outdoorPaint = {
-    "绿化": ["garden", "#97ad83"],
-    "池塘": ["water", "#81adb2"],
-    "斑马线": ["crosswalk", "#eeead8"],
-    "外车位0": ["parking", "#a2a69e"],
-    "道路补充": ["road", "#c7c8b9"],
-    "内部路": ["road", "#c7c8b9"],
-    "道路": ["road", "#c7c8b9"],
+    绿化: ["garden", "#97ad83"],
+    池塘: ["water", "#81adb2"],
+    斑马线: ["crosswalk", "#eeead8"],
+    外车位0: ["parking", "#a2a69e"],
+    道路补充: ["road", "#c7c8b9"],
+    内部路: ["road", "#c7c8b9"],
+    道路: ["road", "#c7c8b9"],
   } as const;
   for (const layer of layers(campus)) {
     const paint = outdoorPaint[layer.name as keyof typeof outdoorPaint];
     if (!paint) continue;
     for (const f of layer.data?.features ?? []) {
-      const [kind, color] = paint, s = surface(f, kind, color, convert);
+      const [kind, color] = paint,
+        s = surface(f, kind, color, convert);
       s.sourceLayer = layer.name;
       s.polygons = s.polygons.filter(intersects);
       if (s.polygons.length) {
@@ -221,9 +229,6 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
     );
     outdoor.sourceOutlines.push(
       ...footprint.map((p) => ({ group: group.key, points: p[0] })),
-    );
-    outdoor.sourceEntries.push(
-      ...(group.feature.properties.entry ?? []).map(convert),
     );
     outdoor.art.roofs.push({
       ...bounds(footprint.flat(2)),
@@ -278,8 +283,168 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
   }
   const plazaCollision = stampRedBirdPlaza(outdoor, campus, convert);
   border(outdoor);
-  const outsideSpace = largestPublicSpace(outdoor),
-    usedEntries = new Set<string>();
+  const candidates = groups.flatMap((group) => {
+    const source = sources[group.sourceMap],
+      floors = floorFeatures(source);
+    const sets =
+      group.key === "east" || group.key === "west"
+        ? floors.map((f) => [f])
+        : [floors];
+    const gates = exteriorGates(
+      source,
+      group.feature,
+      sets.map((fs) => fs.flatMap((f) => polygons(f, convert))),
+      convert,
+    );
+    return gates.map((gate) => {
+      const templateKey = `${group.key}:${gate.wing}`,
+        template = interiorGroups.get(templateKey)!;
+      const outer = convert(gate.xy),
+        inner = template.convert(gate.xy);
+      const normal = gate.towardInterior,
+        reverse = { x: -normal.x, y: -normal.y };
+      const outerGlass = openSourceGlass(
+        outdoor,
+        group.sourceMap,
+        outer,
+        normal,
+      );
+      const innerGlass = openSourceGlass(
+        template.scene,
+        group.sourceMap,
+        inner,
+        reverse,
+      );
+      return {
+        ...gate,
+        group: group.key,
+        templateKey,
+        outer,
+        inner,
+        reverse,
+        outerGlass,
+        innerGlass,
+      };
+    });
+  });
+  // The confirmed leaf can occupy an otherwise blocked strip of library glazing.
+  for (const key of new Set(
+    candidates.filter((g) => g.innerGlass).map((g) => g.templateKey),
+  )) {
+    const template = interiorGroups.get(key)!;
+    template.space = new Set(
+      template.scene.collision.flatMap((_, i) =>
+        canStand(template.scene, gridPoint(template.scene, i)) ? [i] : [],
+      ),
+    );
+  }
+  const outsideSpace = largestPublicSpace(outdoor);
+  const gates = candidates.map((g) => {
+    const template = interiorGroups.get(g.templateKey)!;
+    const approachRoads = fitDoorApron(template.scene, g.inner, template.space);
+    let outside = gateLanding(
+      outdoor,
+      outsideSpace,
+      g.outer,
+      g.towardInterior,
+      g.outerGlass,
+    );
+    let inside = gateLanding(
+      template.scene,
+      template.space,
+      g.inner,
+      g.reverse,
+      g.innerGlass,
+    );
+    const cost = (landing: typeof inside) =>
+      landing
+        ? Math.hypot(landing.point.x - g.inner.x, landing.point.y - g.inner.y)
+        : Infinity;
+    for (const id of approachRoads ?? []) {
+      const edge = template.scene.surfaces.find(
+        (s) => s.kind === "corridor" && s.sourceId === id,
+      )!.line!;
+      const end = edge.toSorted(
+        (a, b) =>
+          Math.hypot(b.x - g.inner.x, b.y - g.inner.y) -
+          Math.hypot(a.x - g.inner.x, a.y - g.inner.y),
+      )[0];
+      const len = Math.hypot(end.x - g.inner.x, end.y - g.inner.y);
+      const n = { x: (end.x - g.inner.x) / len, y: (end.y - g.inner.y) / len };
+      const inner = gateLanding(template.scene, template.space, g.inner, {
+        x: -n.x,
+        y: -n.y,
+      });
+      const outer = gateLanding(outdoor, outsideSpace, g.outer, n);
+      if (outer && inner && cost(inner) < cost(inside)) {
+        outside = outer;
+        inside = inner;
+      }
+    }
+    const office =
+      !inside && outside
+        ? openSourceOffice(template.scene, g.inner, g.reverse, template.space)
+        : undefined;
+    if (office)
+      inside = gateLanding(
+        template.scene,
+        template.space,
+        g.inner,
+        g.reverse,
+        g.innerGlass,
+      );
+    return { ...g, outside, inside, office, approachRoads };
+  });
+  const usedEntries = new Set<string>();
+  type Gate = (typeof gates)[number];
+  const gateKey = (g: Gate) => `${g.group}:${g.regionIndex}`;
+  const attach = (
+    g: Gate,
+    scene: SceneMap,
+    id: string,
+    building: BuildingId,
+  ) => {
+    const outer = g.outside!,
+      inner = g.inside!;
+    const named =
+      g.group === "library"
+        ? features(campus).find(
+            (f) =>
+              f.geometry.type === "Point" &&
+              /图书馆.*一楼入口/.test(f.properties.name ?? "") &&
+              Math.hypot(
+                f.geometry.coordinates[0] - g.xy[0],
+                f.geometry.coordinates[1] - g.xy[1],
+              ) <= 1.2,
+          )
+        : undefined;
+    const name = named ? `${building} · ${named.properties.name}` : building;
+    outdoor.sourceEntries.push(outer.entrance.threshold);
+
+    outdoor.portals.push({
+      ...outer.point,
+      id: `enter_${id}`,
+      buildingId: building,
+      kind: "entrance",
+      label: `进入 ${name} · F1`,
+      targetScene: scene.id,
+      targetPortal: `exit_${id}`,
+      spawn: outer.spawn,
+      entrance: { ...outer.entrance, glazing: g.outerGlass },
+    });
+    scene.portals.push({
+      ...inner.point,
+      id: `exit_${id}`,
+      buildingId: building,
+      kind: "entrance",
+      label: `返回校园 · ${name}`,
+      targetScene: outdoor.id,
+      targetPortal: `enter_${id}`,
+      spawn: inner.spawn,
+      entrance: { ...inner.entrance, glazing: g.innerGlass },
+    });
+    usedEntries.add(gateKey(g));
+  };
   const evidence = config.buildings.map((def) => {
     const group = groups.find((g) => g.key === def.group)!,
       source = sources[group.sourceMap];
@@ -320,36 +485,6 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
       anchorMethod: def.anchor,
     };
     outdoor.buildings.push(b);
-    const own = def.featureId
-        ? getFeature(source, def.featureId).properties.entry
-        : undefined,
-      explicit = def.entryFeatureId
-        ? getFeature(sources[def.entrySourceMap!], def.entryFeatureId)
-        : undefined,
-      candidates: number[][] = explicit
-        ? [coordinates(explicit.geometry.coordinates)[0]]
-        : own?.length
-          ? own
-          : group.feature.properties.entry;
-    const ordered = candidates
-      .map((p, index) => ({
-        p,
-        index,
-        d: Math.hypot(p[0] - anchor[0], p[1] - anchor[1]),
-      }))
-      .sort((a, b) => a.d - b.d);
-
-    const selected =
-      ordered.find((c) => !usedEntries.has(`${group.key}:${c.index}`)) ??
-      ordered[0];
-    usedEntries.add(`${group.key}:${selected.index}`);
-    const raw = convert(selected.p),
-      entry = nearest(outdoor, outsideSpace, raw),
-      displacement = Math.hypot(entry.x - raw.x, entry.y - raw.y);
-    if (displacement > 48)
-      throw new Error(
-        `Source entrance ${def.id} displaced ${displacement.toFixed(1)}px`,
-      );
     const floorIndex =
       group.key === "east" || group.key === "west"
         ? floorFeatures(source)
@@ -370,20 +505,35 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
             }))
             .sort((a, b) => a.d - b.d)[0].index
         : 0;
-    const originalTemplate = interiorGroups.get(`${group.key}:${floorIndex}`)!,
-      innerRaw = originalTemplate.convert(selected.p),
-      innerEntry = nearest(
-        originalTemplate.scene,
-        originalTemplate.space,
-        innerRaw,
+    const templateKey = `${group.key}:${floorIndex}`;
+    const all = gates.filter((g) => g.templateKey === templateKey);
+    const hint = def.entryFeatureId
+      ? coordinates(
+          getFeature(sources[def.entrySourceMap!], def.entryFeatureId).geometry
+            .coordinates,
+        )[0]
+      : anchor;
+    const selected = all
+      .filter((g) => g.outside && g.inside && !usedEntries.has(gateKey(g)))
+      .sort(
+        (a, b) =>
+          Math.hypot(a.xy[0] - hint[0], a.xy[1] - hint[1]) -
+          Math.hypot(b.xy[0] - hint[0], b.xy[1] - hint[1]),
+      )[0];
+    if (!selected)
+      throw new Error(
+        `No verified exterior opening for ${def.id}. ${JSON.stringify(all.map((g) => [g.regionIndex, !!g.outside, !!g.inside]))}`,
+      );
+    const originalTemplate = interiorGroups.get(templateKey)!;
+    const entry = selected.outside!.point,
+      innerEntry = selected.inside!.point;
+    const displacement = Math.hypot(
+        entry.x - selected.outer.x,
+        entry.y - selected.outer.y,
       ),
       innerDisplacement = Math.hypot(
-        innerEntry.x - innerRaw.x,
-        innerEntry.y - innerRaw.y,
-      );
-    if (innerDisplacement > 48)
-      throw new Error(
-        `Interior source entrance ${def.id} displaced ${innerDisplacement.toFixed(1)}px (wing ${floorIndex})`,
+        innerEntry.x - selected.inner.x,
+        innerEntry.y - selected.inner.y,
       );
     const template = {
       ...originalTemplate,
@@ -399,42 +549,8 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
         id: `interior_${id}`,
         name: `${def.id} · ${def.name}`,
       };
-    const innerSpawn = nearest(
-        scene,
-        template.space,
-        innerEntry,
-        (p) =>
-          Math.hypot(p.x - innerEntry.x, p.y - innerEntry.y) >= 20 &&
-          Math.hypot(p.x - innerEntry.x, p.y - innerEntry.y) <= 32,
-      ),
-      outerSpawn = nearest(
-        outdoor,
-        outsideSpace,
-        entry,
-        (p) =>
-          Math.hypot(p.x - entry.x, p.y - entry.y) >= 20 &&
-          Math.hypot(p.x - entry.x, p.y - entry.y) <= 32,
-      );
-    outdoor.portals.push({
-      ...entry,
-      id: `enter_${id}`,
-      buildingId: b.id,
-      kind: "entrance",
-      label: `进入 ${b.id} · F1`,
-      targetScene: scene.id,
-      targetPortal: `exit_${id}`,
-      spawn: outerSpawn,
-    });
-    scene.portals.push({
-      ...innerEntry,
-      id: `exit_${id}`,
-      buildingId: b.id,
-      kind: "entrance",
-      label: `返回校园 · ${b.id}`,
-      targetScene: outdoor.id,
-      targetPortal: `enter_${id}`,
-      spawn: innerSpawn,
-    });
+    const innerSpawn = selected.inside!.spawn;
+    attach(selected, scene, id, b.id);
     scene.spawns.push({ ...innerSpawn, id: `spawn_${id}` });
     const exploration = nearest(
       scene,
@@ -485,32 +601,59 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
       anchorMethod: def.anchor,
       sourceAnchor: anchor,
       label,
-      sourceEntry: selected.p,
-      sourceEntryIndex: selected.index,
+      sourceEntry: selected.xy,
+      sourceEntryIndex: all.indexOf(selected),
+      sourceRegionEntryIndex: selected.regionIndex,
+      modelEntryIndices: selected.modelIndices,
       entryFeatureId: def.entryFeatureId,
       entrySourceMap: def.entrySourceMap,
-      sourceEntryCandidates: candidates,
+      sourceEntryCandidates: all.map((g) => g.xy),
       entry,
       entryDisplacement: displacement,
       innerEntryDisplacement: innerDisplacement,
       footprint:
         "F1 source polygons; physical wings shared by their numbered buildings",
       review: "pending",
-      reason: "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认",
+      reason:
+        "室外模型入口与同栋 F1 通行交接点校合；共享翼楼编号按标签锚点与平面分区关联",
       templateKey: `${group.key}:${floorIndex}`,
       scene,
     };
   });
+  for (const gate of gates) {
+    if (!gate.outside || !gate.inside || usedEntries.has(gateKey(gate)))
+      continue;
+    const owners = evidence
+      .filter((e) => e.templateKey === gate.templateKey)
+      .sort(
+        (a, b) =>
+          Math.hypot(a.label.x - gate.outer.x, a.label.y - gate.outer.y) -
+          Math.hypot(b.label.x - gate.outer.x, b.label.y - gate.outer.y),
+      );
+    const owner = owners[0];
+    if (!owner) throw new Error(`No numbered F1 wing for ${gateKey(gate)}`);
+    const suffix = `${owner.id.toLowerCase()}_r${gate.regionIndex}`;
+    if (
+      !owner.scene.spawns.some((p) =>
+        reachable(owner.scene, p).has(
+          tileIndex(owner.scene, gate.inside!.point),
+        ),
+      )
+    )
+      owner.scene.spawns.push({ ...gate.inside.spawn, id: `spawn_${suffix}` });
+    attach(gate, owner.scene, suffix, owner.id);
+  }
   const c2 = outdoor.portals.find((p) => p.buildingId === "C2")!;
+  const approachDoor = nearest(outdoor, outsideSpace, c2.entrance!.threshold);
   const activity = outdoor.art.roofs.find((r) => r.id === "activity")!;
   const away = {
-    x: c2.x - (activity.x + activity.width / 2),
-    y: c2.y - (activity.y + activity.height / 2),
+    x: approachDoor.x - (activity.x + activity.width / 2),
+    y: approachDoor.y - (activity.y + activity.height / 2),
   };
   const distance = Math.hypot(away.x, away.y);
   const approach = {
-    x: c2.x + (away.x * 72) / distance,
-    y: c2.y + (away.y * 72) / distance,
+    x: approachDoor.x + (away.x * 72) / distance,
+    y: approachDoor.y + (away.y * 72) / distance,
   };
   const softscape = outdoor.surfaces
     .filter((s) => s.kind === "garden" || s.kind === "water")
@@ -627,6 +770,10 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
     evidence,
     interiorGroups,
   );
+  for (const scene of topology.scenes)
+    scene.sourceEntries = scene.portals.flatMap((p) =>
+      p.entrance ? [p.entrance.threshold] : [],
+    );
   const world: WorldMap = {
     mapVersion: config.mapVersion,
     protocolVersion: config.protocolVersion,
@@ -682,6 +829,21 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
     buildings: evidence.map(({ scene, ...e }) => e),
     connections: topology.connections,
     galleries: topology.galleryPairs,
+    exteriorEntrances: gates.map((g) => ({
+      group: g.group,
+      modelIndices: g.modelIndices,
+      regionIndex: g.regionIndex,
+      sourceEntry: g.xy,
+      matchDistance: g.match,
+      templateKey: g.templateKey,
+      accepted: usedEntries.has(gateKey(g)),
+      office: g.office,
+      approachRoads: g.approachRoads,
+      outside: !!g.outside,
+      inside: !!g.inside,
+      outerGlass: g.outerGlass?.sourceId,
+      innerGlass: g.innerGlass?.sourceId,
+    })),
     plazaCollision,
     campusSpawn: {
       point: spawn,
@@ -699,7 +861,7 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
         "passed (walking components and cross-floor graph from campus spawn)",
     },
     unresolved: [
-      "入口与编号的自动关联仍需现场确认；最大安全吸附48像素，实际偏移逐个记录",
+      "出入口坐标已由室外模型与 F1 独立校合；共享翼楼的编号归属按源房间/标签锚点就近关联",
       "六组核心区外边界仍采用有限包络",
       "这是依据源模型的低分辨率重建，尚未完成独立像素美术重绘",
     ],
@@ -848,6 +1010,27 @@ export function tiledMap(scene: SceneMap, mapVersion: string) {
   });
   const ringProperty = (rings: Point[][]) =>
     JSON.stringify(rings.map((r) => r.map(imagePoint)));
+  const imageProperty = (name: string, value: any) => {
+    if (name === "entrance")
+      return {
+        ...value,
+        threshold: imagePoint(value.threshold),
+        width: value.width * ratio,
+        glazing: value.glazing && {
+          ...value.glazing,
+          jambA: imagePoint(value.glazing.jambA),
+          jambB: imagePoint(value.glazing.jambB),
+        },
+      };
+    if (name === "lanes")
+      return value.map((lane: { outside: Point; inside: Point }) => ({
+        outside: imagePoint(lane.outside),
+        inside: imagePoint(lane.inside),
+      }));
+    return value && typeof value.x === "number" && typeof value.y === "number"
+      ? imagePoint(value)
+      : value;
+  };
   let nextObject = 1;
   const objects = (items: (Point & Record<string, any>)[]) =>
     items.map((o) => ({
@@ -866,13 +1049,7 @@ export function tiledMap(scene: SceneMap, mapVersion: string) {
           type: typeof value === "number" ? "float" : "string",
           value:
             typeof value === "object"
-              ? JSON.stringify(
-                  value &&
-                    typeof value.x === "number" &&
-                    typeof value.y === "number"
-                    ? imagePoint(value)
-                    : value,
-                )
+              ? JSON.stringify(imageProperty(name, value))
               : value,
         })),
     }));

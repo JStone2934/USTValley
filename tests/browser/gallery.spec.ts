@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import type { WorldMap } from "../../src/shared/world";
-import { driveTo, position } from "./walking";
+import { driveTo, position, walkThroughEntrance } from "./walking";
 
 test("walk from the campus into C2, take a lift, and cross the F2 skybridge into the administration building and back", async ({
   page,
@@ -21,8 +21,7 @@ test("walk from the campus into C2, take a lift, and cross the F2 skybridge into
     entrance = campus.portals.find((p) => p.buildingId === "C2")!;
   const scene = (id: string) => world.scenes.find((s) => s.id === id)!;
   const f1 = scene(entrance.targetScene);
-  await driveTo(page, campus, entrance);
-  await page.keyboard.press("e");
+  await walkThroughEntrance(page, campus, entrance);
   await expect(page.locator("main")).toHaveAttribute("data-scene", f1.id);
   const lift = f1.portals.find((p) => p.kind === "lift")!,
     f2 = scene(lift.targetScene);

@@ -3,7 +3,12 @@ import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { buildWorld, tiledMap } from "../scripts/map-builder.ts";
 import { layers } from "../scripts/source-geometry.ts";
-import { doorCollision, nearbyDoors, toggleDoor } from "../src/shared/doors.ts";
+import {
+  distanceToLeaf,
+  doorCollision,
+  nearbyDoors,
+  toggleDoor,
+} from "../src/shared/doors.ts";
 import {
   canStand,
   move,
@@ -40,8 +45,26 @@ test("source room doors are reachable from the campus, isolate their rooms when 
       const f = features.get(door.sourceId);
       assert.ok(f?.properties.entry?.length, door.id);
       assert.ok(
-        Math.hypot(door.x - door.sourceEntry.x, door.y - door.sourceEntry.y) <=
+        door.hinge && door.latch,
+        "missing surveyed or inferred jambs: " + door.id,
+      );
+      assert.ok(
+        Math.hypot(
+          door.x - (door.hinge.x + door.latch.x) / 2,
+          door.y - (door.hinge.y + door.latch.y) / 2,
+        ) < 0.02,
+        door.id,
+      );
+      // The entry record marks an approach. The collision opening must still
+      // be fitted locally even when the actual sill is offset from its grid cell.
+      const first = door.cells[0],
+        width = (scene.width * scene.tileSize) / scene.collisionSize;
+      const firstX = ((first % width) + 0.5) * scene.collisionSize;
+      const firstY = (Math.floor(first / width) + 0.5) * scene.collisionSize;
+      assert.ok(
+        Math.hypot(firstX - door.sourceEntry.x, firstY - door.sourceEntry.y) <=
           1.55 * scene.units.pixelsPerMeter + 1e-5,
+        door.id,
       );
       assert.ok(publicSpace.has(tileIndex(scene, door.outside)), door.id);
       assert.ok(
@@ -71,7 +94,11 @@ test("source room doors are reachable from the campus, isolate their rooms when 
         "cannot close onto the avatar",
       );
       assert.deepEqual(travel(door.outside, door.inside), door.inside, door.id);
-      assert.ok(toggleDoor(walk, door, open, door.inside));
+      const clearForClosing = (side: Point) =>
+        distanceToLeaf(door, side) > scene.player.radius
+          ? side
+          : scene.spawns[0];
+      assert.ok(toggleDoor(walk, door, open, clearForClosing(door.inside)));
       assert.ok(nearbyDoors(walk, door.inside).includes(door), door.id);
       assert.ok(toggleDoor(walk, door, open, door.inside));
       assert.deepEqual(
@@ -79,9 +106,60 @@ test("source room doors are reachable from the campus, isolate their rooms when 
         door.outside,
         door.id,
       );
-      assert.ok(toggleDoor(walk, door, open, door.outside));
-      assert.equal(canStand(scene, door), false);
+      assert.ok(toggleDoor(walk, door, open, clearForClosing(door.outside)));
+      assert.ok(door.cells.every((cell) => scene.collision[cell] === 1));
     }
   }
   assert.ok(count > 100, "cover source-supported rooms across the campus");
+});
+
+test("C2 and library leaves meet the measured wall end faces; the widened C2 gate retains its masonry corner", () => {
+  for (const [id, sourceId] of [
+    ["interior_c2", 71686],
+    ["interior_library_f2", 141190],
+  ] as const) {
+    const scene = world.scenes.find((s) => s.id === id)!;
+    const door = scene.doors!.find(
+      (d) => d.sourceId === sourceId && d.id.endsWith("_0"),
+    )!;
+    assert.equal(door.openingSource, "wall-ends");
+    const ends = scene.surfaces
+      .filter((s) => s.kind === "wall")
+      .flatMap((s) =>
+        s.polygons.flatMap((p) =>
+          p.flatMap((r) =>
+            r.slice(1).map((b, i) => ({
+              x: (r[i].x + b.x) / 2,
+              y: (r[i].y + b.y) / 2,
+            })),
+          ),
+        ),
+      );
+    for (const jamb of [door.hinge!, door.latch!]) {
+      assert.ok(
+        ends.some((p) => Math.hypot(jamb.x - p.x, jamb.y - p.y) < 0.01),
+        door.id,
+      );
+    }
+    const span = Math.hypot(
+      door.latch!.x - door.hinge!.x,
+      door.latch!.y - door.hinge!.y,
+    );
+    if (id === "interior_c2") {
+      assert.ok(span / scene.units.pixelsPerMeter > 1.7);
+      assert.ok(door.lanes!.some((l) => l.inside.x < door.inside.x - 3));
+      const walk = doorCollision(scene, new Set([door.id]));
+      const wallCorner = { x: 168, y: 144.8 };
+      assert.ok(
+        canStand({ ...walk, fixtureCollision: undefined }, wallCorner, 0),
+      );
+      assert.equal(canStand(walk, wallCorner, 0), false);
+      assert.ok(canStand(walk, { x: 170.5, y: 146 }));
+    } else {
+      assert.ok(
+        span / scene.units.pixelsPerMeter > 0.9 &&
+          span / scene.units.pixelsPerMeter < 1,
+      );
+    }
+  }
 });

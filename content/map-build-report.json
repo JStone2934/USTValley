@@ -1,5 +1,5 @@
 {
-  "mapVersion": "core-pixel-3d-0.5.1",
+  "mapVersion": "core-pixel-3d-0.5.2",
   "status": "source-geometry-reconstructed",
   "fixtureOccupancy": [
     {
@@ -977,49 +977,37 @@
         "y": 955.51
       },
       "sourceEntry": [
-        12632214.204,
-        2618708.23
+        12632213.84836,
+        2618708.38762
       ],
-      "sourceEntryIndex": 6,
+      "sourceEntryIndex": 2,
+      "sourceRegionEntryIndex": 5,
+      "modelEntryIndices": [
+        6
+      ],
       "sourceEntryCandidates": [
         [
-          12632266.716,
-          2618770.671
+          12632266.75535,
+          2618771.48963
         ],
         [
-          12632272.83,
-          2618781.626
+          12632237.98266,
+          2618744.96646
         ],
         [
-          12632282.332,
-          2618822.519
-        ],
-        [
-          12632300.543,
-          2618858.062
-        ],
-        [
-          12632266.631,
-          2618771.2
-        ],
-        [
-          12632238.357,
-          2618745.02
-        ],
-        [
-          12632214.204,
-          2618708.23
+          12632213.84836,
+          2618708.38762
         ]
       ],
       "entry": {
-        "x": 1126,
-        "y": 982
+        "x": 1122,
+        "y": 986
       },
-      "entryDisplacement": 2.1061813787041483,
-      "innerEntryDisplacement": 1.0473776778221147,
+      "entryDisplacement": 2.4957964660605447,
+      "innerEntryDisplacement": 5.843774465189461,
       "footprint": "F1 source polygons; physical wings shared by their numbered buildings",
       "review": "pending",
-      "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认",
+      "reason": "室外模型入口与同栋 F1 通行交接点校合；共享翼楼编号按标签锚点与平面分区关联",
       "templateKey": "east:1"
     },
     {
@@ -1041,49 +1029,38 @@
         "y": 735.94
       },
       "sourceEntry": [
-        12632266.716,
-        2618770.671
+        12632266.75535,
+        2618771.48963
       ],
       "sourceEntryIndex": 0,
+      "sourceRegionEntryIndex": 3,
+      "modelEntryIndices": [
+        0,
+        4
+      ],
       "sourceEntryCandidates": [
         [
-          12632266.716,
-          2618770.671
+          12632266.75535,
+          2618771.48963
         ],
         [
-          12632272.83,
-          2618781.626
+          12632237.98266,
+          2618744.96646
         ],
         [
-          12632282.332,
-          2618822.519
-        ],
-        [
-          12632300.543,
-          2618858.062
-        ],
-        [
-          12632266.631,
-          2618771.2
-        ],
-        [
-          12632238.357,
-          2618745.02
-        ],
-        [
-          12632214.204,
-          2618708.23
+          12632213.84836,
+          2618708.38762
         ]
       ],
       "entry": {
         "x": 1182,
-        "y": 662
+        "y": 658
       },
-      "entryDisplacement": 0.6514598989961116,
-      "innerEntryDisplacement": 1.493753661083386,
+      "entryDisplacement": 2.1400934559032785,
+      "innerEntryDisplacement": 5.840624966559655,
       "footprint": "F1 source polygons; physical wings shared by their numbered buildings",
       "review": "pending",
-      "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认",
+      "reason": "室外模型入口与同栋 F1 通行交接点校合；共享翼楼编号按标签锚点与平面分区关联",
       "templateKey": "east:1"
     },
     {
@@ -1114,49 +1091,37 @@
         "y": 449.99
       },
       "sourceEntry": [
-        12632272.83,
-        2618781.626
+        12632272.62914,
+        2618781.12911
       ],
-      "sourceEntryIndex": 1,
+      "sourceEntryIndex": 0,
+      "sourceRegionEntryIndex": 2,
+      "modelEntryIndices": [
+        1
+      ],
       "sourceEntryCandidates": [
         [
-          12632266.716,
-          2618770.671
+          12632272.62914,
+          2618781.12911
         ],
         [
-          12632272.83,
-          2618781.626
+          12632281.82916,
+          2618822.41513
         ],
         [
-          12632282.332,
-          2618822.519
-        ],
-        [
-          12632300.543,
-          2618858.062
-        ],
-        [
-          12632266.631,
-          2618771.2
-        ],
-        [
-          12632238.357,
-          2618745.02
-        ],
-        [
-          12632214.204,
-          2618708.23
+          12632300.53323,
+          2618858.53123
         ]
       ],
       "entry": {
         "x": 1182,
-        "y": 614
+        "y": 618
       },
-      "entryDisplacement": 1.6475739740599815,
-      "innerEntryDisplacement": 2.4162988225796993,
+      "entryDisplacement": 3.4476803796176325,
+      "innerEntryDisplacement": 5.93401213345579,
       "footprint": "F1 source polygons; physical wings shared by their numbered buildings",
       "review": "pending",
-      "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认",
+      "reason": "室外模型入口与同栋 F1 通行交接点校合；共享翼楼编号按标签锚点与平面分区关联",
       "templateKey": "east:0"
     },
     {
@@ -1212,49 +1177,37 @@
         "y": 316.05
       },
       "sourceEntry": [
-        12632300.543,
-        2618858.062
+        12632300.53323,
+        2618858.53123
       ],
-      "sourceEntryIndex": 3,
+      "sourceEntryIndex": 2,
+      "sourceRegionEntryIndex": 0,
+      "modelEntryIndices": [
+        3
+      ],
       "sourceEntryCandidates": [
         [
-          12632266.716,
-          2618770.671
+          12632272.62914,
+          2618781.12911
         ],
         [
-          12632272.83,
-          2618781.626
+          12632281.82916,
+          2618822.41513
         ],
         [
-          12632282.332,
-          2618822.519
-        ],
-        [
-          12632300.543,
-          2618858.062
-        ],
-        [
-          12632266.631,
-          2618771.2
-        ],
-        [
-          12632238.357,
-          2618745.02
-        ],
-        [
-          12632214.204,
-          2618708.23
+          12632300.53323,
+          2618858.53123
         ]
       ],
       "entry": {
-        "x": 1126,
-        "y": 294
+        "x": 1122,
+        "y": 286
       },
-      "entryDisplacement": 2.2567454442183306,
-      "innerEntryDisplacement": 1.8878824115924075,
+      "entryDisplacement": 4.908543572181092,
+      "innerEntryDisplacement": 4.2871435711904855,
       "footprint": "F1 source polygons; physical wings shared by their numbered buildings",
       "review": "pending",
-      "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认",
+      "reason": "室外模型入口与同栋 F1 通行交接点校合；共享翼楼编号按标签锚点与平面分区关联",
       "templateKey": "east:0"
     },
     {
@@ -1307,65 +1260,49 @@
         "y": 931.17
       },
       "sourceEntry": [
-        12632090.246,
-        2618778.687
+        12632090.49863,
+        2618778.81216
       ],
       "sourceEntryIndex": 1,
+      "sourceRegionEntryIndex": 16,
+      "modelEntryIndices": [
+        1
+      ],
       "sourceEntryCandidates": [
         [
-          12632116.997,
-          2618762.924
+          12632117.74835,
+          2618764
         ],
         [
-          12632090.246,
-          2618778.687
+          12632090.49863,
+          2618778.81216
         ],
         [
-          12632126.012,
-          2618841.188
+          12632125.47553,
+          2618841.21711
         ],
         [
-          12632146.428,
-          2618840.63
+          12632145.71615,
+          2618841.0483
         ],
         [
-          12632149.52,
-          2618830.663
+          12632149.37952,
+          2618830.53723
         ],
         [
-          12632135.884,
-          2618800.222
-        ],
-        [
-          12632151.298,
-          2618851.324
-        ],
-        [
-          12632162.175,
-          2618853.275
-        ],
-        [
-          12632182.759,
-          2618879.891
-        ],
-        [
-          12632141.932,
-          2618868.569
-        ],
-        [
-          12632204.176,
-          2618913.994
+          12632136.23721,
+          2618799.97256
         ]
       ],
       "entry": {
         "x": 554,
-        "y": 986
+        "y": 990
       },
-      "entryDisplacement": 1.9858751219550268,
-      "innerEntryDisplacement": 2.7504545078950358,
+      "entryDisplacement": 3.480359176866651,
+      "innerEntryDisplacement": 4.8663435965825945,
       "footprint": "F1 source polygons; physical wings shared by their numbered buildings",
       "review": "pending",
-      "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认",
+      "reason": "室外模型入口与同栋 F1 通行交接点校合；共享翼楼编号按标签锚点与平面分区关联",
       "templateKey": "west:0"
     },
     {
@@ -1419,65 +1356,49 @@
         "y": 802.12
       },
       "sourceEntry": [
-        12632126.012,
-        2618841.188
+        12632125.47553,
+        2618841.21711
       ],
       "sourceEntryIndex": 2,
+      "sourceRegionEntryIndex": 13,
+      "modelEntryIndices": [
+        2
+      ],
       "sourceEntryCandidates": [
         [
-          12632116.997,
-          2618762.924
+          12632117.74835,
+          2618764
         ],
         [
-          12632090.246,
-          2618778.687
+          12632090.49863,
+          2618778.81216
         ],
         [
-          12632126.012,
-          2618841.188
+          12632125.47553,
+          2618841.21711
         ],
         [
-          12632146.428,
-          2618840.63
+          12632145.71615,
+          2618841.0483
         ],
         [
-          12632149.52,
-          2618830.663
+          12632149.37952,
+          2618830.53723
         ],
         [
-          12632135.884,
-          2618800.222
-        ],
-        [
-          12632151.298,
-          2618851.324
-        ],
-        [
-          12632162.175,
-          2618853.275
-        ],
-        [
-          12632182.759,
-          2618879.891
-        ],
-        [
-          12632141.932,
-          2618868.569
-        ],
-        [
-          12632204.176,
-          2618913.994
+          12632136.23721,
+          2618799.97256
         ]
       ],
       "entry": {
-        "x": 554,
-        "y": 698
+        "x": 550,
+        "y": 702
       },
-      "entryDisplacement": 1.7677669529663689,
-      "innerEntryDisplacement": 7.496785978004156,
+      "entryDisplacement": 2.241428116179515,
+      "innerEntryDisplacement": 2.17175044606878,
       "footprint": "F1 source polygons; physical wings shared by their numbered buildings",
       "review": "pending",
-      "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认",
+      "reason": "室外模型入口与同栋 F1 通行交接点校合；共享翼楼编号按标签锚点与平面分区关联",
       "templateKey": "west:0"
     },
     {
@@ -1516,65 +1437,45 @@
         "y": 477.64
       },
       "sourceEntry": [
-        12632141.932,
-        2618868.569
+        12632141.63924,
+        2618868.58463
       ],
-      "sourceEntryIndex": 9,
+      "sourceEntryIndex": 3,
+      "sourceRegionEntryIndex": 7,
+      "modelEntryIndices": [
+        9
+      ],
       "sourceEntryCandidates": [
         [
-          12632116.997,
-          2618762.924
+          12632151.52413,
+          2618851.18461
         ],
         [
-          12632090.246,
-          2618778.687
+          12632162.86146,
+          2618853.40103
         ],
         [
-          12632126.012,
-          2618841.188
+          12632182.31912,
+          2618879.90106
         ],
         [
-          12632146.428,
-          2618840.63
+          12632141.63924,
+          2618868.58463
         ],
         [
-          12632149.52,
-          2618830.663
-        ],
-        [
-          12632135.884,
-          2618800.222
-        ],
-        [
-          12632151.298,
-          2618851.324
-        ],
-        [
-          12632162.175,
-          2618853.275
-        ],
-        [
-          12632182.759,
-          2618879.891
-        ],
-        [
-          12632141.932,
-          2618868.569
-        ],
-        [
-          12632204.176,
-          2618913.994
+          12632204.14031,
+          2618914.0413
         ]
       ],
       "entry": {
         "x": 554,
         "y": 574
       },
-      "entryDisplacement": 0.9503683496413898,
-      "innerEntryDisplacement": 6.738857469927721,
+      "entryDisplacement": 0.9889893831583497,
+      "innerEntryDisplacement": 3.9884834210511815,
       "footprint": "F1 source polygons; physical wings shared by their numbered buildings",
       "review": "pending",
-      "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认",
+      "reason": "室外模型入口与同栋 F1 通行交接点校合；共享翼楼编号按标签锚点与平面分区关联",
       "templateKey": "west:1"
     },
     {
@@ -1599,65 +1500,45 @@
         "y": 395.05
       },
       "sourceEntry": [
-        12632182.759,
-        2618879.891
+        12632182.31912,
+        2618879.90106
       ],
-      "sourceEntryIndex": 8,
+      "sourceEntryIndex": 2,
+      "sourceRegionEntryIndex": 3,
+      "modelEntryIndices": [
+        8
+      ],
       "sourceEntryCandidates": [
         [
-          12632116.997,
-          2618762.924
+          12632151.52413,
+          2618851.18461
         ],
         [
-          12632090.246,
-          2618778.687
+          12632162.86146,
+          2618853.40103
         ],
         [
-          12632126.012,
-          2618841.188
+          12632182.31912,
+          2618879.90106
         ],
         [
-          12632146.428,
-          2618840.63
+          12632141.63924,
+          2618868.58463
         ],
         [
-          12632149.52,
-          2618830.663
-        ],
-        [
-          12632135.884,
-          2618800.222
-        ],
-        [
-          12632151.298,
-          2618851.324
-        ],
-        [
-          12632162.175,
-          2618853.275
-        ],
-        [
-          12632182.759,
-          2618879.891
-        ],
-        [
-          12632141.932,
-          2618868.569
-        ],
-        [
-          12632204.176,
-          2618913.994
+          12632204.14031,
+          2618914.0413
         ]
       ],
       "entry": {
         "x": 674,
         "y": 454
       },
-      "entryDisplacement": 2.11123186789137,
-      "innerEntryDisplacement": 3.9553508061864897,
+      "entryDisplacement": 2.793796699833414,
+      "innerEntryDisplacement": 5.241039973135065,
       "footprint": "F1 source polygons; physical wings shared by their numbered buildings",
       "review": "pending",
-      "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认",
+      "reason": "室外模型入口与同栋 F1 通行交接点校合；共享翼楼编号按标签锚点与平面分区关联",
       "templateKey": "west:1"
     },
     {
@@ -1676,53 +1557,57 @@
         "y": 1282.17
       },
       "sourceEntry": [
-        12632150.408,
-        2618664.715
+        12632150.89666,
+        2618665.14631
       ],
       "sourceEntryIndex": 3,
+      "sourceRegionEntryIndex": 0,
+      "modelEntryIndices": [
+        3
+      ],
       "sourceEntryCandidates": [
         [
-          12632111.088,
-          2618687.611
+          12632111.28161,
+          2618687.58863
         ],
         [
-          12632090.893,
-          2618681.554
+          12632090.37852,
+          2618681.34432
         ],
         [
-          12632087.567,
-          2618701.602
+          12632087.15531,
+          2618701.63924
         ],
         [
-          12632150.408,
-          2618664.715
+          12632150.89666,
+          2618665.14631
         ],
         [
-          12632168.804,
-          2618671.355
+          12632168.94836,
+          2618672.31512
         ],
         [
-          12632156.513,
-          2618644.049
+          12632156.38362,
+          2618643.86746
         ],
         [
-          12632154.743,
-          2618630.858
+          12632154.67254,
+          2618630.73125
         ],
         [
-          12632172.874,
-          2618662.833
+          12632172.98766,
+          2618662.94636
         ]
       ],
       "entry": {
         "x": 990,
         "y": 1262
       },
-      "entryDisplacement": 1.2419742348374514,
-      "innerEntryDisplacement": 3.6715119501371527,
+      "entryDisplacement": 2.99294169672583,
+      "innerEntryDisplacement": 5.087022704883493,
       "footprint": "F1 source polygons; physical wings shared by their numbered buildings",
       "review": "pending",
-      "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认",
+      "reason": "室外模型入口与同栋 F1 通行交接点校合；共享翼楼编号按标签锚点与平面分区关联",
       "templateKey": "administration:0"
     },
     {
@@ -1741,27 +1626,39 @@
         "y": 1232.14
       },
       "sourceEntry": [
-        12632189.0856,
-        2618691.0593
+        12632189.0403,
+        2618691.008
       ],
       "sourceEntryIndex": 0,
+      "sourceRegionEntryIndex": 0,
+      "modelEntryIndices": [
+        0
+      ],
       "entryFeatureId": 72730,
       "entrySourceMap": "xgkdgz_xshdzx",
       "sourceEntryCandidates": [
         [
-          12632189.0856,
-          2618691.0593
+          12632189.0403,
+          2618691.008
+        ],
+        [
+          12632230.90306,
+          2618652.98666
+        ],
+        [
+          12632262.26941,
+          2618584.94936
         ]
       ],
       "entry": {
-        "x": 1074,
+        "x": 1070,
         "y": 1094
       },
-      "entryDisplacement": 1.5380507143784121,
-      "innerEntryDisplacement": 1.67026943934205,
+      "entryDisplacement": 2.450999796001667,
+      "innerEntryDisplacement": 5.17746076759641,
       "footprint": "F1 source polygons; physical wings shared by their numbered buildings",
       "review": "pending",
-      "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认",
+      "reason": "室外模型入口与同栋 F1 通行交接点校合；共享翼楼编号按标签锚点与平面分区关联",
       "templateKey": "activity:0"
     },
     {
@@ -1780,29 +1677,77 @@
         "y": 846.58
       },
       "sourceEntry": [
-        12632165.724,
-        2618769.903
+        12632161.93526,
+        2618765.12611
       ],
-      "sourceEntryIndex": 1,
+      "sourceEntryIndex": 12,
+      "sourceRegionEntryIndex": 19,
+      "modelEntryIndices": [
+        12
+      ],
       "sourceEntryCandidates": [
         [
-          12632170.423,
-          2618781.11
+          12632168.13621,
+          2618824.83026
         ],
         [
-          12632165.724,
-          2618769.903
+          12632266.0684,
+          2618840.90506
+        ],
+        [
+          12632251.22011,
+          2618870.68864
+        ],
+        [
+          12632244.19161,
+          2618790.53623
+        ],
+        [
+          12632226.53423,
+          2618766.0684
+        ],
+        [
+          12632178.38762,
+          2618761.68264
+        ],
+        [
+          12632151.64134,
+          2618780.0916
+        ],
+        [
+          12632257.73025,
+          2618813.92416
+        ],
+        [
+          12632199.54733,
+          2618776.80406
+        ],
+        [
+          12632201.0403,
+          2618763.24131
+        ],
+        [
+          12632195.34132,
+          2618831.0443
+        ],
+        [
+          12632237.0171,
+          2618845.25731
+        ],
+        [
+          12632161.93526,
+          2618765.12611
         ]
       ],
       "entry": {
-        "x": 834,
-        "y": 870
+        "x": 830,
+        "y": 894
       },
-      "entryDisplacement": 2.7422071402430657,
-      "innerEntryDisplacement": 2.3847222060440885,
+      "entryDisplacement": 2.629543686649854,
+      "innerEntryDisplacement": 6.217089351135295,
       "footprint": "F1 source polygons; physical wings shared by their numbered buildings",
       "review": "pending",
-      "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认",
+      "reason": "室外模型入口与同栋 F1 通行交接点校合；共享翼楼编号按标签锚点与平面分区关联",
       "templateKey": "academic:0"
     },
     {
@@ -1821,29 +1766,77 @@
         "y": 731.07
       },
       "sourceEntry": [
-        12632228.626,
-        2618779.792
+        12632226.53423,
+        2618766.0684
       ],
-      "sourceEntryIndex": 0,
+      "sourceEntryIndex": 4,
+      "sourceRegionEntryIndex": 2,
+      "modelEntryIndices": [
+        4
+      ],
       "sourceEntryCandidates": [
         [
-          12632228.626,
-          2618779.792
+          12632168.13621,
+          2618824.83026
         ],
         [
-          12632221.463,
-          2618767.261
+          12632266.0684,
+          2618840.90506
+        ],
+        [
+          12632251.22011,
+          2618870.68864
+        ],
+        [
+          12632244.19161,
+          2618790.53623
+        ],
+        [
+          12632226.53423,
+          2618766.0684
+        ],
+        [
+          12632178.38762,
+          2618761.68264
+        ],
+        [
+          12632151.64134,
+          2618780.0916
+        ],
+        [
+          12632257.73025,
+          2618813.92416
+        ],
+        [
+          12632199.54733,
+          2618776.80406
+        ],
+        [
+          12632201.0403,
+          2618763.24131
+        ],
+        [
+          12632195.34132,
+          2618831.0443
+        ],
+        [
+          12632237.0171,
+          2618845.25731
+        ],
+        [
+          12632161.93526,
+          2618765.12611
         ]
       ],
       "entry": {
-        "x": 1034,
-        "y": 706
+        "x": 1054,
+        "y": 758
       },
-      "entryDisplacement": 2.323811524199014,
-      "innerEntryDisplacement": 1.701352403236924,
+      "entryDisplacement": 2.0171762441590912,
+      "innerEntryDisplacement": 4.285148772213215,
       "footprint": "F1 source polygons; physical wings shared by their numbered buildings",
       "review": "pending",
-      "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认",
+      "reason": "室外模型入口与同栋 F1 通行交接点校合；共享翼楼编号按标签锚点与平面分区关联",
       "templateKey": "academic:0"
     },
     {
@@ -1862,29 +1855,77 @@
         "y": 664.64
       },
       "sourceEntry": [
-        12632191.281802889,
-        2618813.634427815
+        12632195.34132,
+        2618831.0443
       ],
-      "sourceEntryIndex": 1,
+      "sourceEntryIndex": 10,
+      "sourceRegionEntryIndex": 12,
+      "modelEntryIndices": [
+        10
+      ],
       "sourceEntryCandidates": [
         [
-          12632194.699398536,
-          2618809.2429160834
+          12632168.13621,
+          2618824.83026
         ],
         [
-          12632191.281802889,
-          2618813.634427815
+          12632266.0684,
+          2618840.90506
+        ],
+        [
+          12632251.22011,
+          2618870.68864
+        ],
+        [
+          12632244.19161,
+          2618790.53623
+        ],
+        [
+          12632226.53423,
+          2618766.0684
+        ],
+        [
+          12632178.38762,
+          2618761.68264
+        ],
+        [
+          12632151.64134,
+          2618780.0916
+        ],
+        [
+          12632257.73025,
+          2618813.92416
+        ],
+        [
+          12632199.54733,
+          2618776.80406
+        ],
+        [
+          12632201.0403,
+          2618763.24131
+        ],
+        [
+          12632195.34132,
+          2618831.0443
+        ],
+        [
+          12632237.0171,
+          2618845.25731
+        ],
+        [
+          12632161.93526,
+          2618765.12611
         ]
       ],
       "entry": {
-        "x": 834,
-        "y": 666
+        "x": 814,
+        "y": 594
       },
-      "entryDisplacement": 1.6483931569865715,
-      "innerEntryDisplacement": 2.035927307150201,
+      "entryDisplacement": 2.2398660674245896,
+      "innerEntryDisplacement": 5.187301803442733,
       "footprint": "F1 source polygons; physical wings shared by their numbered buildings",
       "review": "pending",
-      "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认",
+      "reason": "室外模型入口与同栋 F1 通行交接点校合；共享翼楼编号按标签锚点与平面分区关联",
       "templateKey": "academic:0"
     },
     {
@@ -1903,29 +1944,77 @@
         "y": 553.93
       },
       "sourceEntry": [
-        12632246.212844824,
-        2618842.4403319308
+        12632237.0171,
+        2618845.25731
       ],
-      "sourceEntryIndex": 1,
+      "sourceEntryIndex": 11,
+      "sourceRegionEntryIndex": 10,
+      "modelEntryIndices": [
+        11
+      ],
       "sourceEntryCandidates": [
         [
-          12632255.65261408,
-          2618834.754549894
+          12632168.13621,
+          2618824.83026
         ],
         [
-          12632246.212844824,
-          2618842.4403319308
+          12632266.0684,
+          2618840.90506
+        ],
+        [
+          12632251.22011,
+          2618870.68864
+        ],
+        [
+          12632244.19161,
+          2618790.53623
+        ],
+        [
+          12632226.53423,
+          2618766.0684
+        ],
+        [
+          12632178.38762,
+          2618761.68264
+        ],
+        [
+          12632151.64134,
+          2618780.0916
+        ],
+        [
+          12632257.73025,
+          2618813.92416
+        ],
+        [
+          12632199.54733,
+          2618776.80406
+        ],
+        [
+          12632201.0403,
+          2618763.24131
+        ],
+        [
+          12632195.34132,
+          2618831.0443
+        ],
+        [
+          12632237.0171,
+          2618845.25731
+        ],
+        [
+          12632161.93526,
+          2618765.12611
         ]
       ],
       "entry": {
-        "x": 966,
-        "y": 454
+        "x": 926,
+        "y": 462
       },
-      "entryDisplacement": 1.9260581507316792,
-      "innerEntryDisplacement": 0.6800735254367789,
+      "entryDisplacement": 4.462297614458247,
+      "innerEntryDisplacement": 4.258567834378124,
       "footprint": "F1 source polygons; physical wings shared by their numbered buildings",
       "review": "pending",
-      "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认",
+      "reason": "室外模型入口与同栋 F1 通行交接点校合；共享翼楼编号按标签锚点与平面分区关联",
       "templateKey": "academic:0"
     },
     {
@@ -1944,27 +2033,51 @@
         "y": 184.53
       },
       "sourceEntry": [
-        12632253.56743,
-        2618912.0593
+        12632252.85536,
+        2618912.47353
       ],
-      "sourceEntryIndex": 0,
+      "sourceEntryIndex": 2,
+      "sourceRegionEntryIndex": 3,
+      "modelEntryIndices": [
+        2
+      ],
       "entryFeatureId": 53762,
       "entrySourceMap": "xgkdgz_all",
       "sourceEntryCandidates": [
         [
-          12632253.56743,
-          2618912.0593
+          12632251.0694,
+          2618929.86046
+        ],
+        [
+          12632248.45133,
+          2618931.75835
+        ],
+        [
+          12632252.85536,
+          2618912.47353
+        ],
+        [
+          12632277.0141,
+          2618904.0372
+        ],
+        [
+          12632299.50603,
+          2618903.27051
+        ],
+        [
+          12632296.16841,
+          2618882.55033
         ]
       ],
       "entry": {
         "x": 854,
         "y": 198
       },
-      "entryDisplacement": 1.1363538181393993,
-      "innerEntryDisplacement": 9.201961747366688,
+      "entryDisplacement": 3.5987219953755427,
+      "innerEntryDisplacement": 4.263801121065559,
       "footprint": "F1 source polygons; physical wings shared by their numbered buildings",
       "review": "pending",
-      "reason": "源几何已重建；入口关联自动选择且偏移受限，仍需现场对照确认",
+      "reason": "室外模型入口与同栋 F1 通行交接点校合；共享翼楼编号按标签锚点与平面分区关联",
       "templateKey": "library:0"
     }
   ],
@@ -6898,6 +7011,789 @@
       ]
     }
   ],
+  "exteriorEntrances": [
+    {
+      "group": "east",
+      "modelIndices": [
+        0,
+        4
+      ],
+      "regionIndex": 3,
+      "sourceEntry": [
+        12632266.75535,
+        2618771.48963
+      ],
+      "matchDistance": 0.8195751945517328,
+      "templateKey": "east:1",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "east",
+      "modelIndices": [
+        1
+      ],
+      "regionIndex": 2,
+      "sourceEntry": [
+        12632272.62914,
+        2618781.12911
+      ],
+      "matchDistance": 0.5359518742197461,
+      "templateKey": "east:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "east",
+      "modelIndices": [
+        2
+      ],
+      "regionIndex": 1,
+      "sourceEntry": [
+        12632281.82916,
+        2618822.41513
+      ],
+      "matchDistance": 0.5134559801895691,
+      "templateKey": "east:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "east",
+      "modelIndices": [
+        3
+      ],
+      "regionIndex": 0,
+      "sourceEntry": [
+        12632300.53323,
+        2618858.53123
+      ],
+      "matchDistance": 0.4693317011889367,
+      "templateKey": "east:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "east",
+      "modelIndices": [
+        5
+      ],
+      "regionIndex": 4,
+      "sourceEntry": [
+        12632237.98266,
+        2618744.96646
+      ],
+      "matchDistance": 0.378149399500429,
+      "templateKey": "east:1",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "east",
+      "modelIndices": [
+        6
+      ],
+      "regionIndex": 5,
+      "sourceEntry": [
+        12632213.84836,
+        2618708.38762
+      ],
+      "matchDistance": 0.389003693901087,
+      "templateKey": "east:1",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "west",
+      "modelIndices": [
+        0
+      ],
+      "regionIndex": 5,
+      "sourceEntry": [
+        12632117.74835,
+        2618764
+      ],
+      "matchDistance": 1.3123653542378544,
+      "templateKey": "west:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "west",
+      "modelIndices": [
+        1
+      ],
+      "regionIndex": 16,
+      "sourceEntry": [
+        12632090.49863,
+        2618778.81216
+      ],
+      "matchDistance": 0.28193428852084695,
+      "templateKey": "west:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "west",
+      "modelIndices": [
+        2
+      ],
+      "regionIndex": 13,
+      "sourceEntry": [
+        12632125.47553,
+        2618841.21711
+      ],
+      "matchDistance": 0.537259204368936,
+      "templateKey": "west:0",
+      "accepted": true,
+      "approachRoads": [
+        227,
+        228
+      ],
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "west",
+      "modelIndices": [
+        3
+      ],
+      "regionIndex": 1,
+      "sourceEntry": [
+        12632145.71615,
+        2618841.0483
+      ],
+      "matchDistance": 0.8256544741239034,
+      "templateKey": "west:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "west",
+      "modelIndices": [
+        4
+      ],
+      "regionIndex": 17,
+      "sourceEntry": [
+        12632149.37952,
+        2618830.53723
+      ],
+      "matchDistance": 0.18855429720270364,
+      "templateKey": "west:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "west",
+      "modelIndices": [
+        5
+      ],
+      "regionIndex": 0,
+      "sourceEntry": [
+        12632136.23721,
+        2618799.97256
+      ],
+      "matchDistance": 0.4324090862718434,
+      "templateKey": "west:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "west",
+      "modelIndices": [
+        6
+      ],
+      "regionIndex": 2,
+      "sourceEntry": [
+        12632151.52413,
+        2618851.18461
+      ],
+      "matchDistance": 0.2656395090365265,
+      "templateKey": "west:1",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "west",
+      "modelIndices": [
+        7
+      ],
+      "regionIndex": 18,
+      "sourceEntry": [
+        12632162.86146,
+        2618853.40103
+      ],
+      "matchDistance": 0.6979333004222665,
+      "templateKey": "west:1",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "west",
+      "modelIndices": [
+        8
+      ],
+      "regionIndex": 3,
+      "sourceEntry": [
+        12632182.31912,
+        2618879.90106
+      ],
+      "matchDistance": 0.439995020858957,
+      "templateKey": "west:1",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "west",
+      "modelIndices": [
+        9
+      ],
+      "regionIndex": 7,
+      "sourceEntry": [
+        12632141.63924,
+        2618868.58463
+      ],
+      "matchDistance": 0.2931769334018787,
+      "templateKey": "west:1",
+      "accepted": true,
+      "approachRoads": [
+        154,
+        155
+      ],
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "west",
+      "modelIndices": [
+        10
+      ],
+      "regionIndex": 4,
+      "sourceEntry": [
+        12632204.14031,
+        2618914.0413
+      ],
+      "matchDistance": 0.059254249972847096,
+      "templateKey": "west:1",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "administration",
+      "modelIndices": [
+        0
+      ],
+      "regionIndex": 3,
+      "sourceEntry": [
+        12632111.28161,
+        2618687.58863
+      ],
+      "matchDistance": 0.19489804904245445,
+      "templateKey": "administration:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "administration",
+      "modelIndices": [
+        1
+      ],
+      "regionIndex": 5,
+      "sourceEntry": [
+        12632090.37852,
+        2618681.34432
+      ],
+      "matchDistance": 0.5555676117221362,
+      "templateKey": "administration:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "administration",
+      "modelIndices": [
+        2
+      ],
+      "regionIndex": 4,
+      "sourceEntry": [
+        12632087.15531,
+        2618701.63924
+      ],
+      "matchDistance": 0.4133708674596332,
+      "templateKey": "administration:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "administration",
+      "modelIndices": [
+        3
+      ],
+      "regionIndex": 0,
+      "sourceEntry": [
+        12632150.89666,
+        2618665.14631
+      ],
+      "matchDistance": 0.6517798035168085,
+      "templateKey": "administration:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "administration",
+      "modelIndices": [
+        4
+      ],
+      "regionIndex": 1,
+      "sourceEntry": [
+        12632168.94836,
+        2618672.31512
+      ],
+      "matchDistance": 0.9709120577951279,
+      "templateKey": "administration:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "administration",
+      "modelIndices": [
+        5
+      ],
+      "regionIndex": 6,
+      "sourceEntry": [
+        12632156.38362,
+        2618643.86746
+      ],
+      "matchDistance": 0.22292589864585924,
+      "templateKey": "administration:0",
+      "accepted": true,
+      "office": {
+        "roomId": 39883,
+        "walkRoadId": 660
+      },
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "administration",
+      "modelIndices": [
+        6
+      ],
+      "regionIndex": 7,
+      "sourceEntry": [
+        12632154.67254,
+        2618630.73125
+      ],
+      "matchDistance": 0.14501784095944195,
+      "templateKey": "administration:0",
+      "accepted": true,
+      "office": {
+        "roomId": 11576,
+        "walkRoadId": 785
+      },
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "administration",
+      "modelIndices": [
+        7
+      ],
+      "regionIndex": 2,
+      "sourceEntry": [
+        12632172.98766,
+        2618662.94636
+      ],
+      "matchDistance": 0.1605275217043818,
+      "templateKey": "administration:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "activity",
+      "modelIndices": [
+        0
+      ],
+      "regionIndex": 0,
+      "sourceEntry": [
+        12632189.0403,
+        2618691.008
+      ],
+      "matchDistance": 7.038943137649216,
+      "templateKey": "activity:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "activity",
+      "modelIndices": [
+        1
+      ],
+      "regionIndex": 2,
+      "sourceEntry": [
+        12632230.90306,
+        2618652.98666
+      ],
+      "matchDistance": 2.4232591677683586,
+      "templateKey": "activity:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "activity",
+      "modelIndices": [
+        2
+      ],
+      "regionIndex": 1,
+      "sourceEntry": [
+        12632262.26941,
+        2618584.94936
+      ],
+      "matchDistance": 4.533850249829506,
+      "templateKey": "activity:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "academic",
+      "modelIndices": [
+        0
+      ],
+      "regionIndex": 15,
+      "sourceEntry": [
+        12632168.13621,
+        2618824.83026
+      ],
+      "matchDistance": 0.4998779369958993,
+      "templateKey": "academic:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "academic",
+      "modelIndices": [
+        1
+      ],
+      "regionIndex": 7,
+      "sourceEntry": [
+        12632266.0684,
+        2618840.90506
+      ],
+      "matchDistance": 0.4940150638294145,
+      "templateKey": "academic:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "academic",
+      "modelIndices": [
+        2
+      ],
+      "regionIndex": 9,
+      "sourceEntry": [
+        12632251.22011,
+        2618870.68864
+      ],
+      "matchDistance": 2.4427682492917033,
+      "templateKey": "academic:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "academic",
+      "modelIndices": [
+        3
+      ],
+      "regionIndex": 4,
+      "sourceEntry": [
+        12632244.19161,
+        2618790.53623
+      ],
+      "matchDistance": 2.2134766952325795,
+      "templateKey": "academic:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "academic",
+      "modelIndices": [
+        4
+      ],
+      "regionIndex": 2,
+      "sourceEntry": [
+        12632226.53423,
+        2618766.0684
+      ],
+      "matchDistance": 1.4341149726662668,
+      "templateKey": "academic:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "academic",
+      "modelIndices": [
+        5
+      ],
+      "regionIndex": 22,
+      "sourceEntry": [
+        12632178.38762,
+        2618761.68264
+      ],
+      "matchDistance": 0.8291223996334638,
+      "templateKey": "academic:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "academic",
+      "modelIndices": [
+        6
+      ],
+      "regionIndex": 18,
+      "sourceEntry": [
+        12632151.64134,
+        2618780.0916
+      ],
+      "matchDistance": 5.262232267120025,
+      "templateKey": "academic:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "academic",
+      "modelIndices": [
+        7
+      ],
+      "regionIndex": 5,
+      "sourceEntry": [
+        12632257.73025,
+        2618813.92416
+      ],
+      "matchDistance": 1.9999074945347755,
+      "templateKey": "academic:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "academic",
+      "modelIndices": [
+        8
+      ],
+      "regionIndex": 21,
+      "sourceEntry": [
+        12632199.54733,
+        2618776.80406
+      ],
+      "matchDistance": 0.6630331019897812,
+      "templateKey": "academic:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "academic",
+      "modelIndices": [
+        9
+      ],
+      "regionIndex": 0,
+      "sourceEntry": [
+        12632201.0403,
+        2618763.24131
+      ],
+      "matchDistance": 2.337671539647589,
+      "templateKey": "academic:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "academic",
+      "modelIndices": [
+        10
+      ],
+      "regionIndex": 12,
+      "sourceEntry": [
+        12632195.34132,
+        2618831.0443
+      ],
+      "matchDistance": 2.1989172686466913,
+      "templateKey": "academic:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "academic",
+      "modelIndices": [
+        11
+      ],
+      "regionIndex": 10,
+      "sourceEntry": [
+        12632237.0171,
+        2618845.25731
+      ],
+      "matchDistance": 2.7597692407565106,
+      "templateKey": "academic:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "academic",
+      "modelIndices": [
+        12
+      ],
+      "regionIndex": 19,
+      "sourceEntry": [
+        12632161.93526,
+        2618765.12611
+      ],
+      "matchDistance": 5.347729290433945,
+      "templateKey": "academic:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true
+    },
+    {
+      "group": "library",
+      "modelIndices": [
+        0
+      ],
+      "regionIndex": 2,
+      "sourceEntry": [
+        12632251.0694,
+        2618929.86046
+      ],
+      "matchDistance": 0.5747338262691952,
+      "templateKey": "library:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true,
+      "outerGlass": 47051,
+      "innerGlass": 47051
+    },
+    {
+      "group": "library",
+      "modelIndices": [
+        1
+      ],
+      "regionIndex": 0,
+      "sourceEntry": [
+        12632248.45133,
+        2618931.75835
+      ],
+      "matchDistance": 0.38153124552164175,
+      "templateKey": "library:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true,
+      "outerGlass": 47052,
+      "innerGlass": 47052
+    },
+    {
+      "group": "library",
+      "modelIndices": [
+        2
+      ],
+      "regionIndex": 3,
+      "sourceEntry": [
+        12632252.85536,
+        2618912.47353
+      ],
+      "matchDistance": 0.06882449083320506,
+      "templateKey": "library:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true,
+      "outerGlass": 47050,
+      "innerGlass": 47050
+    },
+    {
+      "group": "library",
+      "modelIndices": [
+        3
+      ],
+      "regionIndex": 4,
+      "sourceEntry": [
+        12632277.0141,
+        2618904.0372
+      ],
+      "matchDistance": 0.7191578753225571,
+      "templateKey": "library:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true,
+      "outerGlass": 47082,
+      "innerGlass": 47082
+    },
+    {
+      "group": "library",
+      "modelIndices": [
+        4
+      ],
+      "regionIndex": 5,
+      "sourceEntry": [
+        12632299.50603,
+        2618903.27051
+      ],
+      "matchDistance": 0.19951797175636304,
+      "templateKey": "library:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true,
+      "outerGlass": 47085,
+      "innerGlass": 47085
+    },
+    {
+      "group": "library",
+      "modelIndices": [
+        5
+      ],
+      "regionIndex": 1,
+      "sourceEntry": [
+        12632296.16841,
+        2618882.55033
+      ],
+      "matchDistance": 0.682479286718569,
+      "templateKey": "library:0",
+      "accepted": true,
+      "outside": true,
+      "inside": true,
+      "outerGlass": 47083,
+      "innerGlass": 47083
+    }
+  ],
   "plazaCollision": {
     "featureId": 43597,
     "waterNode": "SHUI",
@@ -6918,12 +7814,12 @@
   "checks": {
     "scenes": 34,
     "sourceFloors": 32,
-    "pairedPortals": 423,
+    "pairedPortals": 455,
     "chests": 12,
     "reachability": "passed (walking components and cross-floor graph from campus spawn)"
   },
   "unresolved": [
-    "入口与编号的自动关联仍需现场确认；最大安全吸附48像素，实际偏移逐个记录",
+    "出入口坐标已由室外模型与 F1 独立校合；共享翼楼的编号归属按源房间/标签锚点就近关联",
     "六组核心区外边界仍采用有限包络",
     "这是依据源模型的低分辨率重建，尚未完成独立像素美术重绘"
   ],
@@ -7993,8 +8889,15 @@
       ],
       "extrudedPolygons": 66,
       "steppedStairs": 10,
-      "triangles": 33210,
-      "pixelSha256": "6f7a35fad709236d523d38781497aaacace66e0c38bfc8b2cd95c0d44ff398fa"
+      "openings": {
+        "sourceJambs": 24,
+        "roomEdges": 0,
+        "entranceSills": 3,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
+      "triangles": 34818,
+      "pixelSha256": "93026f5caec6468aee11d1e527c700002694d5eb178d6bcdf8ab2bd81072f91f"
     },
     {
       "sceneId": "interior_e3",
@@ -8582,8 +9485,15 @@
       ],
       "extrudedPolygons": 77,
       "steppedStairs": 12,
-      "triangles": 40465,
-      "pixelSha256": "6b68366dc702bc63b4240b4737c9b1b5b9fcaff6932a748ceb572fc3f5b0727c"
+      "openings": {
+        "sourceJambs": 34,
+        "roomEdges": 1,
+        "entranceSills": 3,
+        "inferredSolidReturns": 4,
+        "activeGlassBays": []
+      },
+      "triangles": 42871,
+      "pixelSha256": "84398269bd9071cf403e2b5a6fbf4254ec83eb7f6351c0be788f8f0259578108"
     },
     {
       "sceneId": "interior_w1",
@@ -9104,8 +10014,15 @@
       ],
       "extrudedPolygons": 89,
       "steppedStairs": 12,
-      "triangles": 42919,
-      "pixelSha256": "b85deea8a2e91b6227d07f30d8b3f836395320bc9e80c702c1ef6cc9408b731c"
+      "openings": {
+        "sourceJambs": 52,
+        "roomEdges": 2,
+        "entranceSills": 6,
+        "inferredSolidReturns": 6,
+        "activeGlassBays": []
+      },
+      "triangles": 46639,
+      "pixelSha256": "3a8d134b07ed48c4dcdc2607e7aad6c5db23df7322e403e6b5300e112b94f526"
     },
     {
       "sceneId": "interior_w3",
@@ -9518,8 +10435,15 @@
       ],
       "extrudedPolygons": 72,
       "steppedStairs": 12,
-      "triangles": 38272,
-      "pixelSha256": "6e4daa4302d2ad9c6eb7b7a0dfec40058684ffe8098780a90efadc5df44c6e72"
+      "openings": {
+        "sourceJambs": 35,
+        "roomEdges": 0,
+        "entranceSills": 5,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
+      "triangles": 40622,
+      "pixelSha256": "79d44e752fff619313d66b6dfedd2250d0460a1b7c9b7c24fe43686e57d3aa97"
     },
     {
       "sceneId": "interior_c1",
@@ -9616,7 +10540,7 @@
           "y": 205.34388534445327
         }
       ],
-      "inferredCasework": 3,
+      "inferredCasework": 2,
       "pointFixtures": [
         {
           "x": 118.60088242202778,
@@ -9686,8 +10610,15 @@
       ],
       "extrudedPolygons": 27,
       "steppedStairs": 4,
-      "triangles": 11383,
-      "pixelSha256": "5a7046c062106d84460baee32b018ecdcbb46254f9169bb21d36d165b1c11080"
+      "openings": {
+        "sourceJambs": 1,
+        "roomEdges": 0,
+        "entranceSills": 8,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
+      "triangles": 11429,
+      "pixelSha256": "fe59962493fa24337522120040ddc408508ec0d86d4b5e86eab7da60eac444ec"
     },
     {
       "sceneId": "interior_c2",
@@ -9843,20 +10774,6 @@
             17927,
             17928,
             17929
-          ]
-        },
-        {
-          "x": 733.5795491114875,
-          "y": 351.10810964860593,
-          "sourceId": 73066,
-          "kind": "coffee",
-          "cells": [
-            17930,
-            17931,
-            17932,
-            18134,
-            18135,
-            18136
           ]
         }
       ],
@@ -10057,8 +10974,15 @@
       ],
       "extrudedPolygons": 62,
       "steppedStairs": 6,
-      "triangles": 25153,
-      "pixelSha256": "ee11de0c290f37db78954b7293f5f1222ed5ecf09ebef5b8992d48b360c72c5a"
+      "openings": {
+        "sourceJambs": 6,
+        "roomEdges": 0,
+        "entranceSills": 3,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
+      "triangles": 25549,
+      "pixelSha256": "71d742be1bb843607eb82bd8c00065b1495fa16492164112f7fbc01102916f99"
     },
     {
       "sceneId": "interior_c3",
@@ -10590,8 +11514,15 @@
       ],
       "extrudedPolygons": 33,
       "steppedStairs": 13,
-      "triangles": 30110,
-      "pixelSha256": "633e5e05a6c68076abe563ea119a1d4aaebbdb196197466f31718cf52175b89b"
+      "openings": {
+        "sourceJambs": 4,
+        "roomEdges": 1,
+        "entranceSills": 13,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
+      "triangles": 30544,
+      "pixelSha256": "48014be645f36295b707e4bee2a3b4b640060894287c442d2a5ca881eaac3873"
     },
     {
       "sceneId": "interior_c7",
@@ -10835,10 +11766,84 @@
           "triangles": 144
         }
       ],
-      "extrudedPolygons": 31,
+      "extrudedPolygons": 37,
       "steppedStairs": 6,
-      "triangles": 16229,
-      "pixelSha256": "442dd5c1e1a829df838d925ca387e0893a2526b6b37a09499970d47bf097f28f"
+      "openings": {
+        "sourceJambs": 1,
+        "roomEdges": 0,
+        "entranceSills": 6,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": [
+          {
+            "sourceId": 47050,
+            "jambA": {
+              "x": 267.2088649360511,
+              "y": 136.1996311739837
+            },
+            "jambB": {
+              "x": 266.528391113539,
+              "y": 148.22922492326316
+            }
+          },
+          {
+            "sourceId": 47051,
+            "jambA": {
+              "x": 201.61381911410012,
+              "y": 56.5681863607799
+            },
+            "jambB": {
+              "x": 208.08342416285623,
+              "y": 57.31771377496505
+            }
+          },
+          {
+            "sourceId": 47052,
+            "jambA": {
+              "x": 182.91342422230153,
+              "y": 54.37795687694493
+            },
+            "jambB": {
+              "x": 189.3819086683322,
+              "y": 55.137094415843386
+            }
+          },
+          {
+            "sourceId": 47082,
+            "jambA": {
+              "x": 418.13577404736503,
+              "y": 119.51551632144646
+            },
+            "jambB": {
+              "x": 417.45639718900077,
+              "y": 107.48586057075491
+            }
+          },
+          {
+            "sourceId": 47085,
+            "jambA": {
+              "x": 532.3992523938095,
+              "y": 50.22214908517501
+            },
+            "jambB": {
+              "x": 538.8285358282766,
+              "y": 49.18200709929405
+            }
+          },
+          {
+            "sourceId": 47083,
+            "jambA": {
+              "x": 584.2993330819472,
+              "y": 167.16792628552847
+            },
+            "jambB": {
+              "x": 577.8856952556811,
+              "y": 168.3005474335712
+            }
+          }
+        ]
+      },
+      "triangles": 16787,
+      "pixelSha256": "b9c1ad7e234fd87e2f8a368da3a3b8138aab17aa1a14d7472be3c5cc90a8d5ab"
     },
     {
       "sceneId": "interior_east_f2",
@@ -11471,7 +12476,7 @@
           "y": 1272.9617357575942
         }
       ],
-      "inferredCasework": 54,
+      "inferredCasework": 53,
       "pointFixtures": [],
       "sourceModelInstances": 24,
       "sourceModels": [
@@ -11622,8 +12627,15 @@
       ],
       "extrudedPolygons": 117,
       "steppedStairs": 31,
-      "triangles": 54020,
-      "pixelSha256": "2c437e57ce49cdeb952ab6e9e579c21a88e9aabbc0122900e1d18e313edf20a1"
+      "openings": {
+        "sourceJambs": 63,
+        "roomEdges": 1,
+        "entranceSills": 0,
+        "inferredSolidReturns": 4,
+        "activeGlassBays": []
+      },
+      "triangles": 58232,
+      "pixelSha256": "65cc5f307915e1684332bd83e6b50c85348b8479752ef2c4b7248d9cefe662c3"
     },
     {
       "sceneId": "interior_east_f3",
@@ -12389,8 +13401,15 @@
       ],
       "extrudedPolygons": 73,
       "steppedStairs": 32,
-      "triangles": 55666,
-      "pixelSha256": "e60e4b101aae9ad53d8b86ced76c7e103a6707d89278c24e0b531b8a49459829"
+      "openings": {
+        "sourceJambs": 51,
+        "roomEdges": 8,
+        "entranceSills": 0,
+        "inferredSolidReturns": 29,
+        "activeGlassBays": []
+      },
+      "triangles": 60082,
+      "pixelSha256": "a246894bac4f6b1d4310ef5cd6151f0c9a5e1de970ea9e719e98fe21f722e43c"
     },
     {
       "sceneId": "interior_east_f4",
@@ -13342,8 +14361,15 @@
       ],
       "extrudedPolygons": 85,
       "steppedStairs": 31,
-      "triangles": 68723,
-      "pixelSha256": "2892bc2882658cabb013023deac30c9f592130be1ee4083a06d08e1573bbbf0d"
+      "openings": {
+        "sourceJambs": 35,
+        "roomEdges": 6,
+        "entranceSills": 0,
+        "inferredSolidReturns": 21,
+        "activeGlassBays": []
+      },
+      "triangles": 71807,
+      "pixelSha256": "0bc5b6ec5386dcd08d9e2483d6dee86fb17fd8cbfe827d343b384aee8cca8c8b"
     },
     {
       "sceneId": "interior_east_f5",
@@ -14313,8 +15339,15 @@
       ],
       "extrudedPolygons": 79,
       "steppedStairs": 29,
-      "triangles": 67637,
-      "pixelSha256": "449d4a58937e688e4ae7a3a4c2f7f4886a325e6c0a63d43341e203817df14b9e"
+      "openings": {
+        "sourceJambs": 46,
+        "roomEdges": 10,
+        "entranceSills": 0,
+        "inferredSolidReturns": 35,
+        "activeGlassBays": []
+      },
+      "triangles": 71963,
+      "pixelSha256": "bb596414bafe3c6a03b2a294b6c1cea8c33dd2ab6c5c31da32e318a73b2ac4c7"
     },
     {
       "sceneId": "interior_east_f6",
@@ -15002,8 +16035,15 @@
       ],
       "extrudedPolygons": 57,
       "steppedStairs": 24,
-      "triangles": 50064,
-      "pixelSha256": "199815ecf4621924a6ceef6a94edb1ef2eb62699ddf9c3a7def021568167dc97"
+      "openings": {
+        "sourceJambs": 38,
+        "roomEdges": 7,
+        "entranceSills": 0,
+        "inferredSolidReturns": 19,
+        "activeGlassBays": []
+      },
+      "triangles": 53368,
+      "pixelSha256": "28b8c59bb12cf13b69230c49edf1fe32e743465afc311e96f17d7255184cda21"
     },
     {
       "sceneId": "interior_west_f2",
@@ -15616,8 +16656,15 @@
       ],
       "extrudedPolygons": 131,
       "steppedStairs": 33,
-      "triangles": 64575,
-      "pixelSha256": "b335fa938147f4672602a8c30fb4ef87d7f210c278b4a6e685faa3b15f6efe47"
+      "openings": {
+        "sourceJambs": 27,
+        "roomEdges": 8,
+        "entranceSills": 0,
+        "inferredSolidReturns": 27,
+        "activeGlassBays": []
+      },
+      "triangles": 67371,
+      "pixelSha256": "a43ea85b3ba7db9d1ebe373f2366a787c10b8ec85e4aea485b8ffd6900ca6db8"
     },
     {
       "sceneId": "interior_west_f3",
@@ -16527,8 +17574,15 @@
       ],
       "extrudedPolygons": 116,
       "steppedStairs": 31,
-      "triangles": 80161,
-      "pixelSha256": "e4769f19cae11e4b7003c54509b5b0e27a831b6d451dfef96f2479bac36d231b"
+      "openings": {
+        "sourceJambs": 88,
+        "roomEdges": 8,
+        "entranceSills": 0,
+        "inferredSolidReturns": 29,
+        "activeGlassBays": []
+      },
+      "triangles": 87019,
+      "pixelSha256": "214a4407889c24f3d5f554169bb910014638b6c41e82f221f297ef8e78932d68"
     },
     {
       "sceneId": "interior_west_f4",
@@ -17331,8 +18385,15 @@
       ],
       "extrudedPolygons": 93,
       "steppedStairs": 30,
-      "triangles": 76655,
-      "pixelSha256": "2c7ac80300b25740f6abdfd1a4ffc98755e19afdbabd47fa95084fa09f9df71a"
+      "openings": {
+        "sourceJambs": 40,
+        "roomEdges": 8,
+        "entranceSills": 0,
+        "inferredSolidReturns": 15,
+        "activeGlassBays": []
+      },
+      "triangles": 80093,
+      "pixelSha256": "8e98bc97c420d1ca06f7a3a6c0f2f0e4e2cebf253617faa2ea2ca46bb6226be3"
     },
     {
       "sceneId": "interior_west_f5",
@@ -17965,7 +19026,7 @@
           "y": 845.4518651115255
         }
       ],
-      "inferredCasework": 60,
+      "inferredCasework": 59,
       "pointFixtures": [
         {
           "x": 435.1243506256652,
@@ -18111,8 +19172,15 @@
       ],
       "extrudedPolygons": 132,
       "steppedStairs": 28,
-      "triangles": 75318,
-      "pixelSha256": "c6be2951a14f8a1120f40457910e27ec303755b1796ea80bc661ad87119810aa"
+      "openings": {
+        "sourceJambs": 67,
+        "roomEdges": 7,
+        "entranceSills": 0,
+        "inferredSolidReturns": 9,
+        "activeGlassBays": []
+      },
+      "triangles": 80280,
+      "pixelSha256": "d543b7464353a6249dccf7d3a261213057eb6bc2e967401f6817a151da9d4cff"
     },
     {
       "sceneId": "interior_west_f6",
@@ -18739,7 +19807,7 @@
           "y": 171.38361243887496
         }
       ],
-      "inferredCasework": 54,
+      "inferredCasework": 53,
       "pointFixtures": [
         {
           "x": 434.85393839405083,
@@ -18880,8 +19948,15 @@
       ],
       "extrudedPolygons": 141,
       "steppedStairs": 24,
-      "triangles": 73798,
-      "pixelSha256": "9e9143e6beb280f8e1e7d3b329ec92d79f36041adfa2d01c7c2bb76d33f3203c"
+      "openings": {
+        "sourceJambs": 78,
+        "roomEdges": 3,
+        "entranceSills": 0,
+        "inferredSolidReturns": 4,
+        "activeGlassBays": []
+      },
+      "triangles": 79132,
+      "pixelSha256": "2053102038f3cf6ed4dd3fd03c4018ae3b54765a3655ddce02de47ff8252c17f"
     },
     {
       "sceneId": "interior_administration_f2",
@@ -19123,8 +20198,15 @@
       ],
       "extrudedPolygons": 18,
       "steppedStairs": 4,
-      "triangles": 14329,
-      "pixelSha256": "a327b5847a3733c9bceec07d01fa4c28867cf5c2822ff7624526aa5c936506a7"
+      "openings": {
+        "sourceJambs": 2,
+        "roomEdges": 0,
+        "entranceSills": 0,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
+      "triangles": 14461,
+      "pixelSha256": "4088506f25aa79ff2fdcd8074ad144528d280faafe23adb6578d3779f0c0bce8"
     },
     {
       "sceneId": "interior_administration_f3",
@@ -19348,8 +20430,15 @@
       ],
       "extrudedPolygons": 18,
       "steppedStairs": 4,
-      "triangles": 13907,
-      "pixelSha256": "98a2799c178d90a5a8e37a771e9e68c92153ca43b3b6ac8de887dc5cb69bd300"
+      "openings": {
+        "sourceJambs": 2,
+        "roomEdges": 0,
+        "entranceSills": 0,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
+      "triangles": 14039,
+      "pixelSha256": "b3bf86dc4584205e67a81eb346c456cecb04ee41b8fc98c27c023262f75b0a60"
     },
     {
       "sceneId": "interior_administration_f4",
@@ -19609,6 +20698,13 @@
       ],
       "extrudedPolygons": 19,
       "steppedStairs": 4,
+      "openings": {
+        "sourceJambs": 0,
+        "roomEdges": 0,
+        "entranceSills": 0,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
       "triangles": 15091,
       "pixelSha256": "be305d23c2c7dc00897f8150be59e036fa3f115b68869ce422d55c9d374b5bce"
     },
@@ -19834,8 +20930,15 @@
       ],
       "extrudedPolygons": 18,
       "steppedStairs": 4,
-      "triangles": 14358,
-      "pixelSha256": "bf0dd20420bd350190418e84ba73bb698c3e786bb3e10740dd011ace5504deb6"
+      "openings": {
+        "sourceJambs": 2,
+        "roomEdges": 0,
+        "entranceSills": 0,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
+      "triangles": 14490,
+      "pixelSha256": "30952d25a6180eda96d154cac5024dddaa3b4bdfe57e02e6327bc35c2d0ed866"
     },
     {
       "sceneId": "interior_administration_f6",
@@ -20125,8 +21228,15 @@
       ],
       "extrudedPolygons": 26,
       "steppedStairs": 3,
-      "triangles": 16490,
-      "pixelSha256": "61346d8ebc2ec14b280accde9232c148901ba1fe326cd54cce5c9291c5a510b1"
+      "openings": {
+        "sourceJambs": 6,
+        "roomEdges": 0,
+        "entranceSills": 0,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
+      "triangles": 16886,
+      "pixelSha256": "3defe7af253dc3e29913bd6dc6b5685069e23b7f5f5c70790e51e23a805c1715"
     },
     {
       "sceneId": "interior_administration_f7",
@@ -20428,8 +21538,15 @@
       ],
       "extrudedPolygons": 14,
       "steppedStairs": 3,
-      "triangles": 17065,
-      "pixelSha256": "7c27fc29f22ae0b85d3ab15e37f7069b97127fb570d4a5592f5a4ba1db3f2a81"
+      "openings": {
+        "sourceJambs": 5,
+        "roomEdges": 1,
+        "entranceSills": 0,
+        "inferredSolidReturns": 1,
+        "activeGlassBays": []
+      },
+      "triangles": 17479,
+      "pixelSha256": "13175e5167e88fe015987b09d9d2c8d3aba1d5e2dc5c706761105db72f8b7fd2"
     },
     {
       "sceneId": "interior_administration_f8",
@@ -20456,6 +21573,13 @@
       "sourceModels": [],
       "extrudedPolygons": 4,
       "steppedStairs": 3,
+      "openings": {
+        "sourceJambs": 0,
+        "roomEdges": 0,
+        "entranceSills": 0,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
       "triangles": 4597,
       "pixelSha256": "d33c9cd4e30e7854c0055420679dea80f543f5f701f6f60ec2dc0d1ef7ce060c"
     },
@@ -20856,8 +21980,15 @@
       ],
       "extrudedPolygons": 59,
       "steppedStairs": 5,
-      "triangles": 31408,
-      "pixelSha256": "ffca1b9acf8437d59f6dba8e2a2b48968fe932e7316ae0a086c21aade565243f"
+      "openings": {
+        "sourceJambs": 8,
+        "roomEdges": 0,
+        "entranceSills": 0,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
+      "triangles": 31936,
+      "pixelSha256": "2055393121aac109814199be6f60753b1c1b1b7713c20be529828ac2ea1d87cf"
     },
     {
       "sceneId": "interior_academic_f2",
@@ -21212,8 +22343,15 @@
       ],
       "extrudedPolygons": 38,
       "steppedStairs": 12,
-      "triangles": 39024,
-      "pixelSha256": "99b05f69447a2eaa07f7c1005df7b3beee0d2bc0e3bee4aded12b3c99e605952"
+      "openings": {
+        "sourceJambs": 7,
+        "roomEdges": 0,
+        "entranceSills": 0,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
+      "triangles": 39486,
+      "pixelSha256": "5f0f3a900206df482a14e5474cf4c928105f25be1b12b3a5985cdfe36234f050"
     },
     {
       "sceneId": "interior_academic_f3",
@@ -21387,6 +22525,13 @@
       ],
       "extrudedPolygons": 27,
       "steppedStairs": 3,
+      "openings": {
+        "sourceJambs": 0,
+        "roomEdges": 0,
+        "entranceSills": 0,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
       "triangles": 17714,
       "pixelSha256": "1a9f1fdbec57e03ecdd1602a8e60b3b30db8e55f4fd3df15397f67c2bb381cde"
     },
@@ -21822,8 +22967,15 @@
       ],
       "extrudedPolygons": 65,
       "steppedStairs": 6,
-      "triangles": 18351,
-      "pixelSha256": "756c4176c4377cd17f6f55a9dcf62ba8eaa0340eb1219eeabc9adf8abc3fe7f2"
+      "openings": {
+        "sourceJambs": 6,
+        "roomEdges": 0,
+        "entranceSills": 0,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
+      "triangles": 18747,
+      "pixelSha256": "d23a66d2be4a9f47668f8ac1537a6f705dd0065ca1f7d13c709122d01a5092a1"
     },
     {
       "sceneId": "interior_library_f3",
@@ -22301,8 +23453,15 @@
       ],
       "extrudedPolygons": 8,
       "steppedStairs": 6,
-      "triangles": 32689,
-      "pixelSha256": "a9be22a320f96f09ff2c2a096d776f69d95b442fc9803f7b83e57f8aa5eecd39"
+      "openings": {
+        "sourceJambs": 4,
+        "roomEdges": 0,
+        "entranceSills": 0,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
+      "triangles": 32953,
+      "pixelSha256": "45c928ebd871a35f2c69596ea4207bb3575f8a28bdca3e86566ba3c32c734604"
     },
     {
       "sceneId": "interior_library_f4",
@@ -22822,8 +23981,15 @@
       ],
       "extrudedPolygons": 687,
       "steppedStairs": 6,
-      "triangles": 26363,
-      "pixelSha256": "b88de8953c4322b43f362818bdc7035733334bdbef035e32ea975286e22b228b"
+      "openings": {
+        "sourceJambs": 3,
+        "roomEdges": 0,
+        "entranceSills": 0,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
+      "triangles": 26561,
+      "pixelSha256": "14a00fe9c197563dd9eebcfee7bb94807fbcc47d2dc474b586681243a8e19631"
     },
     {
       "sceneId": "interior_library_f5",
@@ -23694,8 +24860,15 @@
       ],
       "extrudedPolygons": 59,
       "steppedStairs": 5,
-      "triangles": 43164,
-      "pixelSha256": "e2d90085b5770db9598c022c5148159bf6b086b669f5b300427a2c3c707a9740"
+      "openings": {
+        "sourceJambs": 2,
+        "roomEdges": 0,
+        "entranceSills": 0,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
+      "triangles": 43296,
+      "pixelSha256": "9e9bb742458f38432acad33a0f41e67793fd1c49a02aed5966c1fa5f2349843a"
     },
     {
       "sceneId": "interior_library_f6",
@@ -23786,6 +24959,13 @@
       ],
       "extrudedPolygons": 6,
       "steppedStairs": 4,
+      "openings": {
+        "sourceJambs": 0,
+        "roomEdges": 0,
+        "entranceSills": 0,
+        "inferredSolidReturns": 0,
+        "activeGlassBays": []
+      },
       "triangles": 12306,
       "pixelSha256": "9c009c1edc1bede0a1f231cf67ca8b98ce7b988f54aceb7cec73c47dd3a271d5"
     }

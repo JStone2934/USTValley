@@ -1,3 +1,9 @@
+import { slidingEntrance } from "./entrance-art";
+import {
+  approachedRoomDoor,
+  clearOfDoor,
+  crossedEntrance,
+} from "../shared/automatic-doors";
 import { addSundialForeground } from "./sundial-art";
 import { canObserveSundial, sundial } from "../shared/sundial";
 import { makeStudentAvatar } from "./avatar-art";
@@ -33,6 +39,7 @@ export type Snapshot = {
   discovered: string[];
   target?: string;
   passages?: { id: string; label: string }[];
+  openDoorIds?: string[];
   zoomPercent: number;
   canZoomOut: boolean;
   canZoomIn: boolean;
@@ -92,6 +99,8 @@ export class CampusScene extends Phaser.Scene {
   private referenceLayer!: Phaser.GameObjects.Graphics;
   private discovered = new Set<string>();
   private openDoors = new Set<string>();
+  private entranceLeaves: ((feet: Point, delta: number) => void)[] = [];
+  private swings = new Map<string, { door: RoomDoor; progress: number }>();
   private doorSprites = new Map<string, Phaser.GameObjects.Graphics>();
   private position: Point = { x: 0, y: 0 };
   private lastEmit = 0;
@@ -195,6 +204,9 @@ export class CampusScene extends Phaser.Scene {
       for (const asset of this.assets(this.current))
         if (!keep.has(asset)) this.textures.remove(asset);
     }
+    this.openDoors.clear();
+    this.swings.clear();
+    this.entranceLeaves = [];
     this.current = doorCollision(next, this.openDoors);
     this.position = { ...point };
     const s = this.current;
@@ -232,7 +244,7 @@ export class CampusScene extends Phaser.Scene {
         .setDepth(6000 + door.y)
         .setName("room-door");
       this.doorSprites.set(door.id, g);
-      this.paintDoor(door);
+      this.paintDoor(door, 0);
     }
     const g = this.add.graphics().setDepth(5500);
     for (const b of s.buildings) {
@@ -279,23 +291,20 @@ export class CampusScene extends Phaser.Scene {
       chest.fillStyle(0xf4d677).fillRect(-1, -5, 3, 4);
     }
     for (const p of s.portals.filter((p) => p.kind === "entrance")) {
+      const glass = slidingEntrance(this, s, p);
+      if (glass) this.entranceLeaves.push(glass);
       const threshold = this.add
-        .graphics({ x: p.x, y: p.y })
-        .setDepth(5500)
+        .graphics(p.entrance?.threshold ?? { x: p.x, y: p.y })
+        .setRotation(
+          p.entrance
+            ? Math.atan2(p.entrance.toward.x, -p.entrance.toward.y)
+            : 0,
+        )
+        .setDepth(8050)
         .fillStyle(0xf0d893, 0.9)
         .fillRect(-4, -2, 8, 4);
-      this.mapCue(threshold, 2.5);
-      if (id !== "campus_core") {
-        const label = this.add
-          .text(p.x, p.y, `↓ ${p.label}`, {
-            fontSize: "4px",
-            color: "#365545",
-            backgroundColor: "#f5edd3",
-          })
-          .setOrigin(0.5, 1)
-          .setDepth(5500);
-        this.mapCue(label, 3, -3);
-      }
+      if (p.entrance) threshold.setScale(p.entrance.width / 8, 0.45);
+      else this.mapCue(threshold, 2.5);
     }
     for (const marker of passageMarkers(this.world, s)) {
       const lift = marker.kind === "lift",
@@ -332,17 +341,8 @@ export class CampusScene extends Phaser.Scene {
       }
       icon.setData("portalIds", marker.portalIds);
       this.mapCue(icon, 1.8, -8, 12);
-      const label = this.add
-        .text(marker.x, marker.y, marker.label, {
-          fontFamily: "sans-serif",
-          fontSize: "3px",
-          color: gallery ? "#774522" : lift ? "#28627c" : "#315e3e",
-          backgroundColor: "#f2f3e4",
-          padding: { x: 1, y: 1 },
-        })
-        .setOrigin(0, 1)
-        .setDepth(5600);
-      this.mapCue(label, 4.25, -6, 3);
+      // Destination text is shown in the interaction controls at the landing.
+      // Keeping labels off the floor leaves nearby door leaves and jambs visible.
     }
     this.referenceLayer = this.add.graphics().setDepth(11000);
     this.drawReferences();
@@ -444,11 +444,31 @@ export class CampusScene extends Phaser.Scene {
     this.preferredZoom = next;
     this.frameCamera();
   }
-  private paintDoor(door: RoomDoor) {
+  private setDoor(door: RoomDoor, open: boolean) {
+    if (this.openDoors.has(door.id) === open) return;
+    if (!toggleDoor(this.current, door, this.openDoors, this.position)) return;
+    if (!this.swings.has(door.id))
+      this.swings.set(door.id, { door, progress: open ? 0 : 1 });
+  }
+  private advanceDoors(delta: number) {
+    for (const [id, swing] of this.swings) {
+      const target = this.openDoors.has(id) ? 1 : 0;
+      const step = Math.min(1, delta / 180);
+      swing.progress = target
+        ? Math.min(1, swing.progress + step)
+        : Math.max(0, swing.progress - step);
+      this.paintDoor(
+        swing.door,
+        swing.progress * swing.progress * (3 - 2 * swing.progress),
+      );
+      if (swing.progress === target) this.swings.delete(id);
+    }
+  }
+  private paintDoor(door: RoomDoor, progress: number) {
     drawRoomDoor(
       this.doorSprites.get(door.id)!,
       door,
-      this.openDoors.has(door.id),
+      progress,
       this.current.units.pixelsPerMeter,
       this.current.units.heightProjection,
     );
@@ -481,8 +501,7 @@ export class CampusScene extends Phaser.Scene {
     const nearby = this.nearbyActions();
     const action = actionId ? nearby.find((a) => a.id === actionId) : nearby[0];
     if (action?.door) {
-      if (toggleDoor(this.current, action.door, this.openDoors, this.position))
-        this.paintDoor(action.door);
+      this.setDoor(action.door, !this.openDoors.has(action.door.id));
       this.publish();
       return;
     }
@@ -511,6 +530,7 @@ export class CampusScene extends Phaser.Scene {
       sceneId: this.current.id,
       position: { ...this.position },
       discovered: [...this.discovered],
+      openDoorIds: [...this.openDoors],
       target: actions[0]?.label ?? (observation ? sundial.action : undefined),
       passages: observation
         ? [{ id: sundial.id, label: sundial.action }]
@@ -548,6 +568,8 @@ export class CampusScene extends Phaser.Scene {
               Number(k.has("w") || k.has("ArrowUp")),
           };
     const before = this.position;
+    const approaching = approachedRoomDoor(this.current, before, input);
+    if (approaching) this.setDoor(approaching, true);
     const running =
       !this.bridge.paused &&
       (k.has("ShiftLeft") || k.has("ShiftRight") || k.has("Shift"));
@@ -559,7 +581,21 @@ export class CampusScene extends Phaser.Scene {
       running ? this.current.player.runSpeed : this.current.player.speed,
       this.current.player.radius,
     );
-    const gate = crossedGallery(this.current, before, this.position);
+    if (this.openDoors.size) {
+      for (const door of this.current.doors ?? [])
+        if (
+          this.openDoors.has(door.id) &&
+          clearOfDoor(this.current, door, this.position)
+        )
+          this.setDoor(door, false);
+    }
+    if (!this.bridge.paused && !this.loading) {
+      this.advanceDoors(delta);
+      for (const update of this.entranceLeaves) update(this.position, delta);
+    }
+    const gate =
+      crossedGallery(this.current, before, this.position) ??
+      crossedEntrance(this.current, before, this.position);
     if (gate) {
       const target = this.world.scenes.find((s) => s.id === gate.targetScene)!;
       const reverse = target.portals.find((p) => p.id === gate.targetPortal)!;

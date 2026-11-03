@@ -232,13 +232,35 @@ function Overview({ world }: { world: WorldMap }) {
                 height={plan.height * 16}
               />
             ))}
+          {!hiddenLayers.includes("walls") &&
+            plan.doors?.map(
+              (door) =>
+                door.hinge &&
+                door.latch && (
+                  <line
+                    key={door.id}
+                    x1={door.hinge.x}
+                    y1={door.hinge.y}
+                    x2={door.latch.x}
+                    y2={door.latch.y}
+                    stroke={
+                      snapshot.openDoorIds?.includes(door.id)
+                        ? "#428779"
+                        : "#936737"
+                    }
+                    strokeWidth="1"
+                  >
+                    <title>{door.room}</title>
+                  </line>
+                ),
+            )}
           {plan.portals
             .filter((p) => p.kind === "entrance")
             .map((p) => (
               <circle
                 key={p.id}
-                cx={p.x}
-                cy={p.y}
+                cx={p.entrance?.threshold.x ?? p.x}
+                cy={p.entrance?.threshold.y ?? p.y}
                 r="4"
                 fill={
                   p.kind === "entrance"
@@ -381,6 +403,7 @@ function App() {
       data-camera-zoom={snapshot.cameraZoom}
       data-x={Math.round(snapshot.position.x)}
       data-y={Math.round(snapshot.position.y)}
+      data-open-doors={(snapshot.openDoorIds ?? []).join(" ")}
       data-floor={current?.floor.name}
       data-floor-images={JSON.stringify(snapshot.floorImages ?? [])}
       data-stair-markers={snapshot.stairMarkers ?? 0}
@@ -393,7 +416,7 @@ function App() {
           </span>
         </a>
         <div className="chapter">
-          <span className="eyebrow">BUILD 0.5.1 / 立体像素校园</span>
+          <span className="eyebrow">BUILD 0.5.2 / 立体像素校园</span>
           <h1>
             从校园，
             <br />
@@ -498,9 +521,8 @@ function App() {
               {!snapshot.target && (
                 <div className="interaction-hint" role="status">
                   {current?.id === "campus_core"
-                    ? "靠近建筑金色入口，按"
-                    : "靠近房门或通道，按"}{" "}
-                  <kbd>E</kbd> {current?.id === "campus_core" ? "进入" : "交互"}
+                    ? "走向金色门槛，自动进入建筑"
+                    : "走近房门自动开启，楼梯和电梯按 E 选择"}
                 </div>
               )}
               {Boolean(snapshot.passages?.length) && (
@@ -604,7 +626,9 @@ function App() {
             <ol>
               <li>使用 WASD、方向键或左侧触摸摇杆移动。</li>
               <li>电脑按住 Shift 奔跑，松开后恢复基础移动速度。</li>
-              <li>靠近金色入口标记，按 E 或右侧交互键进入建筑。</li>
+              <li>
+                走向金色门槛，自动进出建筑。也可以在门前按 E 或点入口名称。
+              </li>
               <li>
                 靠近绿色台阶图标，按 E
                 上下楼；同处有多个方向时，点击“上楼至”或“下楼至”按钮。蓝色图标为电梯。
@@ -613,8 +637,8 @@ function App() {
                 进入建筑后，漫游画面与地图只显示当前楼层平面；上下楼后自动同步。室外校园总览可预览各建筑楼层。
               </li>
               <li>
-                沿同层连廊走过交界点即可进入相邻楼。在房门两侧按 E
-                或点击房间名称开关门。
+                沿同层连廊走过交界点即可进入相邻楼。走近房门会自动开门，离开后自动关门。按
+                E 或点房间名也可手动开关。
               </li>
               <li>到达室内绿色探索区后，本次探索计数增加；再从出口返回。</li>
               <li>

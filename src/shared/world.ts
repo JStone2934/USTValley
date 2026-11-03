@@ -14,6 +14,12 @@ export type Portal = Point & {
   spawn: Point;
   label: string;
   sourceRoadId?: string;
+  entrance?: {
+    threshold: Point;
+    toward: Point;
+    width: number;
+    glazing?: { sourceId: number; jambA: Point; jambB: Point };
+  };
 } & (
     | {
         kind: "entrance" | "stairs" | "lift" | "escalator";

@@ -16,6 +16,7 @@ import {
   modelMaterials,
   textures,
   renderPrimitives,
+  type Texture,
 } from "./gltf.ts";
 import { gradeCampusModel } from "./campus-art.ts";
 
@@ -72,6 +73,8 @@ export async function bakeLandmarks(
       const parts = primitives(glb, placement);
       const materials = modelMaterials(glb, await textures(glb));
       const isPlaza = id === 43597 || id === 48569;
+      const isCanopy = src.endsWith("/c25d7cf1596409df9cdb1d84892a5541.glb");
+      if (isCanopy) resolveCanopyGrid(materials[2].texture!);
       const baked = await renderPrimitives(
         parts,
         materials,
@@ -80,7 +83,7 @@ export async function bakeLandmarks(
         config.roofHeightFactor,
         undefined,
         isPlaza,
-        isPlaza,
+        isPlaza || isCanopy,
         density,
       );
       const x = Math.max(0, baked.x),
@@ -89,21 +92,20 @@ export async function bakeLandmarks(
         h = Math.min(baked.y + baked.height, height * density) - y;
       if (w <= 0 || h <= 0) continue;
       const crop = { left: x - baked.x, top: y - baked.y, width: w, height: h };
-      const png = isPlaza
-        ? await sharp(
-            await plazaFinish(
-              id,
-              baked,
-              convert(tarray.slice(12, 14)),
-              density,
-            ),
-          )
-            .extract(crop)
-            .png({ compressionLevel: 9 })
-            .toBuffer()
-        : await gradeCampusModel(
-            await sharp(baked.png).extract(crop).png().toBuffer(),
-          );
+      let png: Buffer;
+      if (isPlaza || isCanopy) {
+        const finished = isPlaza
+          ? await plazaFinish(id, baked, convert(tarray.slice(12, 14)), density)
+          : await canopyFinish(baked);
+        png = await sharp(finished)
+          .extract(crop)
+          .png({ compressionLevel: 9 })
+          .toBuffer();
+      } else {
+        png = await gradeCampusModel(
+          await sharp(baked.png).extract(crop).png().toBuffer(),
+        );
+      }
       if ((await sharp(png).stats()).channels[3].max === 0) continue;
       const image = `landmark-${id}.png`;
       files.set(`public/maps/${image}`, png);
@@ -242,4 +244,74 @@ async function plazaFinish(
       data[k + ch] = Math.max(0, Math.min(255, Math.round(color[ch] + accent)));
   }
   return sharp(data, { raw: info }).png({ compressionLevel: 9 }).toBuffer();
+}
+
+// The actual canopy has a single dark texel per 64-texel UV period. At its
+// surveyed scale each panel is ~8 baked pixels across. Widen just those seams
+// in texture space so their location and orientation follow each placed GLB.
+function resolveCanopyGrid(texture: Texture) {
+  const { data, width, height } = texture,
+    original = Buffer.from(data);
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      let value = 244;
+      for (let d = -5; d <= 5; d++) {
+        const col = (x + d + width) % width,
+          row = (y + d + height) % height;
+        if (
+          Math.min(
+            original[4 * (y * width + col)],
+            original[4 * (row * width + x)],
+          ) < 205
+        ) {
+          value = Math.min(value, 198 + Math.abs(d) * 8);
+        }
+      }
+      const offset = 4 * (y * width + x);
+      data.fill(value, offset, offset + 3);
+    }
+  }
+}
+
+async function canopyFinish(bake: Bake) {
+  const { data, info } = await sharp(bake.png)
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const ids = bake.surfaceIds!,
+    w = info.width;
+  const top = 0x8000 | 3; // 网格 horizontal faces; sides share the texture.
+  for (let i = 0; i < ids.length; i++) {
+    const face = ids[i];
+    if (!face) continue;
+    const k = i * 4;
+    if (face === top) {
+      const x = i % w,
+        y = Math.floor(i / w);
+      // Pale aluminium panels pick up the sky. Separate the thin front lip
+      // and back highlight along the actual mesh rim, never across its posts.
+      const front = ids[i + w] !== top,
+        back = ids[i - w] !== top;
+      const rolledLip = !front && ids[i + 2 * w] !== top;
+      const sheen = Math.round(8 * (1 - x / w) - (5 * y) / info.height);
+      const level = front
+        ? 124
+        : rolledLip
+          ? 204
+          : back
+            ? 217
+            : Math.min(221, Math.round(data[k] * 0.9 + 11)) + sheen;
+      data[k] = level - 1;
+      data[k + 1] = level + 1;
+      data[k + 2] = level + 3;
+    } else {
+      // Original deck, posts, fascia and alpha-tested railings retain their
+      // own visible silhouettes under the overhang.
+      const mat = (face & 0x7fff) - 1;
+      const level = mat === 0 ? 71 : mat === 1 ? 148 : mat === 2 ? 111 : 126;
+      data[k] = level - 7;
+      data[k + 1] = level;
+      data[k + 2] = level + 4;
+    }
+  }
+  return sharp(data, { raw: info }).png().toBuffer();
 }

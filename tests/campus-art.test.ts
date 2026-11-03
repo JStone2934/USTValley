@@ -93,3 +93,20 @@ test("source lawns have pixel highlights at camera scale and leave courtyard hol
     "authored tufts and seams must survive rasterization",
   );
 });
+
+test("mapped kerbside bays retain their source outlines on the campus terrain layer", () => {
+  const campus = world.scenes[0];
+  const bays = campus.surfaces.filter((s) => s.kind === "parking");
+  const bay = bays.find((s) => s.sourceId === 39347)!;
+  assert.equal(bay.sourceLayer, "外车位0");
+  assert.equal(bay.sourceMap, "xgkdgz_all");
+  const ring = bay.polygons[0][0];
+  assert.deepEqual(ring[0], ring.at(-1));
+  const edges = ring.slice(1).map((p, i) =>
+    Math.hypot(p.x - ring[i].x, p.y - ring[i].y) / campus.units.pixelsPerMeter,
+  );
+  assert.ok(Math.min(...edges) > 2 && Math.min(...edges) < 3);
+  assert.ok(Math.max(...edges) > 4 && Math.max(...edges) < 7);
+  const svg = campusLayerSvg({ ...campus, surfaces: [bay] }, "terrain");
+  assert.match(svg, /fill="#a2a69e" fill-rule="evenodd"/);
+});

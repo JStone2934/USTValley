@@ -1,3 +1,4 @@
+import { isLibraryTerrace } from "./library-photo-art.ts";
 import type { SceneMap } from "../src/shared/world.ts";
 import {
   bounds,
@@ -67,6 +68,7 @@ export function fitSourceFixtures(scene: SceneMap, source: SourceMap) {
     if (
       !f ||
       !(
+        isLibraryTerrace(scene, s) ||
         furniture.test(s.sourceLayer) ||
         furniture.test(f.name ?? "") ||
         labelledAssets.has(f.src)

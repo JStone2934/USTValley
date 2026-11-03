@@ -36,6 +36,14 @@ import {
 import type { RoomCasework } from "../src/shared/casework.ts";
 import { roomPanel, wallFootprint } from "./room-fittings.ts";
 
+import {
+  isLibraryTerrace,
+  libraryPhotoReferences,
+  libraryTerrace,
+  libraryStudySet,
+  photoFloorInk,
+  studyInlays,
+} from "./library-photo-art.ts";
 const earcut = createRequire(import.meta.url)(
   "phaser/src/geom/polygon/Earcut.js",
 ) as (vertices: number[], holes: number[], dimensions: number) => number[];
@@ -444,6 +452,8 @@ export function createIndoorBaker(root: string, sources: Sources) {
         ),
       ),
     );
+    const photoSets: number[] = [],
+      terraces: number[] = [];
     const modelIds = new Set<number>(),
       modelMaterialOffsets = new Map<string, number>();
     const models: {
@@ -462,11 +472,17 @@ export function createIndoorBaker(root: string, sources: Sources) {
         box.y <= height + 24
       );
     };
+    const darkCarpet =
+      scene.sourceMap === "xgkdgz_tsg" && scene.floor.key === "2";
     const addShadow = (polygon: Polygon, elevation: number, group: string) => {
       if (elevation < 1) return;
       for (const [distance, z, ink] of [
-        [1.0, 0.14, material.shadow],
-        [0.55, 0.15, material.contact],
+        [1.0, 0.14, darkCarpet ? material.darkCarpetPenumbra : material.shadow],
+        [
+          0.55,
+          0.15,
+          darkCarpet ? material.darkCarpetContact : material.contact,
+        ],
       ]) {
         const shadow = polygon.map((r) =>
           r.map((p) => ({
@@ -502,11 +518,23 @@ export function createIndoorBaker(root: string, sources: Sources) {
           f.properties.height ?? model.height * Math.abs(matrix[10] || 1),
         );
       const zFactor = model.height > 0 ? realHeight / model.height : 1;
-      const parts = model.parts.map(
+      const refined = libraryStudySet(
+        scene,
+        src,
+        s.sourceId,
+        material,
+        polygonMesh,
+      );
+      if (refined) photoSets.push(s.sourceId);
+      const parts = (refined ?? model.parts).map(
         (p): Primitive => ({
           ...p,
           node: `feature-${s.sourceId}:${p.node}`,
-          material: p.material < 0 ? material.masonry : p.material + offset,
+          material: refined
+            ? p.material
+            : p.material < 0
+              ? material.masonry
+              : p.material + offset,
           vertices: p.vertices.map((v): Vec3 => {
             const placed = transformPoint(matrix, v),
               q = convert(placed);
@@ -515,8 +543,19 @@ export function createIndoorBaker(root: string, sources: Sources) {
         }),
       );
       const group = kindLayer(s);
-      for (const polygon of s.polygons)
-        addShadow(polygon, realHeight * scale, group);
+      if (refined) {
+        for (const part of parts.filter((p) =>
+          p.node.endsWith(":study-caster"),
+        )) {
+          addShadow(
+            [part.vertices.map(([x, y]) => ({ x, y }))],
+            part.vertices[0][2],
+            group,
+          );
+        }
+      } else
+        for (const polygon of s.polygons)
+          addShadow(polygon, realHeight * scale, group);
       groups.get(group)!.push(...parts);
       models.push({
         featureId: s.sourceId,
@@ -529,6 +568,10 @@ export function createIndoorBaker(root: string, sources: Sources) {
       addShadow([item.footprint], 1.05 * scale, "fixtures");
       groups.get("fixtures")!.push(...caseworkMesh(item, scale, material));
     }
+    const inlays = studyInlays(scene, material, polygonMesh);
+    // The open-space floor image must keep its coloured inlays when fixture
+    // visibility is toggled. Its 0.09 elevation sits just above walk polygons.
+    groups.get("floor")!.push(...inlays);
     const pointFixtures = scene.pointFixtures ?? [];
     for (const f of pointFixtures) {
       groups
@@ -568,18 +611,30 @@ export function createIndoorBaker(root: string, sources: Sources) {
       if (s.kind === "room")
         roomFinishes[finish] = (roomFinishes[finish] ?? 0) + 1;
       for (const polygon of s.polygons) {
-        if (s.kind === "floor")
+        const photoInk = photoFloorInk(scene, s);
+        if (isLibraryTerrace(scene, s)) {
+          target.push(...libraryTerrace(polygon, scale, material, polygonMesh));
+          addShadow(polygon, scale * 1.08, group);
+          terraces.push(s.sourceId);
+        } else if (s.kind === "floor")
           target.push(
             ...polygonMesh(
               polygon,
               0,
               -scale * 0.35,
-              material.slab,
+              photoInk ? material[photoInk] : material.slab,
               material.riser,
             ),
           );
         else if (s.kind === "corridor")
-          target.push(...polygonMesh(polygon, 0.08, 0.08, material.passage));
+          target.push(
+            ...polygonMesh(
+              polygon,
+              0.08,
+              0.08,
+              photoInk ? material[photoInk] : material.passage,
+            ),
+          );
         else if (s.kind === "room") {
           const roomFloor = polygonMesh(polygon, 0.04, 0.04, material[finish]);
           if (roomFloor[0]) {
@@ -751,6 +806,23 @@ export function createIndoorBaker(root: string, sources: Sources) {
         pixels: { width: width * pixelRatio, height: height * pixelRatio },
         pixelRatio,
         logicalPixels: { width, height },
+        ...(scene.sourceMap === "xgkdgz_tsg" &&
+        ["0", "2", "4"].includes(scene.floor.key)
+          ? {
+              photoReference: {
+                ...libraryPhotoReferences[
+                  scene.floor.key === "0"
+                    ? "firstFloor"
+                    : scene.floor.key === "2"
+                      ? "thirdFloor"
+                      : "fifthFloor"
+                ],
+                refinedSourceSets: photoSets,
+                tieredSeats: terraces,
+                colourInlays: inlays.length,
+              },
+            }
+          : {}),
         roomFinishes,
         inferredFittings,
         inferredCasework: scene.roomCasework?.length ?? 0,

@@ -1,5 +1,5 @@
 {
-  "mapVersion": "core-pixel-3d-0.5.0",
+  "mapVersion": "core-pixel-3d-0.5.1",
   "status": "source-geometry-reconstructed",
   "fixtureOccupancy": [
     {
@@ -149,7 +149,7 @@
     },
     {
       "sceneId": "interior_library_f3",
-      "installed": 47,
+      "installed": 48,
       "conflictingSourceIds": []
     },
     {
@@ -7242,7 +7242,7 @@
         "width": 1714,
         "height": 1330
       },
-      "pixelSha256": "7b0a78e045de1879f1b3c8e1eec54754586a14373f1e57410133592dfabb3610"
+      "pixelSha256": "644ed55b82628ecf3cac0ed97a7863c462936908aff6eb03325d79bf74339b6e"
     },
     {
       "group": "academic",
@@ -7305,7 +7305,7 @@
         "width": 1443,
         "height": 1649
       },
-      "pixelSha256": "a10b4bf4b44a768aea087b016e3c61327e44b2fa4afa5de0afe149685b729d52"
+      "pixelSha256": "b84a78ee691a9294f1b1930a424443527ca60dc9f6f024c8b327cded9c21d3fa"
     },
     {
       "group": "library",
@@ -10608,6 +10608,14 @@
         "width": 688,
         "height": 224
       },
+      "photoReference": {
+        "url": "https://www.lib.cuhk.edu.hk/wp-content/uploads/2025/12/integrating-tradition-and-innovation-in-library-space-design-a-case-study-of-the-hkustgz-library-space-transformation.pdf#page=9",
+        "observed": "Pale grey stone and white walls in the exhibition gallery.",
+        "registration": "Gallery POI 47857 in floor surface 141557 and walking polygon 509.",
+        "refinedSourceSets": [],
+        "tieredSeats": [],
+        "colourInlays": 0
+      },
       "roomFinishes": {
         "washroom": 5,
         "studio": 3,
@@ -10830,7 +10838,7 @@
       "extrudedPolygons": 31,
       "steppedStairs": 6,
       "triangles": 16229,
-      "pixelSha256": "fbfb4623d878030fa081f29afd43b5e0a9db41dbcc262e2ed6cbc202e5c66adc"
+      "pixelSha256": "442dd5c1e1a829df838d925ca387e0893a2526b6b37a09499970d47bf097f28f"
     },
     {
       "sceneId": "interior_east_f2",
@@ -21832,6 +21840,58 @@
         "width": 688,
         "height": 224
       },
+      "photoReference": {
+        "url": "https://www.lib.cuhk.edu.hk/wp-content/uploads/2025/12/integrating-tradition-and-innovation-in-library-space-design-a-case-study-of-the-hkustgz-library-space-transformation.pdf#page=4",
+        "observed": "Curved timber seating tiers with muted rose pads and a display under the spiral stair, coloured shell chairs and dark carpet.",
+        "registration": "The actual crescent of leisure feature 143982, the surrounding GLB table placements, and source F3 stair geometry. Cushion spacing, screen pattern and seat colours are artistic.",
+        "refinedSourceSets": [
+          143757,
+          143758,
+          143760,
+          143761,
+          143763,
+          143764,
+          143765,
+          143766,
+          143767,
+          143768,
+          143759,
+          143762,
+          143814,
+          143815,
+          143819,
+          143820,
+          143823,
+          143824,
+          143827,
+          143828,
+          143831,
+          143832,
+          143835,
+          143836,
+          143839,
+          143840,
+          143843,
+          143844,
+          143847,
+          143848,
+          143851,
+          143852,
+          143855,
+          143856,
+          144433,
+          144436,
+          144437,
+          144438,
+          144439,
+          144440,
+          144441
+        ],
+        "tieredSeats": [
+          143982
+        ],
+        "colourInlays": 0
+      },
       "roomFinishes": {
         "washroom": 5,
         "office": 7,
@@ -21978,205 +22038,205 @@
           "featureId": 143757,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143758,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143760,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143761,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143763,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143764,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143765,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143766,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143767,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143768,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143759,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143762,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143814,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143815,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143819,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143820,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143823,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143824,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143827,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143828,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143831,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143832,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143835,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143836,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143839,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143840,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143843,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143844,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143847,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143848,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143851,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143852,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143855,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143856,
           "sourceLayer": "模型",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 143899,
@@ -22200,49 +22260,49 @@
           "featureId": 144433,
           "sourceLayer": "模型",
           "sha256": "0cfad318af35df6fa57f5550a3f1083c0fdc0afc49a0ace1fb5df3a7ddd7f779",
-          "triangles": 42
+          "triangles": 466
         },
         {
           "featureId": 144436,
           "sourceLayer": "模型",
           "sha256": "0cfad318af35df6fa57f5550a3f1083c0fdc0afc49a0ace1fb5df3a7ddd7f779",
-          "triangles": 42
+          "triangles": 466
         },
         {
           "featureId": 144437,
           "sourceLayer": "模型",
           "sha256": "0cfad318af35df6fa57f5550a3f1083c0fdc0afc49a0ace1fb5df3a7ddd7f779",
-          "triangles": 42
+          "triangles": 466
         },
         {
           "featureId": 144438,
           "sourceLayer": "模型",
           "sha256": "0cfad318af35df6fa57f5550a3f1083c0fdc0afc49a0ace1fb5df3a7ddd7f779",
-          "triangles": 42
+          "triangles": 466
         },
         {
           "featureId": 144439,
           "sourceLayer": "模型",
           "sha256": "0cfad318af35df6fa57f5550a3f1083c0fdc0afc49a0ace1fb5df3a7ddd7f779",
-          "triangles": 42
+          "triangles": 466
         },
         {
           "featureId": 144440,
           "sourceLayer": "模型",
           "sha256": "0cfad318af35df6fa57f5550a3f1083c0fdc0afc49a0ace1fb5df3a7ddd7f779",
-          "triangles": 42
+          "triangles": 466
         },
         {
           "featureId": 144441,
           "sourceLayer": "模型",
           "sha256": "0cfad318af35df6fa57f5550a3f1083c0fdc0afc49a0ace1fb5df3a7ddd7f779",
-          "triangles": 42
+          "triangles": 466
         }
       ],
-      "extrudedPolygons": 9,
+      "extrudedPolygons": 8,
       "steppedStairs": 6,
-      "triangles": 19493,
-      "pixelSha256": "44d34bd0ccc9c17e3d596f0a87a87b9dfb951fcfcb9da5121effbab4a761f6b5"
+      "triangles": 32689,
+      "pixelSha256": "a9be22a320f96f09ff2c2a096d776f69d95b442fc9803f7b83e57f8aa5eecd39"
     },
     {
       "sceneId": "interior_library_f4",
@@ -22780,6 +22840,118 @@
         "width": 688,
         "height": 224
       },
+      "photoReference": {
+        "url": "https://www.lib.cuhk.edu.hk/wp-content/uploads/2025/12/integrating-tradition-and-innovation-in-library-space-design-a-case-study-of-the-hkustgz-library-space-transformation.pdf#page=6",
+        "observed": "Grey flooring with ochre and sand-coloured inlays, pale timber chairs, light communal tabletops and metal legs.",
+        "registration": "Original F5 table/chair instances and two clusters of source round-table placements; exact inlay outlines and the colour of individual chairs are inferred.",
+        "refinedSourceSets": [
+          144275,
+          144278,
+          144280,
+          144281,
+          144283,
+          144284,
+          144285,
+          144286,
+          144288,
+          144289,
+          144290,
+          144291,
+          144293,
+          144294,
+          144295,
+          144296,
+          144297,
+          144298,
+          144299,
+          144300,
+          144301,
+          144302,
+          144303,
+          144304,
+          144306,
+          144307,
+          144308,
+          144309,
+          144310,
+          144311,
+          144312,
+          144313,
+          144314,
+          144323,
+          144324,
+          144325,
+          144326,
+          144327,
+          144328,
+          144329,
+          144330,
+          144335,
+          144336,
+          144337,
+          144338,
+          144339,
+          144340,
+          144341,
+          144342,
+          144343,
+          144347,
+          144348,
+          144349,
+          144350,
+          144351,
+          144352,
+          144344,
+          144355,
+          144356,
+          144357,
+          144361,
+          144362,
+          144363,
+          144364,
+          144365,
+          144366,
+          144371,
+          144372,
+          144373,
+          144380,
+          144381,
+          144382,
+          144383,
+          144384,
+          144385,
+          144389,
+          144390,
+          144391,
+          144392,
+          144393,
+          144394,
+          144398,
+          144399,
+          144400,
+          144401,
+          144402,
+          144403,
+          144404,
+          144405,
+          144406,
+          144408,
+          144412,
+          144414,
+          144415,
+          144419,
+          144420,
+          144421,
+          144422,
+          144427,
+          144428,
+          144429,
+          144430,
+          144431
+        ],
+        "tieredSeats": [],
+        "colourInlays": 2
+      },
       "roomFinishes": {
         "washroom": 5,
         "teaching": 6,
@@ -22887,619 +23059,619 @@
           "featureId": 144275,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144278,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144280,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144281,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144283,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144284,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144285,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144286,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144288,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144289,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144290,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144291,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144293,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144294,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144295,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144296,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144297,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144298,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144299,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144300,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144301,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144302,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144303,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144304,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144306,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144307,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144308,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144309,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144310,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144311,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144312,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144313,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144314,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144323,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144324,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144325,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144326,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144327,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144328,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144329,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144330,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144335,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144336,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144337,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144338,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144339,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144340,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144341,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144342,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144343,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144347,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144348,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144349,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144350,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144351,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144352,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144344,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144355,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144356,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144357,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144361,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144362,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144363,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144364,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144365,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144366,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144371,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144372,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144373,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144380,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144381,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144382,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144383,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144384,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144385,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144389,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144390,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144391,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144392,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144393,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144394,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144398,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144399,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144400,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144401,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144402,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144403,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144404,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144405,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144406,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144408,
           "sourceLayer": "座位",
           "sha256": "0cfad318af35df6fa57f5550a3f1083c0fdc0afc49a0ace1fb5df3a7ddd7f779",
-          "triangles": 42
+          "triangles": 506
         },
         {
           "featureId": 144412,
           "sourceLayer": "座位",
           "sha256": "0cfad318af35df6fa57f5550a3f1083c0fdc0afc49a0ace1fb5df3a7ddd7f779",
-          "triangles": 42
+          "triangles": 506
         },
         {
           "featureId": 144414,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144415,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144419,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144420,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144421,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144422,
           "sourceLayer": "座位",
           "sha256": "9e8bbebe115e127ca98782b93c6548e685dd9c658c8a0d5e63449dea0f1443e8",
-          "triangles": 22
+          "triangles": 258
         },
         {
           "featureId": 144427,
           "sourceLayer": "座位",
           "sha256": "0cfad318af35df6fa57f5550a3f1083c0fdc0afc49a0ace1fb5df3a7ddd7f779",
-          "triangles": 42
+          "triangles": 506
         },
         {
           "featureId": 144428,
           "sourceLayer": "座位",
           "sha256": "0cfad318af35df6fa57f5550a3f1083c0fdc0afc49a0ace1fb5df3a7ddd7f779",
-          "triangles": 42
+          "triangles": 506
         },
         {
           "featureId": 144429,
           "sourceLayer": "座位",
           "sha256": "0cfad318af35df6fa57f5550a3f1083c0fdc0afc49a0ace1fb5df3a7ddd7f779",
-          "triangles": 42
+          "triangles": 506
         },
         {
           "featureId": 144430,
           "sourceLayer": "座位",
           "sha256": "0cfad318af35df6fa57f5550a3f1083c0fdc0afc49a0ace1fb5df3a7ddd7f779",
-          "triangles": 42
+          "triangles": 506
         },
         {
           "featureId": 144431,
           "sourceLayer": "座位",
           "sha256": "0cfad318af35df6fa57f5550a3f1083c0fdc0afc49a0ace1fb5df3a7ddd7f779",
-          "triangles": 42
+          "triangles": 506
         },
         {
           "featureId": 51400,
@@ -23522,8 +23694,8 @@
       ],
       "extrudedPolygons": 59,
       "steppedStairs": 5,
-      "triangles": 17032,
-      "pixelSha256": "591b0883419f993e060a4aa3227bdc2a7fa6b5b7cb3f14a7528e3d05f74e8da3"
+      "triangles": 43164,
+      "pixelSha256": "e2d90085b5770db9598c022c5148159bf6b086b669f5b300427a2c3c707a9740"
     },
     {
       "sceneId": "interior_library_f6",

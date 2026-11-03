@@ -1,4 +1,5 @@
 import sharp from "sharp";
+import { finishHubBridge } from "./hub-bridge-finish.ts";
 import type { SceneMap, Surface } from "../src/shared/world.ts";
 import { pathData } from "./source-geometry.ts";
 
@@ -64,25 +65,32 @@ function meadow() {
   return pattern("lawn", 130, 130, "#90af77", marks.join(""));
 }
 
+function stonePaving(id: string, tones: string[]) {
+  const rows = [[0, 12, 26, 39], [-6, 6, 21, 36], [-2, 9, 24, 37], [-8, 5, 18, 32]];
+  const marks: string[] = [];
+  for (let row = 0; row < rows.length; row++) {
+    const joints = rows[row];
+    for (let j = 0; j < joints.length; j++) {
+      const x = joints[j], y = row * 4;
+      const length = (joints[j + 1] ?? joints[0] + 48) - x;
+      const tone = tones[(row * 3 + j + (row === 2 ? 1 : 0)) % tones.length];
+      // Repeat across the pattern boundary so a clipped slab keeps both halves.
+      for (const shift of [0, 48]) {
+        marks.push(rect(x + shift, y, length - .4, 3.6, tone));
+        if ((row + j) % 3 === 0)
+          marks.push(rect(x + shift + 2, y + .6, 2, .45, tones[2]));
+      }
+    }
+  }
+  return pattern(id, 48, 16, "#b6bbb3", marks.join(""));
+}
+
 const definitions = [
   meadow(),
-  pattern(
-    "plaza",
-    20,
-    12,
-    "#dccdb1",
-    '<path fill="none" stroke="#cdbfa6" d="M0 0H20M0 6H20M5 0V6M15 6V12"/>' +
-      rect(6, 1, 5, 1, "#e5d8bf") +
-      rect(1, 7, 4, 1, "#e5d8bf"),
-  ),
-  pattern(
-    "path",
-    18,
-    12,
-    "#e8d8b8",
-    '<path fill="none" stroke="#d8c8ad" d="M0 0H18M0 6H18M0 0V6M9 6V12"/>' +
-      rect(1, 1, 5, 1, "#efe1c6"),
-  ),
+  // Between the photographed plaza and C2, granite setts are roughly one footfall
+  // wide and several footfalls long. Individual stones vary more than the grout.
+  stonePaving("plaza", ["#d1cfc1", "#c5c6bb", "#dbd9ca", "#b4bab3", "#ccd0c4"]),
+  stonePaving("path", ["#d8d8ca", "#cccec2", "#e2dfd0", "#bfc5bc", "#d3d5c9"]),
   pattern(
     "asphalt",
     29,
@@ -115,6 +123,7 @@ const material: Record<string, [string, string, number]> = {
   floor: ["#dfd7c4", "#b3b7a3", 1],
   garden: ["url(#lawn)", "#79976c", 2],
   road: ["url(#asphalt)", "#92998e", 2],
+  parking: ["#a2a69e", "#e6e4cf", 0.9],
   crosswalk: ["#f6eacb", "#e4dbbc", 0.5],
   room: ["#cdbca2", "#a3a294", 1],
   corridor: ["url(#path)", "#c5b99d", 1],
@@ -152,7 +161,7 @@ export function campusLayerSvg(scene: SceneMap, layer: string) {
     s.kind === "corridor" && s.sourceMap === scene.sourceMap;
   const kinds: Record<string, string[]> = {
     floor: ["floor"],
-    terrain: ["road", "garden", "crosswalk"],
+    terrain: ["road", "garden", "parking", "crosswalk"],
     rooms: ["room"],
     passages: ["corridor"],
     fixtures: ["water", "detail", "stairs", "lift"],
@@ -220,15 +229,35 @@ const neutralRamp = parse(masonry),
   greenRamp = parse(roofGrass),
   warmRamp = parse(warm);
 
+// C2's source UVs already locate the narrow panels, punched windows and mullions.
+const bambooMetal = parse([
+  "#504a3a", "#736343", "#89734c", "#9e8457", "#ad9363",
+  "#bca476", "#cbb58b", "#d6c49d", "#dfceac",
+]);
+const activityGlazing = parse([
+  "#29434a", "#324d55", "#3e5a60", "#4d676c",
+  "#637d7d", "#8e9e96", "#bec6b4",
+]);
+function finishValue(ramp: number[][], value: number, low: number, high: number) {
+  const t = Math.max(0, Math.min(1, (value - low) / (high - low)));
+  return ramp[Math.round(t * (ramp.length - 1))];
+}
+
 export async function gradeCampusModel(
   input: Buffer,
   surfaceIds?: Uint16Array,
   names?: string[],
+  featureId?: number,
+  pixelRatio = 1,
 ) {
   const { data, info } = await sharp(input)
     .ensureAlpha()
     .raw()
     .toBuffer({ resolveWithObject: true });
+  if (featureId === 43543 && surfaceIds && names) {
+    finishHubBridge(data, info.width, info.height, surfaceIds, names, pixelRatio);
+    return sharp(data, { raw: info }).png({ compressionLevel: 9 }).toBuffer();
+  }
   const families = names?.map((name) =>
     /草地/.test(name) ? "grass" : /太阳能|光伏/.test(name) ? "solar" : "",
   );
@@ -261,11 +290,27 @@ export async function gradeCampusModel(
       family = families?.[(face & 0x7fff) - 1];
     let color = c,
       accent = 0;
-    if (family === "grass") {
+    const sourceFinish = names?.[(face & 0x7fff) - 1];
+    if (featureId === 43540 && sourceFinish === "学生活动中心外墙1") {
+      // Keep the openings in the photographed cladding texture exactly where the
+      // model's UVs put them. The cool inset panes read against warm bronze fins.
+      color = b > r + 7 ? finishValue(activityGlazing, luma, .40, .80)
+                        : finishValue(bambooMetal, luma, .49, .85);
+    } else if (featureId === 43540 && sourceFinish === "窗户") {
+      color = finishValue(activityGlazing, luma, .33, .83);
+    } else if (family === "grass") {
       // Hand-sized clusters and occasional pairs of light blades on the actual
       // planted roof material, including its sloping faces.
       const hash =
         (Math.imul(x >> 2, 374761393) ^ Math.imul(y >> 2, 668265263)) >>> 0;
+      if (featureId === 43540) {
+        // The living roof has broad olive and ochre planting masses. Lay the
+        // vegetation in low-contrast swaths, clipped by the two source roof meshes.
+        const metresX = x / (pixelRatio * 4.34), metresY = y / (pixelRatio * 4.34);
+        const bed = Math.sin(metresX * .20 + Math.sin(metresY * .14) * 2.2)
+          + .65 * Math.cos(metresY * .27 - metresX * .11);
+        color = [c[0] * .80 + 15 + bed * 5, c[1] * .72 + 15 + bed * 2, c[2] * .63 + 8];
+      }
       const u = x % 4,
         v = y % 4;
       if (hash % 7 < 2 && ((v === 2 && u < 3) || (v === 1 && u === 2)))

@@ -16,7 +16,7 @@ import { loadGlb, renderModel, primitives, campusPlacement } from "./gltf.ts";
 
 export const SURFACE_LAYERS = [
   { id: "floor", kinds: ["floor"] },
-  { id: "terrain", kinds: ["road", "garden", "crosswalk"] },
+  { id: "terrain", kinds: ["road", "garden", "parking", "crosswalk"] },
   { id: "rooms", kinds: ["room"] },
   { id: "passages", kinds: ["corridor"] },
   { id: "fixtures", kinds: ["detail", "stairs", "lift", "water"] },
@@ -98,6 +98,8 @@ export async function bakeMaps(
       baked.png,
       baked.surfaceIds,
       glb.json.materials?.map((m) => m.name ?? ""),
+      group.featureId,
+      density,
     );
     files.set(`public/maps/${roof.image}`, graded);
     shadows.push(

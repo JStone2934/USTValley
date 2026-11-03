@@ -155,33 +155,20 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
       b.y + b.height > 0
     );
   };
+  const outdoorPaint = {
+    "绿化": ["garden", "#97ad83"],
+    "池塘": ["water", "#81adb2"],
+    "斑马线": ["crosswalk", "#eeead8"],
+    "外车位0": ["parking", "#a2a69e"],
+    "道路补充": ["road", "#c7c8b9"],
+    "内部路": ["road", "#c7c8b9"],
+    "道路": ["road", "#c7c8b9"],
+  } as const;
   for (const layer of layers(campus)) {
-    if (
-      !["绿化", "池塘", "斑马线", "道路补充", "内部路", "道路"].includes(
-        layer.name,
-      )
-    )
-      continue;
+    const paint = outdoorPaint[layer.name as keyof typeof outdoorPaint];
+    if (!paint) continue;
     for (const f of layer.data?.features ?? []) {
-      const kind =
-          layer.name === "绿化"
-            ? "garden"
-            : layer.name === "池塘"
-              ? "water"
-              : layer.name === "斑马线"
-                ? "crosswalk"
-                : "road",
-        s = surface(
-          f,
-          kind,
-          {
-            garden: "#97ad83",
-            water: "#81adb2",
-            crosswalk: "#eeead8",
-            road: "#c7c8b9",
-          }[kind],
-          convert,
-        );
+      const [kind, color] = paint, s = surface(f, kind, color, convert);
       s.sourceLayer = layer.name;
       s.polygons = s.polygons.filter(intersects);
       if (s.polygons.length) {

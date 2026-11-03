@@ -48,6 +48,34 @@ const cloth = (x: number, y: number) =>
   (y % 6 === 1 && x % 8 >= 2 && x % 8 <= 4 ? 6 : 0) -
   (y % 6 === 4 && x % 8 >= 5 && x % 8 <= 7 ? 6 : 0);
 const swatches = {
+  // Original pixel finishes observed in the Guangzhou library's room photos.
+  galleryStone: [
+    [194, 195, 188],
+    (x, y) => (x % 24 === 0 || y % 12 === 0 ? -15 : stoneChip(x, y)),
+  ],
+  darkCarpetPenumbra: [[109, 108, 109], cloth],
+  darkCarpetContact: [[87, 91, 92], cloth],
+  libraryCarpet: [[133, 133, 132], cloth],
+  libraryFelt: [[188, 188, 183], cloth],
+  libraryOchre: [[231, 177, 72], cloth],
+  librarySand: [[208, 184, 143], cloth],
+  libraryAsh: [[222, 182, 125], wood],
+  librarySlats: [
+    [196, 148, 90],
+    (x, y) => (x % 4 === 0 ? -15 : y % 17 === 0 ? 6 : 0),
+  ],
+  librarySeat: [[176, 127, 111], cloth],
+  libraryBerry: [[172, 86, 77], cloth],
+  libraryDisplay: [
+    [96, 115, 167],
+    (x, y) =>
+      (x + Math.floor(y / 3) * 3) % 22 < 6
+        ? -23
+        : (x + Math.floor(y / 4) * 7) % 29 < 5
+          ? 32
+          : 0,
+  ],
+
   slab: [[192, 194, 178], stone],
   passage: [[233, 214, 175], stone],
   oak: [[199, 154, 104], wood],

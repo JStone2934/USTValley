@@ -1,3 +1,4 @@
+import sharp from "sharp";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -316,4 +317,43 @@ test("the plaza's visible pool and sculpture stop feet, and its stone rim and in
     report.plazaCollision.visibleWaterCells > 290 &&
       report.plazaCollision.plinthCells < 32,
   );
+});
+
+test("the C2 approach starts on foot with a transparent 40px opening in all six baked roofs", async () => {
+  const scene = world.scenes[0],
+    point = scene.spawns[0],
+    entry = scene.portals.find((p) => p.id === "enter_c2")!;
+  assert.ok(reachable(scene, point).has(tileIndex(scene, entry)));
+  assert.ok(Math.hypot(point.x - entry.x, point.y - entry.y) < 125);
+  const baked = JSON.parse(
+    readFileSync(new URL("../public/maps/world.json", import.meta.url), "utf8"),
+  ) as typeof world;
+  const published = baked.scenes[0],
+    ratio = published.art.pixelRatio ?? 1;
+  assert.deepEqual(point, published.spawns[0]);
+  assert.equal(published.art.roofs.length, 6);
+  for (const roof of published.art.roofs) {
+    const image = sharp(
+      new URL(`../public/maps/${roof.image}`, import.meta.url).pathname,
+    );
+    const { width, height } = await image.metadata();
+    const pad = report.campusSpawn.projectedRoofClearancePixels * ratio;
+    const x = Math.round((point.x - roof.x) * ratio),
+      y = Math.round((point.y - roof.y) * ratio);
+    const left = Math.max(0, x - pad),
+      top = Math.max(0, y - pad),
+      right = Math.min(width!, x + pad + 1),
+      bottom = Math.min(height!, y + pad + 1);
+    if (right <= left || bottom <= top) continue;
+    const alpha = await image
+      .extract({ left, top, width: right - left, height: bottom - top })
+      .ensureAlpha()
+      .extractChannel(3)
+      .raw()
+      .toBuffer();
+    assert.ok(
+      alpha.every((n) => n === 0),
+      `spawn obscured by ${roof.id}`,
+    );
+  }
 });

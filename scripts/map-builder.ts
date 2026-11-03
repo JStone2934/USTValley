@@ -2,6 +2,9 @@ import { fitSourceFixtures } from "./fixture-collision.ts";
 import { fitRoomCasework } from "./room-casework.ts";
 import { fitRoomDoors } from "./room-doors.ts";
 import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { campusPlacement, parseGlb, primitives } from "./gltf.ts";
 import config from "../content/map-config.json";
 import {
   canStand,
@@ -525,28 +528,73 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
   const softscape = outdoor.surfaces
     .filter((s) => s.kind === "garden" || s.kind === "water")
     .flatMap((s) => s.polygons);
-  // Start on the public promenade in front of C2, clear of both the plan
-  // footprint and the roof's northward projection into the initial camera view.
-  const rise =
-    getFeature(campus, groups.find((g) => g.key === "activity")!.featureId)
-      .properties.height *
-    config.transform.pixelsPerProjectedUnit *
-    config.roofHeightFactor;
+  // Build a separate visibility mask. Roof projections must not change where
+  // the avatar can walk once it leaves the initial promenade.
+  const clearRadius = 20,
+    searchRadius = 80;
+  const roofMask = {
+    ...outdoor,
+    collision: Array(outdoor.collision.length).fill(0),
+  };
+  const zScale =
+    config.transform.pixelsPerProjectedUnit * config.roofHeightFactor;
+  const envelopes = groups.map((group) => {
+    const properties = group.feature.properties;
+    const floor = outdoor.art.roofs.find((r) => r.id === group.key)!;
+    // An upper gallery / canopy can extend well beyond its F1 polygon.
+    // Project actual mesh faces in precisely the same direction as the bake.
+    const glb = parseGlb(
+      readFileSync(
+        resolve(
+          import.meta.dirname,
+          "../data/maps",
+          properties.src.replace(/^\/res\/projects\//, ""),
+        ),
+      ),
+    );
+    const matrix = campusPlacement(glb, properties.tarray, properties.height);
+    const window = searchRadius + clearRadius + size;
+    for (const part of primitives(glb, matrix)) {
+      const points = part.vertices.map((v) => {
+        const at = convert(v);
+        return { x: at.x, y: at.y - v[2] * zScale };
+      });
+      for (let i = 0; i < part.indices.length; i += 3) {
+        const tri = [
+          points[part.indices[i]],
+          points[part.indices[i + 1]],
+          points[part.indices[i + 2]],
+        ];
+        if (
+          tri.every((p) => p.x < approach.x - window) ||
+          tri.every((p) => p.x > approach.x + window) ||
+          tri.every((p) => p.y < approach.y - window) ||
+          tri.every((p) => p.y > approach.y + window)
+        )
+          continue;
+        stamp(roofMask, [tri], 1);
+      }
+    }
+    return { floor, rise: properties.height * zScale };
+  });
   const spawn = nearest(outdoor, outsideSpace, approach, (p) => {
     if (
-      Math.hypot(p.x - approach.x, p.y - approach.y) > 80 ||
-      !canStand(outdoor, p, 4)
+      Math.hypot(p.x - approach.x, p.y - approach.y) > searchRadius ||
+      !canStand(outdoor, p, 4) ||
+      !canStand(roofMask, p, clearRadius)
     )
       return false;
     if (softscape.some((poly) => inPolygon(p, poly))) return false;
-    for (let y = 0; y <= rise + 8; y += 4)
-      if (
-        activity.footprint.some((poly) =>
-          inPolygon({ x: p.x, y: p.y + y }, poly),
+    return envelopes.every(({ floor, rise }) => {
+      for (let dy = 0; dy <= rise + size; dy += size)
+        if (
+          floor.footprint.some((poly) =>
+            inPolygon({ x: p.x, y: p.y + dy }, poly),
+          )
         )
-      )
-        return false;
-    return true;
+          return false;
+      return true;
+    });
   });
   outdoor.spawns.push({ ...spawn, id: "campus_spawn" });
   const excluded = (p: Point) =>
@@ -648,6 +696,11 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
     connections: topology.connections,
     galleries: topology.galleryPairs,
     plazaCollision,
+    campusSpawn: {
+      point: spawn,
+      approachTo: c2.id,
+      projectedRoofClearancePixels: clearRadius,
+    },
     checks: {
       scenes: world.scenes.length,
       sourceFloors: new Set(

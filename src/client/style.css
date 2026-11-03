@@ -743,6 +743,16 @@ dialog::backdrop {
   font-size: 12px;
   cursor: pointer;
 }
+@media (pointer: fine) {
+  .passage-options button[aria-keyshortcuts="E"]::before {
+    content: "E";
+    margin-right: 0.5em;
+    padding: 0.05em 0.35em;
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    font-family: monospace;
+  }
+}
 @media (pointer: coarse) {
   .passage-options {
     bottom: 130px;

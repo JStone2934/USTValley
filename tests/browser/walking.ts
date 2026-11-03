@@ -79,11 +79,17 @@ export async function driveTo(
       if (Math.abs(delta) < 0.9) continue;
       const key =
         axis === "x" ? (delta > 0 ? "d" : "a") : delta > 0 ? "s" : "w";
+      // Use the game's own sprint on long, clear straightaways. Corners and
+      // door approaches still take ordinary walking steps with the real avatar.
+      const sprint = Math.abs(delta) > 48;
+      const speed = sprint ? scene.player.runSpeed : scene.player.speed;
+      if (sprint) await page.keyboard.down("ShiftLeft");
       await page.keyboard.down(key);
       await page.clock.runFor(
-        Math.max(16, Math.round((Math.abs(delta) / scene.player.speed) * 1000)),
+        Math.max(16, Math.round((Math.abs(delta) / speed) * 1000)),
       );
       await page.keyboard.up(key);
+      if (sprint) await page.keyboard.up("ShiftLeft");
       await page.clock.runFor(120);
     }
   }

@@ -382,7 +382,14 @@ export class CampusScene extends Phaser.Scene {
     offsetX = 0,
   ) {
     if (object instanceof Phaser.GameObjects.Text) object.setResolution(5);
-    this.cues.push({ object, x: object.x, y: object.y, maxScale, offsetX, offsetY });
+    this.cues.push({
+      object,
+      x: object.x,
+      y: object.y,
+      maxScale,
+      offsetX,
+      offsetY,
+    });
   }
   private frameCamera() {
     if (!this.current || !this.player) return;
@@ -416,7 +423,9 @@ export class CampusScene extends Phaser.Scene {
     );
     for (const cue of this.cues) {
       const scale = Math.min(1, cue.maxScale / this.cameras.main.zoom);
-      cue.object.setScale(scale).setPosition(cue.x + cue.offsetX * scale, cue.y + cue.offsetY * scale);
+      cue.object
+        .setScale(scale)
+        .setPosition(cue.x + cue.offsetX * scale, cue.y + cue.offsetY * scale);
     }
     this.publish();
   }
@@ -610,6 +619,13 @@ export function createGame(
   // Phaser's canvas renderer can draw the same native image and coordinates.
   const probe = document.createElement("canvas").getContext("webgl");
   const limit = probe?.getParameter(probe.MAX_TEXTURE_SIZE) ?? 0;
+  const info = probe?.getExtension("WEBGL_debug_renderer_info");
+  const renderer = info
+    ? String(probe!.getParameter(info.UNMASKED_RENDERER_WEBGL))
+    : "";
+  const softwareRenderer = /swiftshader|llvmpipe|software rasterizer/i.test(
+    renderer,
+  );
   probe?.getExtension("WEBGL_lose_context")?.loseContext();
   const fitsGpu = world.scenes.every(
     (s) =>
@@ -617,7 +633,7 @@ export function createGame(
       limit,
   );
   const game = new Phaser.Game({
-    type: fitsGpu ? Phaser.AUTO : Phaser.CANVAS,
+    type: fitsGpu && !softwareRenderer ? Phaser.AUTO : Phaser.CANVAS,
     parent,
     backgroundColor: "#88a56c",
     pixelArt: true,

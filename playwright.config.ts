@@ -11,7 +11,7 @@ export default defineConfig({
   use: { baseURL: "http://127.0.0.1:4317", trace: "retain-on-failure" },
   webServer: {
     // Test the published map assets. The build command independently rebuilds and verifies them.
-    command: "vite --host 127.0.0.1 --port 4317",
+    command: "vite --mode test --host 127.0.0.1 --port 4317",
     url: "http://127.0.0.1:4317",
     reuseExistingServer: false,
     timeout: 120_000,

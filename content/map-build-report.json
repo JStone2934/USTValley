@@ -6907,6 +6907,14 @@
     "visibleWaterCells": 312,
     "plinthCells": 26
   },
+  "campusSpawn": {
+    "point": {
+      "x": 1010,
+      "y": 1022
+    },
+    "approachTo": "enter_c2",
+    "projectedRoofClearancePixels": 20
+  },
   "checks": {
     "scenes": 34,
     "sourceFloors": 32,

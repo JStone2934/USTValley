@@ -489,27 +489,21 @@ function App() {
                   ＋
                 </button>
               </div>
-              <div className="interaction-hint" role="status">
-                {snapshot.target ? (
-                  <>
-                    <kbd>E</kbd> {snapshot.target}
-                  </>
-                ) : (
-                  <>
-                    {current?.id === "campus_core"
-                      ? "靠近建筑金色入口，按"
-                      : "靠近房门或通道，按"}{" "}
-                    <kbd>E</kbd>{" "}
-                    {current?.id === "campus_core" ? "进入" : "交互"}
-                  </>
-                )}
-              </div>
+              {!snapshot.target && (
+                <div className="interaction-hint" role="status">
+                  {current?.id === "campus_core"
+                    ? "靠近建筑金色入口，按"
+                    : "靠近房门或通道，按"}{" "}
+                  <kbd>E</kbd> {current?.id === "campus_core" ? "进入" : "交互"}
+                </div>
+              )}
               {Boolean(snapshot.passages?.length) && (
                 <div className="passage-options" aria-label="附近的门与通道">
-                  {snapshot.passages!.map((p) => (
+                  {snapshot.passages!.map((p, index) => (
                     <button
                       key={p.id}
                       data-portal={p.id}
+                      aria-keyshortcuts={index === 0 ? "E" : undefined}
                       onClick={() => bridge.interact(p.id)}
                     >
                       {p.label}

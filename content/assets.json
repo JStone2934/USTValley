@@ -19,9 +19,9 @@
     },
     {
       "id": "avatar",
-      "path": "src/client/game.ts",
+      "path": "src/client/avatar-art.ts",
       "author": "USTValley project contributors (procedural graphics)",
-      "source": "Original code-drawn avatar texture; scene display size is calibrated in metres",
+      "source": "Original four-direction 22×44 pixel campus avatar, four walk frames per direction. Scene display size is calibrated in metres.",
       "license": "Project-authored; distribution license not yet assigned",
       "version": "0.5.0"
     },

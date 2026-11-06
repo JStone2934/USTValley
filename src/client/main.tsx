@@ -416,7 +416,7 @@ function App() {
           </span>
         </a>
         <div className="chapter">
-          <span className="eyebrow">BUILD 0.5.3 / 立体像素校园</span>
+          <span className="eyebrow">BUILD 0.5.4 / 立体像素校园</span>
           <h1>
             从校园，
             <br />

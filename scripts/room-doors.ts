@@ -1,3 +1,4 @@
+import { clearOfFixtures } from "../src/shared/fixtures.ts";
 import { doorEdgeCollision } from "./door-edge-collision.ts";
 import config from "../content/map-config.json";
 import {
@@ -285,7 +286,11 @@ export function fitRoomDoors(
       if (physical)
         protectEdges(scene, polygon, surface.kind === "wall" ? solid : hard);
       if (physical || surface.kind === "floor") {
-        const mask = physical ? hard : floor;
+        const mask = physical
+          ? surface.kind === "wall"
+            ? solid
+            : hard
+          : floor;
         for (const cell of cells) mask[cell] = 1;
       } else {
         // Mechanical shafts and service plant remain closed; records without an entry cannot provide a hinge location.
@@ -375,7 +380,7 @@ export function fitRoomDoors(
               !publicSpace.has(first - d) ||
               owners[first - d] ||
               !floor[first - d] ||
-              solid[first - d] ||
+              hard[first - d] ||
               !canStand(scene, outside)
             )
               continue;
@@ -394,8 +399,17 @@ export function fitRoomDoors(
               sourceEntry.y - mark.y,
             );
             candidates.push({ outside, inside, cells });
+            // Fine geometry preserves a real doorway inside a partially occupied
+            // coarse cell. Older scenes retain their structural wall mask.
             if (
-              cells.some((c) => solid[c]) ||
+              (!scene.fixtureCollision && cells.some((c) => solid[c])) ||
+              !clearOfFixtures(
+                scene,
+                Math.min(outside.x, inside.x) - scene.player.radius,
+                Math.min(outside.y, inside.y) - scene.player.radius,
+                Math.max(outside.x, inside.x) + scene.player.radius,
+                Math.max(outside.y, inside.y) + scene.player.radius,
+              ) ||
               distance > maxDistance ||
               (best && distance >= best.distance)
             )

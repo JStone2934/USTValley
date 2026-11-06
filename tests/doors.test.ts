@@ -163,3 +163,29 @@ test("C2 and library leaves meet the measured wall end faces; the widened C2 gat
     }
   }
 });
+
+test("a wall touching a grid corner does not erase the surveyed opening beside it", () => {
+  for (const id of [
+    "door_interior_c3_24060_1",
+    "door_interior_c7_47554_0",
+    "door_interior_activity_f2_71211_0",
+    "door_interior_library_f2_141197_0",
+  ]) {
+    const scene = world.scenes.find((s) => s.doors?.some((d) => d.id === id));
+    assert.ok(scene, `missing source opening ${id}`);
+    const door = scene.doors!.find((d) => d.id === id)!;
+    assert.equal(door.openingSource, "wall-ends");
+    const open = new Set<string>();
+    const walk = doorCollision(scene, open);
+    assert.ok(toggleDoor(walk, door, open, door.outside));
+    const delta = {
+      x: door.inside.x - door.outside.x,
+      y: door.inside.y - door.outside.y,
+    };
+    const length = Math.hypot(delta.x, delta.y);
+    let feet = door.outside;
+    for (let step = 0; step < length; step++)
+      feet = move(walk, feet, delta, 0.05, 20);
+    assert.deepEqual(feet, door.inside, id);
+  }
+});

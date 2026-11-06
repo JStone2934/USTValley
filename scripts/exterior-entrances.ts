@@ -170,11 +170,10 @@ export function openSourceGlass(
   return bay;
 }
 
-/** Pick a foot-sized line on the approaching side and prove the whole return walk with
- * avatar collision. Both ends retain the very same surveyed sill in their own transforms. */
-export function gateLanding(
+/** Use the measured fixed jambs for glazed doors, and the surveyed approach
+ * normal and a single-door clearance for an unmeasured campus entrance. */
+export function exteriorOpening(
   scene: SceneMap,
-  space: Set<number>,
   threshold: Point,
   toward: Point,
   glazing?: ReturnType<typeof measuredGlassBay>,
@@ -186,6 +185,26 @@ export function gateLanding(
     const n = { x: (b.y - a.y) / l, y: (a.x - b.x) / l };
     toward = n.x * toward.x + n.y * toward.y > 0 ? n : { x: -n.x, y: -n.y };
   }
+  return {
+    threshold,
+    toward,
+    width: glazing
+      ? dist(glazing.jambA, glazing.jambB)
+      : 1.35 * scene.units.pixelsPerMeter,
+  };
+}
+
+/** Pick a foot-sized line on the approaching side and prove the whole return walk with
+ * avatar collision. Both ends retain the very same surveyed sill in their own transforms. */
+export function gateLanding(
+  scene: SceneMap,
+  space: Set<number>,
+  threshold: Point,
+  toward: Point,
+  glazing?: ReturnType<typeof measuredGlassBay>,
+) {
+  const entrance = exteriorOpening(scene, threshold, toward, glazing);
+  ({ threshold, toward } = entrance);
   const ppm = scene.units.pixelsPerMeter,
     grid = scene.collisionSize;
   const positions: { x: number; y: number; cost: number }[] = [];
@@ -215,9 +234,12 @@ export function gateLanding(
     }
   for (const { x, y } of positions.sort((a, b) => a.cost - b.cost)) {
     const point = { x, y };
-    for (const retreat of [2.3, 1.85, 1.5, 1.1]) {
+    // A shallow vestibule may have a wall just behind this routing cell.
+    // Keep the return spawn clear of the physical sill on either side.
+    for (const retreat of [2.3, 1.85, 1.5, 1.1, 0.8, 0.55]) {
       const spawn = along(point, toward, -retreat * ppm);
-      if (!space.has(tileIndex(scene, spawn))) continue;
+      const setback = (threshold.x - spawn.x) * toward.x + (threshold.y - spawn.y) * toward.y;
+      if (setback < 1.1 * ppm || !space.has(tileIndex(scene, spawn))) continue;
       let clear = true;
       for (let t = -retreat * ppm; t <= scene.player.radius + 0.51; t += 0.5) {
         if (!canStand(scene, along(point, toward, t))) {
@@ -229,7 +251,7 @@ export function gateLanding(
         return {
           point,
           spawn,
-          entrance: { threshold, toward, width: 1.35 * ppm },
+          entrance,
         };
     }
   }
@@ -348,6 +370,20 @@ export function fitDoorApron(
       s.line.some((p) => floors.some((f) => inPolygon(p, f))),
   );
   if (roads.length < 2) return;
+  // These surveyed walking edges extend across the recessed forecourt beyond
+  // the main F1 slab. Give them the same round-ended paving used by collision.
+  const halfWidth = ppm * 0.65;
+  for (const road of roads) {
+    const [a, b] = road.line!;
+    const bearing = Math.atan2(b.y - a.y, b.x - a.x);
+    const cap = (p: Point, start: number) =>
+      Array.from({ length: 9 }, (_, i) => {
+        const angle = bearing + start + (i * Math.PI) / 8;
+        return { x: p.x + halfWidth * Math.cos(angle), y: p.y + halfWidth * Math.sin(angle) };
+      });
+    road.polygons = [[[...cap(b, -Math.PI / 2), ...cap(a, Math.PI / 2)]]];
+    road.strokeWidth = 2 * halfWidth;
+  }
   const barriers = scene.surfaces.filter((s) =>
     ["room", "wall", "water", "lift"].includes(s.kind),
   );
@@ -369,7 +405,7 @@ export function fitDoorApron(
         continue;
       if (
         !roads.some(
-          (s) => distanceSegment(p, s.line![0], s.line![1]) <= ppm * 0.65,
+          (s) => distanceSegment(p, s.line![0], s.line![1]) <= halfWidth,
         )
       )
         continue;

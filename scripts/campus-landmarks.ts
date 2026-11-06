@@ -82,7 +82,7 @@ export async function bakeLandmarks(
         config.transform.pixelsPerProjectedUnit,
         config.roofHeightFactor,
         undefined,
-        isPlaza,
+        true,
         isPlaza || isCanopy,
         density,
       );
@@ -109,12 +109,19 @@ export async function bakeLandmarks(
       if ((await sharp(png).stats()).channels[3].max === 0) continue;
       const image = `landmark-${id}.png`;
       files.set(`public/maps/${image}`, png);
+      const riseMap = isPlaza ? undefined : `landmark-${id}-height.png`;
+      if (riseMap)
+        files.set(
+          `public/maps/${riseMap}`,
+          await sharp(baked.riseMap!).extract(crop).toColourspace("b-w").png({ compressionLevel: 9 }).toBuffer(),
+        );
       // The low planted beds around the sundial sit beneath the standing figure.
       const foot = bounds(parts.flatMap((p) => p.vertices.map(convert)));
       const frontY = id === 48569 ? -1 : foot.y + foot.height / 2;
       landmarks.push({
         id,
         image,
+        riseMap,
         x: x / density,
         y: y / density,
         width: w / density,

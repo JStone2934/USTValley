@@ -73,7 +73,9 @@ test("walking from each side of all 47 entrances crosses its exact line, and wal
       assert.ok(
         Math.abs(Math.hypot(n.x, n.y) - 1) < 1e-8 && width > scene.player.width,
       );
-      const dot = (gate.spawn.x - gate.x) * n.x + (gate.spawn.y - gate.y) * n.y;
+      const { threshold } = gate.entrance!;
+      const dot =
+        (gate.spawn.x - threshold.x) * n.x + (gate.spawn.y - threshold.y) * n.y;
       assert.ok(
         dot < -scene.units.pixelsPerMeter,
         `arrival is on approach side of ${gate.id}`,
@@ -88,6 +90,11 @@ test("walking from each side of all 47 entrances crosses its exact line, and wal
         from = to;
       }
       assert.equal(hit?.id, gate.id, `cannot walk through ${gate.id}`);
+      const depth = (from.x - threshold.x) * n.x + (from.y - threshold.y) * n.y;
+      assert.ok(
+        Math.abs(depth) <= scene.player.radius,
+        `only a foot touching the physical sill transfers at ${gate.id}`,
+      );
       assert.equal(
         crossedEntrance(
           scene,
@@ -147,4 +154,30 @@ test("Tiled scales both absolute feet of each room-door lane and both jambs", ()
   assert.deepEqual(JSON.parse(values.lanes), [
     { outside: scaled(door.outside), inside: scaled(door.inside) },
   ]);
+});
+
+test("feet reaching either clear edge of an entrance also transfer", () => {
+  let edges = 0;
+  for (const scene of world.scenes) {
+    const r = scene.player.radius;
+    for (const gate of scene.portals) {
+      if (!gate.entrance) continue;
+      const { threshold: sill, toward: n, width } = gate.entrance;
+      for (const side of [-1, 1]) {
+        const b = side * (width / 2 - r * 0.5);
+        const start = {
+          x: sill.x - n.x * r - n.y * b,
+          y: sill.y - n.y * r + n.x * b,
+        };
+        const end = { x: start.x + n.x * r, y: start.y + n.y * r };
+        if (!canStand(scene, start) || !canStand(scene, end)) continue;
+        assert.equal(crossedEntrance(scene, start, end)?.id, gate.id);
+        edges++;
+      }
+    }
+  }
+  assert.ok(
+    edges > 10,
+    "exercised off-centre foot crossings through real apertures",
+  );
 });

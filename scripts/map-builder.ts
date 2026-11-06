@@ -1,3 +1,6 @@
+import { fixedGlazing } from "./doorway-art.ts";
+import { fitThinWalls } from "./indoor-wall-collision.ts";
+import { sealCampusBuildings } from "./campus-shell.ts";
 import {
   exteriorGates,
   gateLanding,
@@ -5,6 +8,7 @@ import {
   openSourceOffice,
   fitDoorApron,
 } from "./exterior-entrances.ts";
+import { fitEntranceSills } from "./entrance-sills.ts";
 import { fitSourceFixtures } from "./fixture-collision.ts";
 import { fitRoomCasework } from "./room-casework.ts";
 import { fitRoomDoors } from "./room-doors.ts";
@@ -332,12 +336,25 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
     candidates.filter((g) => g.innerGlass).map((g) => g.templateKey),
   )) {
     const template = interiorGroups.get(key)!;
+    const glazing = candidates.flatMap((g) =>
+      g.templateKey === key && g.innerGlass ? [g.innerGlass] : [],
+    );
+    fitThinWalls(
+      template.scene,
+      template.scene.surfaces
+        .filter((s) => s.sourceLayer === "玻璃外墙-门")
+        .map((s) => ({
+          ...s,
+          polygons: fixedGlazing(s, glazing),
+        })),
+    );
     template.space = new Set(
       template.scene.collision.flatMap((_, i) =>
         canStand(template.scene, gridPoint(template.scene, i)) ? [i] : [],
       ),
     );
   }
+  sealCampusBuildings(outdoor, candidates, campus, convert);
   const outsideSpace = largestPublicSpace(outdoor);
   const gates = candidates.map((g) => {
     const template = interiorGroups.get(g.templateKey)!;
@@ -805,6 +822,7 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
     fitRoomDoors(scene, sources[scene.sourceMap], publicSpace.get(scene.id)!);
   for (const scene of topology.scenes)
     fitRoomCasework(scene, sources[scene.sourceMap]);
+  for (const scene of world.scenes) fitEntranceSills(scene);
   validateWorld(world);
   const report = {
     mapVersion: world.mapVersion,
@@ -1092,6 +1110,16 @@ export function tiledMap(scene: SceneMap, mapVersion: string) {
       ? [
           {
             name: "fixture_collision",
+            properties: [
+              {
+                name: "blockedRowRuns",
+                type: "string",
+                value: JSON.stringify(
+                  scene.fixtureCollision.runs.map((v) => v * ratio),
+                ),
+              },
+              { name: "rowHeight", type: "int", value: ratio },
+            ],
             type: "objectgroup",
             visible: false,
             objects: scene.surfaces

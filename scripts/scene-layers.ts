@@ -1,3 +1,4 @@
+import { fitThinWalls } from "./indoor-wall-collision.ts";
 import config from "../content/map-config.json";
 import {
   canStand,
@@ -202,12 +203,24 @@ export function sourceFloor(
   if (indoor)
     for (const s of ownSurfaces.filter((s) => s.kind === "floor"))
       s.polygons.forEach((p) => stamp(scene, p, 0));
-  for (const s of ownSurfaces.filter((s) =>
-    ["room", "lift", "water", "wall"].includes(s.kind),
+  for (const s of ownSurfaces.filter(
+    (s) =>
+      ["room", "lift", "water"].includes(s.kind) ||
+      (!indoor && s.kind === "wall"),
   ))
     s.polygons.forEach((p) => stamp(scene, p, 1));
   // A source passage may cross a room's broad functional polygon, but must never cut a wall.
   for (const s of passages) for (const p of s.polygons) stamp(scene, p, 0);
-  for (const s of ownSurfaces.filter((s) => ["wall", "water"].includes(s.kind)))
+  for (const s of ownSurfaces.filter(
+    (s) =>
+      s.kind === "water" ||
+      (s.kind === "wall" && (!indoor || s.sourceLayer === "玻璃外墙-门")),
+  ))
     s.polygons.forEach((p) => stamp(scene, p, 1));
+  // The fixed glazing is fitted after matching the six moving library bays.
+  if (indoor)
+    fitThinWalls(
+      scene,
+      ownSurfaces.filter((s) => s.sourceLayer !== "玻璃外墙-门"),
+    );
 }

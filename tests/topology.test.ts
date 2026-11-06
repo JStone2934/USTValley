@@ -312,8 +312,12 @@ test("the plaza's visible pool and sculpture stop feet, and its stone rim and in
     assert.ok(canStand(scene, polar(30, deg)), `inner stone steps ${deg}°`);
   }
   // This source stone slab crosses SHUI at 210 degrees and is physically above it.
-  for (let r = 20; r <= 84; r += 0.25)
+  for (let r = 20; r <= 78; r += 0.25)
     assert.ok(canStand(scene, polar(r, 210)), `stone crossing radius ${r}`);
+  // Beyond the stone landing, model 48569 puts a raised curb and planted
+  // island across this radial line. The player can turn onto the outer rim.
+  for (const r of [83, 86, 90])
+    assert.equal(canStand(scene, polar(r, 210)), false, `walkable planter ${r}`);
   assert.equal(report.plazaCollision.waterNode, "SHUI");
   assert.equal(report.plazaCollision.sculptureNode, "柱体");
   assert.ok(

@@ -1,7 +1,13 @@
 import { test, expect, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import sharp from "sharp";
-import { canStand, type SceneMap, type WorldMap } from "../../src/shared/world";
+import {
+  canStand,
+  reachable,
+  tileIndex,
+  type SceneMap,
+  type WorldMap,
+} from "../../src/shared/world";
 
 import { driveTo, position, walkThroughEntrance } from "./walking";
 
@@ -69,6 +75,8 @@ test("C2 exploration on the real F1 plan, paired return, dialog pause and blur",
     "data-scene",
     "campus_core",
   );
+  // The C2 return is under its projected roof. Its opaque pixels must never tint the avatar.
+  await assertFraming(page, 0.0875);
   await page.screenshot({ path: "test-results/campus-desktop.png" });
   expect(errors).toEqual([]);
 });
@@ -127,6 +135,7 @@ test("C2 source escalator reaches F2 and the reciprocal passage returns to F1", 
   ).toHaveCount(0);
   await page.getByRole("button", { name: "关闭面板" }).click();
   await page.getByRole("button", { name: "回到广场 ↺" }).click();
+  await page.clock.runFor(250);
   await expect(page.locator("main")).toHaveAttribute(
     "data-scene",
     "campus_core",
@@ -179,7 +188,14 @@ test("visible stairs walk up and down while gameplay and maps show only the occu
     "interior_c2",
   );
   const f1 = world.scenes.find((s) => s.id === "interior_c2")!;
-  const stairs = f1.portals.find((p) => p.kind === "stairs")!;
+  const accessible = reachable(f1, {
+      x: await position(page, "x"),
+      y: await position(page, "y"),
+    }),
+    stairs = f1.portals.find(
+      (p) => p.kind === "stairs" && accessible.has(tileIndex(f1, p)),
+    )!;
+  expect(stairs, "a staircase connects the entrance lobby to F2").toBeDefined();
   await expect
     .poll(() =>
       page.locator("main").getAttribute("data-stair-markers").then(Number),

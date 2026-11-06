@@ -1,8 +1,10 @@
+import { campusCutaway, entranceSill } from "./campus-cutaway";
 import { slidingEntrance } from "./entrance-art";
 import {
   approachedRoomDoor,
   clearOfDoor,
   crossedEntrance,
+  facesEntrance,
 } from "../shared/automatic-doors";
 import { addSundialForeground } from "./sundial-art";
 import { canObserveSundial, sundial } from "../shared/sundial";
@@ -28,7 +30,6 @@ import {
   type Point,
   type SceneMap,
   type WorldMap,
-  type Roof,
 } from "../shared/world";
 
 const CAMERA_STOPS = [12.5, 25, 50, 75, 100, 125, 150, 175, 200];
@@ -95,6 +96,7 @@ export class CampusScene extends Phaser.Scene {
   private current!: SceneMap;
   private player!: Phaser.GameObjects.Image;
   private occlusion?: ReturnType<typeof actorOcclusion>;
+  private cutaway?: ReturnType<typeof campusCutaway>;
   private footShadow!: Phaser.GameObjects.Ellipse;
   private referenceLayer!: Phaser.GameObjects.Graphics;
   private discovered = new Set<string>();
@@ -136,7 +138,9 @@ export class CampusScene extends Phaser.Scene {
     return [
       scene.art.ground,
       ...(scene.art.riseMap ? [scene.art.riseMap] : []),
-      ...(scene.art.landmarks ?? []).map((l) => l.image),
+      ...(scene.art.landmarks ?? []).flatMap((l) =>
+        l.riseMap ? [l.image, l.riseMap] : [l.image],
+      ),
       ...(scene.id === "campus_core"
         ? scene.art.roofs.map((r) => r.image)
         : []),
@@ -195,6 +199,8 @@ export class CampusScene extends Phaser.Scene {
       return;
     }
     if (!keepWalking) this.bridge.clear();
+    this.cutaway?.dispose();
+    this.cutaway = undefined;
     this.occlusion?.dispose();
     this.occlusion = undefined;
     this.cues = [];
@@ -223,20 +229,17 @@ export class CampusScene extends Phaser.Scene {
         .setOrigin(0)
         .setDisplaySize(landmark.width, landmark.height)
         .setDepth(
-          plaza ? -89 : landmark.frontY < 0 ? -90 : 6000 + landmark.frontY,
+          plaza
+            ? -89
+            : landmark.frontY < 0
+              ? -90
+              : landmark.riseMap
+                ? -88
+                : 6000 + landmark.frontY,
         );
       if (plaza) addSundialForeground(this, landmark);
     }
-    this.roofSprites = (s.id === "campus_core" ? s.art.roofs : []).map(
-      (roof) => ({
-        roof,
-        sprite: this.add
-          .image(roof.x, roof.y, roof.image)
-          .setOrigin(0)
-          .setDisplaySize(roof.width, roof.height)
-          .setDepth(8000),
-      }),
-    );
+    this.cutaway = campusCutaway(this, s);
     this.doorSprites.clear();
     for (const door of s.doors ?? []) {
       const g = this.add
@@ -278,7 +281,7 @@ export class CampusScene extends Phaser.Scene {
         ppm = s.units.pixelsPerMeter;
       const chest = this.add
         .graphics({ x: c.x, y: c.y })
-        .setDepth(c.y)
+        .setDepth(6000 + c.y)
         .setScale(
           (dimensions.widthMeters * ppm) / 14,
           ((dimensions.heightMeters * s.units.heightProjection +
@@ -293,18 +296,7 @@ export class CampusScene extends Phaser.Scene {
     for (const p of s.portals.filter((p) => p.kind === "entrance")) {
       const glass = slidingEntrance(this, s, p);
       if (glass) this.entranceLeaves.push(glass);
-      const threshold = this.add
-        .graphics(p.entrance?.threshold ?? { x: p.x, y: p.y })
-        .setRotation(
-          p.entrance
-            ? Math.atan2(p.entrance.toward.x, -p.entrance.toward.y)
-            : 0,
-        )
-        .setDepth(8050)
-        .fillStyle(0xf0d893, 0.9)
-        .fillRect(-4, -2, 8, 4);
-      if (p.entrance) threshold.setScale(p.entrance.width / 8, 0.45);
-      else this.mapCue(threshold, 2.5);
+      entranceSill(this, s, p);
     }
     for (const marker of passageMarkers(this.world, s)) {
       const lift = marker.kind === "lift",
@@ -346,14 +338,16 @@ export class CampusScene extends Phaser.Scene {
     }
     this.referenceLayer = this.add.graphics().setDepth(11000);
     this.drawReferences();
-    this.footShadow = this.add.ellipse(
-      point.x,
-      point.y,
-      s.player.width * 1.45,
-      Math.max(1, s.player.groundDepth),
-      0x253b40,
-      0.34,
-    );
+    this.footShadow = this.add
+      .ellipse(
+        point.x,
+        point.y,
+        s.player.width,
+        s.player.groundDepth,
+        0x253b40,
+        0.34,
+      )
+      .setDepth(-60);
     this.occlusion = actorOcclusion(this, s);
     this.player = this.add
       .image(point.x, point.y, "avatar-down-0")
@@ -365,7 +359,6 @@ export class CampusScene extends Phaser.Scene {
     this.cameras.main.roundPixels = false;
     this.frameCamera();
   }
-  private roofSprites: { roof: Roof; sprite: Phaser.GameObjects.Image }[] = [];
   drawReferences() {
     if (!this.referenceLayer) return;
     const g = this.referenceLayer.clear();
@@ -474,15 +467,15 @@ export class CampusScene extends Phaser.Scene {
     );
   }
   private nearbyActions() {
-    const portals = nearbyPortals(this.current, this.position).map(
-      (portal) => ({
+    const portals = nearbyPortals(this.current, this.position)
+      .filter((p) => facesEntrance(this.current, this.position, p))
+      .map((portal) => ({
         id: portal.id,
         label: passageLabel(this.world, this.current, portal),
         point: portal,
         portal,
         door: undefined as RoomDoor | undefined,
-      }),
-    );
+      }));
     const doors = nearbyDoors(this.current, this.position).map((door) => ({
       id: door.id,
       label: `${this.openDoors.has(door.id) ? "关门" : "开门"} · ${door.room}`,
@@ -623,40 +616,9 @@ export class CampusScene extends Phaser.Scene {
       .setTexture(
         `avatar-${this.direction}-${moving ? Math.floor(time / (running ? 80 : 130)) % 4 : 0}`,
       );
-    this.footShadow
-      .setPosition(this.player.x, this.player.y)
-      .setDepth(this.player.depth - 0.1);
+    this.footShadow.setPosition(this.player.x, this.player.y);
     this.occlusion?.update(this.player.x, this.player.y, this.player.depth);
-    for (const { roof, sprite } of this.roofSprites) {
-      const within = roof.footprint.some((poly) =>
-        inPolygon(this.position, poly),
-      );
-      const nearDoor = this.current.portals.some(
-        (p) =>
-          Math.hypot(p.x - this.position.x, p.y - this.position.y) < 40 &&
-          p.x >= roof.x &&
-          p.x <= roof.x + roof.width &&
-          p.y >= roof.y &&
-          p.y <= roof.y + roof.height,
-      );
-      // Roof height projection can cover public ground outside its F1 footprint.
-      const x = Math.floor(this.position.x - roof.x),
-        y = Math.floor(this.position.y - roof.y);
-      const covered =
-        x >= 0 &&
-        y >= 0 &&
-        x < roof.width &&
-        y < roof.height &&
-        this.textures.getPixelAlpha(
-          Math.floor((this.position.x - roof.x) * density),
-          Math.floor((this.position.y - roof.y) * density),
-          roof.image,
-        ) > 0;
-      const alpha = within || nearDoor || covered ? 0.32 : 1;
-      sprite.setAlpha(
-        Phaser.Math.Linear(sprite.alpha, alpha, Math.min(1, delta / 100)),
-      );
-    }
+    this.cutaway?.update(this.player, this.player.depth);
     for (const zone of this.current.exploration)
       if (contains(zone, this.position)) this.discovered.add(zone.buildingId);
     if (time - this.lastEmit >= 100) {
@@ -782,21 +744,4 @@ export function createGame(
     bridge.scene = undefined;
     game.destroy(true);
   };
-}
-
-function inPolygon(point: Point, rings: Point[][]): boolean {
-  const inside = (ring: Point[]) => {
-    let value = false;
-    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-      const a = ring[i],
-        b = ring[j];
-      if (
-        a.y > point.y !== b.y > point.y &&
-        point.x < ((b.x - a.x) * (point.y - a.y)) / (b.y - a.y) + a.x
-      )
-        value = !value;
-    }
-    return value;
-  };
-  return inside(rings[0]) && !rings.slice(1).some(inside);
 }

@@ -67,7 +67,12 @@ export type SceneMap = {
     ground: string;
     pixelRatio?: number;
     riseMap?: string;
-    landmarks?: (Rect & { id: number; image: string; frontY: number })[];
+    landmarks?: (Rect & {
+      id: number;
+      image: string;
+      riseMap?: string;
+      frontY: number;
+    })[];
     layers: { id: string; image: string }[];
     roofs: Roof[];
   };
@@ -276,6 +281,76 @@ export function hasLineOfSight(
   return true;
 }
 
+/** Four-pixel cell centres miss narrow, angled passages. Flood the actual
+ * one-pixel foot positions, then report reachable centres on the same grid
+ * used by spawns, doors and the map exporter. */
+function fineReachable(
+  scene: SceneMap,
+  start: Point,
+  radius: number,
+): Set<number> {
+  const w = scene.width * scene.tileSize,
+    h = scene.height * scene.tileSize;
+  const step = scene.collisionSize,
+    columns = w / step;
+  const blocked = new Uint8Array(w * h);
+  function obstacle(left: number, top: number, right: number, bottom: number) {
+    const x0 = Math.max(0, Math.ceil(left - radius)),
+      x1 = Math.min(w, Math.ceil(right + radius));
+    const y0 = Math.max(0, Math.ceil(top - radius)),
+      y1 = Math.min(h, Math.ceil(bottom + radius));
+    for (let y = y0; y < y1; y++) blocked.fill(1, y * w + x0, y * w + x1);
+  }
+  for (let y = 0; y < h / step; y++)
+    for (let x = 0; x < columns; ) {
+      if (!scene.collision[y * columns + x]) {
+        x++;
+        continue;
+      }
+      const left = x++;
+      while (x < columns && scene.collision[y * columns + x]) x++;
+      obstacle(left * step, y * step, x * step, (y + 1) * step);
+    }
+  const runs = scene.fixtureCollision!.runs;
+  for (let i = 0; i < runs.length; i += 3)
+    obstacle(runs[i + 1], runs[i], runs[i + 1] + runs[i + 2], runs[i] + 1);
+  obstacle(-1, -1, 0, h + 1);
+  obstacle(w, -1, w + 1, h + 1);
+  obstacle(0, -1, w, 0);
+  obstacle(0, h, w, h + 1);
+  const visited = new Set<number>([tileIndex(scene, start)]);
+  const queue = new Int32Array(w * h);
+  let count = 0;
+  function visit(index: number) {
+    if (blocked[index]) return;
+    blocked[index] = 1;
+    queue[count++] = index;
+  }
+  for (
+    let y = Math.max(0, Math.floor(start.y));
+    y <= Math.min(h - 1, Math.ceil(start.y));
+    y++
+  )
+    for (
+      let x = Math.max(0, Math.floor(start.x));
+      x <= Math.min(w - 1, Math.ceil(start.x));
+      x++
+    )
+      if (canStand(scene, { x, y: start.y }, radius)) visit(y * w + x);
+  for (let head = 0; head < count; head++) {
+    const i = queue[head],
+      x = i % w,
+      y = (i - x) / w;
+    if (x % step === step / 2 && y % step === step / 2)
+      visited.add(Math.floor(y / step) * columns + Math.floor(x / step));
+    if (x > 0) visit(i - 1);
+    if (x + 1 < w) visit(i + 1);
+    if (y > 0) visit(i - w);
+    if (y + 1 < h) visit(i + w);
+  }
+  return visited;
+}
+
 /** Cardinal BFS uses the same avatar footprint as runtime collision. */
 export function reachable(
   scene: SceneMap,
@@ -288,6 +363,8 @@ export function reachable(
     width = (scene.width * scene.tileSize) / size,
     height = (scene.height * scene.tileSize) / size;
   if (!canStand(scene, start, radius)) return visited;
+  if (scene.fixtureCollision && scene.id !== "campus_core")
+    return fineReachable(scene, start, radius);
   const queue = [startIndex];
   visited.add(startIndex);
   for (let head = 0; head < queue.length; head++) {

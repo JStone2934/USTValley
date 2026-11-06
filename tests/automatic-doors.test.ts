@@ -5,6 +5,7 @@ import {
   approachedRoomDoor,
   clearOfDoor,
   crossedEntrance,
+  facesEntrance,
 } from "../src/shared/automatic-doors.ts";
 import { doorCollision, toggleDoor } from "../src/shared/doors.ts";
 import {
@@ -63,20 +64,46 @@ test("building doors trigger only while approaching their accessible threshold",
   for (const scene of world.scenes) {
     for (const p of scene.portals.filter((p) => p.kind === "entrance")) {
       assert.ok(p.entrance, p.id);
-      const n = p.entrance.toward;
+      const { toward: n, threshold, width } = p.entrance;
+      const side =
+        -(p.spawn.x - threshold.x) * n.y + (p.spawn.y - threshold.y) * n.x;
       const offset = (a: number, b: number): Point => ({
-        x: p.x + a * n.x - b * n.y,
-        y: p.y + a * n.y + b * n.x,
+        x: threshold.x + a * n.x - b * n.y,
+        y: threshold.y + a * n.y + b * n.x,
       });
-      const before = offset(-scene.player.radius, 0);
+      const before = offset(-scene.player.radius, side),
+        end = offset(0, side);
       assert.ok(canStand(scene, before), "no navigable approach to " + p.id);
-      assert.equal(crossedEntrance(scene, before, p)?.id, p.id);
-      assert.equal(crossedEntrance(scene, p, before), undefined);
+      assert.equal(crossedEntrance(scene, before, end)?.id, p.id);
+      assert.equal(crossedEntrance(scene, end, before), undefined);
       assert.equal(crossedEntrance(scene, before, before), undefined);
       assert.equal(
         crossedEntrance(scene, offset(0, -1), offset(0, 1)),
         undefined,
       );
+      for (const missed of [-width, width]) {
+        assert.equal(
+          crossedEntrance(
+            scene,
+            offset(-scene.player.radius, missed),
+            offset(0, missed),
+          ),
+          undefined,
+        );
+        assert.equal(
+          facesEntrance(scene, offset(-scene.player.radius, missed), p),
+          false,
+        );
+      }
+      assert.equal(
+        crossedEntrance(
+          scene,
+          offset(-1.2 * scene.units.pixelsPerMeter, side),
+          offset(-0.45 * scene.units.pixelsPerMeter, side),
+        ),
+        undefined,
+      );
+      assert.equal(facesEntrance(scene, before, p), true);
     }
   }
 });

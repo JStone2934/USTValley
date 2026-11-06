@@ -100,7 +100,7 @@ export function fitSourceFixtures(scene: SceneMap, source: SourceMap) {
     for (const i of pixels) mask[i] = 1;
   }
   if (sourceIds.length) {
-    const runs: number[] = [];
+    const runs = [...(scene.fixtureCollision?.runs ?? [])];
     for (let y = 0; y < h; y++)
       for (let x = 0; x < w; ) {
         if (!mask[y * w + x]) {

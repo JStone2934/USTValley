@@ -1,5 +1,5 @@
 {
-  "mapVersion": "core-pixel-3d-0.5.2",
+  "mapVersion": "core-pixel-3d-0.5.3",
   "status": "source-geometry-reconstructed",
   "fixtureOccupancy": [
     {
@@ -1392,10 +1392,10 @@
       ],
       "entry": {
         "x": 550,
-        "y": 702
+        "y": 698
       },
-      "entryDisplacement": 2.241428116179515,
-      "innerEntryDisplacement": 2.17175044606878,
+      "entryDisplacement": 3.283900120283847,
+      "innerEntryDisplacement": 4.865850388164435,
       "footprint": "F1 source polygons; physical wings shared by their numbered buildings",
       "review": "pending",
       "reason": "室外模型入口与同栋 F1 通行交接点校合；共享翼楼编号按标签锚点与平面分区关联",
@@ -2535,7 +2535,7 @@
       "accepted": true,
       "offsets": [
         1.7762882648939535,
-        5.266725738065375
+        7.401243138824737
       ]
     },
     {
@@ -2547,7 +2547,7 @@
       "accepted": true,
       "offsets": [
         9.568970686547235,
-        6.302396369635932
+        9.775489757551785
       ]
     },
     {
@@ -2558,8 +2558,8 @@
       "toFloor": "4",
       "accepted": true,
       "offsets": [
-        7.786167221425451,
-        6.2858969129313405
+        9.951100441659696,
+        8.758567234428218
       ]
     },
     {
@@ -2570,7 +2570,7 @@
       "toFloor": "5",
       "accepted": true,
       "offsets": [
-        6.2858969129313405,
+        8.758567234428218,
         5.622970745077721
       ]
     },
@@ -2847,7 +2847,7 @@
       "accepted": true,
       "offsets": [
         1.877684744572489,
-        5.7172808222091245
+        5.970535989339598
       ]
     },
     {
@@ -2858,7 +2858,7 @@
       "toFloor": "4",
       "accepted": true,
       "offsets": [
-        5.7172808222091245,
+        5.970535989339598,
         1.7762882648939535
       ]
     },
@@ -3495,7 +3495,7 @@
       "accepted": true,
       "offsets": [
         0.677200118133458,
-        6.140244294814344
+        8.950005586590446
       ]
     },
     {
@@ -3506,7 +3506,7 @@
       "toFloor": "4",
       "accepted": true,
       "offsets": [
-        6.140244294814344,
+        8.950005586590446,
         0.8052949770115475
       ]
     },
@@ -3627,7 +3627,7 @@
       "accepted": true,
       "offsets": [
         0.32802438933713157,
-        2.272641634750178
+        2.5228753437298495
       ]
     },
     {
@@ -3687,7 +3687,7 @@
       "accepted": true,
       "offsets": [
         0.7443117626371446,
-        4.946048928184912
+        8.540690838567986
       ]
     },
     {
@@ -3699,7 +3699,7 @@
       "accepted": true,
       "offsets": [
         1.5654072952429434,
-        5.749052095780698
+        5.886560965453459
       ]
     },
     {
@@ -3711,7 +3711,7 @@
       "accepted": true,
       "offsets": [
         1.5620499351813302,
-        7.3619902200424265
+        8.175506100542053
       ]
     },
     {
@@ -3758,8 +3758,8 @@
       "toFloor": "3",
       "accepted": true,
       "offsets": [
-        6.302396369635932,
-        7.786167221425451
+        9.775489757551785,
+        9.951100441659696
       ]
     },
     {
@@ -4431,7 +4431,7 @@
       "accepted": true,
       "offsets": [
         7.892578792764775,
-        7.359028468486841
+        10.015752592791
       ]
     },
     {
@@ -4442,7 +4442,7 @@
       "toFloor": "2",
       "accepted": true,
       "offsets": [
-        7.359028468486841,
+        10.015752592791,
         10.74806029011747
       ]
     },
@@ -4491,7 +4491,7 @@
       "accepted": true,
       "offsets": [
         8.877567234327211,
-        15.035774007346618
+        15.783361492407128
       ]
     },
     {
@@ -4527,7 +4527,7 @@
       "accepted": true,
       "offsets": [
         8.235708834095579,
-        8.65834279755659
+        9.376934467084652
       ]
     },
     {
@@ -4538,7 +4538,7 @@
       "toFloor": "2",
       "accepted": true,
       "offsets": [
-        8.65834279755659,
+        9.376934467084652,
         11.31558659548854
       ]
     },
@@ -4563,7 +4563,7 @@
       "accepted": true,
       "offsets": [
         10.881700234797867,
-        8.873533681685116
+        10.19115302603199
       ]
     },
     {
@@ -4743,7 +4743,7 @@
       "accepted": true,
       "offsets": [
         2.1870985345887357,
-        4.92946244533819
+        7.142800571204534
       ]
     },
     {
@@ -4754,7 +4754,7 @@
       "toFloor": "4",
       "accepted": true,
       "offsets": [
-        4.92946244533819,
+        7.142800571204534,
         1.860430057809228
       ]
     },
@@ -4767,7 +4767,7 @@
       "accepted": true,
       "offsets": [
         1.860430057809228,
-        4.71274866717926
+        5.24309069156734
       ]
     },
     {
@@ -4827,7 +4827,7 @@
       "accepted": true,
       "offsets": [
         2.476065427245433,
-        6.958519957577122
+        9.462610633435148
       ]
     },
     {
@@ -4983,7 +4983,7 @@
       "accepted": true,
       "offsets": [
         1.5110923201446351,
-        7.15740874898172
+        7.804389790368006
       ]
     },
     {
@@ -4994,7 +4994,7 @@
       "toFloor": "4",
       "accepted": true,
       "offsets": [
-        7.15740874898172,
+        7.804389790368006,
         2.6166390656717926
       ]
     },
@@ -5007,7 +5007,7 @@
       "accepted": true,
       "offsets": [
         2.6166390656717926,
-        5.208272266308709
+        9.090990045094149
       ]
     },
     {
@@ -5019,7 +5019,7 @@
       "accepted": true,
       "offsets": [
         0.053851648071306615,
-        6.124589782181334
+        10.110914894311001
       ]
     },
     {
@@ -5031,7 +5031,7 @@
       "accepted": true,
       "offsets": [
         0.9972462083157098,
-        7.7034342990643285
+        7.775789348998575
       ]
     },
     {
@@ -5055,7 +5055,7 @@
       "accepted": true,
       "offsets": [
         1.3636715146984697,
-        5.617766460080041
+        9.395706466253593
       ]
     },
     {
@@ -5138,8 +5138,8 @@
       "toFloor": "4",
       "accepted": true,
       "offsets": [
-        9.45084652293114,
-        7.319357895334786
+        10.956208285716322,
+        8.974018052132434
       ]
     },
     {
@@ -5150,8 +5150,8 @@
       "toFloor": "5",
       "accepted": true,
       "offsets": [
-        7.319357895334786,
-        11.338077438437258
+        8.974018052132434,
+        11.808132790581208
       ]
     },
     {
@@ -5378,8 +5378,8 @@
       "toFloor": "3",
       "accepted": true,
       "offsets": [
-        10.249297536904658,
-        9.45084652293114
+        11.842639063992477,
+        10.956208285716322
       ]
     },
     {
@@ -5558,7 +5558,7 @@
       "toFloor": "3",
       "accepted": true,
       "offsets": [
-        15.035774007346618,
+        15.783361492407128,
         10.017609495283793
       ]
     },
@@ -6182,7 +6182,7 @@
       "toFloor": "1",
       "accepted": true,
       "offsets": [
-        1.3014607178090174,
+        2.886832173854251,
         1.8456706098326283
       ]
     },
@@ -6218,7 +6218,7 @@
       "toFloor": "1",
       "accepted": true,
       "offsets": [
-        8.12114523943511,
+        9.758739672724124,
         3.8571621692638134
       ]
     },
@@ -6230,7 +6230,7 @@
       "toFloor": "1",
       "accepted": true,
       "offsets": [
-        1.9039432764659623,
+        2.1224985276791246,
         0.7616429609731763
       ]
     },
@@ -6279,7 +6279,7 @@
       "accepted": true,
       "offsets": [
         0.8981091247727294,
-        1.9208331525668634
+        2.5631230949761394
       ]
     },
     {
@@ -6327,7 +6327,7 @@
       "accepted": true,
       "offsets": [
         1.1609048195265848,
-        1.9329769786523787
+        2.4771758112818145
       ]
     },
     {
@@ -6543,7 +6543,7 @@
       "accepted": true,
       "offsets": [
         9.315846714067385,
-        20.879149886908746
+        22.581826764015386
       ]
     },
     {
@@ -6554,7 +6554,7 @@
       "toFloor": "3",
       "accepted": true,
       "offsets": [
-        20.879149886908746,
+        22.581826764015386,
         8.534594307874277
       ]
     },
@@ -6810,7 +6810,7 @@
       "elevation": 3,
       "matchMeters": 0.37422188691588415,
       "landingOffsets": [
-        2.41665057465908,
+        4.019975124301116,
         0.8537564055396863
       ]
     },
@@ -7805,8 +7805,8 @@
   },
   "campusSpawn": {
     "point": {
-      "x": 1010,
-      "y": 1022
+      "x": 1018,
+      "y": 1010
     },
     "approachTo": "enter_c2",
     "projectedRoofClearancePixels": 20
@@ -8274,6 +8274,7 @@
     {
       "id": 45779,
       "image": "landmark-45779.png",
+      "riseMap": "landmark-45779-height.png",
       "x": 1262,
       "y": 0,
       "width": 125.66666666666667,
@@ -8285,6 +8286,7 @@
     {
       "id": 49275,
       "image": "landmark-49275.png",
+      "riseMap": "landmark-49275-height.png",
       "x": 785,
       "y": 307,
       "width": 14.333333333333334,
@@ -8296,6 +8298,7 @@
     {
       "id": 45953,
       "image": "landmark-45953.png",
+      "riseMap": "landmark-45953-height.png",
       "x": 1778.3333333333333,
       "y": 239.33333333333334,
       "width": 29.666666666666668,
@@ -8307,6 +8310,7 @@
     {
       "id": 49278,
       "image": "landmark-49278.png",
+      "riseMap": "landmark-49278-height.png",
       "x": 786.6666666666666,
       "y": 380.6666666666667,
       "width": 21.666666666666668,
@@ -8318,6 +8322,7 @@
     {
       "id": 49277,
       "image": "landmark-49277.png",
+      "riseMap": "landmark-49277-height.png",
       "x": 804.6666666666666,
       "y": 403,
       "width": 21.666666666666668,
@@ -8329,6 +8334,7 @@
     {
       "id": 49640,
       "image": "landmark-49640.png",
+      "riseMap": "landmark-49640-height.png",
       "x": 892.6666666666666,
       "y": 468,
       "width": 17,
@@ -8340,6 +8346,7 @@
     {
       "id": 49276,
       "image": "landmark-49276.png",
+      "riseMap": "landmark-49276-height.png",
       "x": 790.6666666666666,
       "y": 522,
       "width": 15.333333333333334,
@@ -8351,6 +8358,7 @@
     {
       "id": 49279,
       "image": "landmark-49279.png",
+      "riseMap": "landmark-49279-height.png",
       "x": 1022.3333333333334,
       "y": 846.3333333333334,
       "width": 14.666666666666666,
@@ -8362,6 +8370,7 @@
     {
       "id": 45955,
       "image": "landmark-45955.png",
+      "riseMap": "landmark-45955-height.png",
       "x": 1781.3333333333333,
       "y": 793.3333333333334,
       "width": 26.666666666666668,
@@ -8373,6 +8382,7 @@
     {
       "id": 49281,
       "image": "landmark-49281.png",
+      "riseMap": "landmark-49281-height.png",
       "x": 790.6666666666666,
       "y": 920.6666666666666,
       "width": 22,
@@ -8384,6 +8394,7 @@
     {
       "id": 49280,
       "image": "landmark-49280.png",
+      "riseMap": "landmark-49280-height.png",
       "x": 986.3333333333334,
       "y": 988.3333333333334,
       "width": 15,
@@ -8395,6 +8406,7 @@
     {
       "id": 45972,
       "image": "landmark-45972.png",
+      "riseMap": "landmark-45972-height.png",
       "x": 810.3333333333334,
       "y": 1025.3333333333333,
       "width": 75,
@@ -8406,6 +8418,7 @@
     {
       "id": 45974,
       "image": "landmark-45974.png",
+      "riseMap": "landmark-45974-height.png",
       "x": 919.6666666666666,
       "y": 1038.3333333333333,
       "width": 60.333333333333336,
@@ -8417,6 +8430,7 @@
     {
       "id": 49282,
       "image": "landmark-49282.png",
+      "riseMap": "landmark-49282-height.png",
       "x": 730.6666666666666,
       "y": 1065.3333333333333,
       "width": 14.333333333333334,
@@ -8428,6 +8442,7 @@
     {
       "id": 50038,
       "image": "landmark-50038.png",
+      "riseMap": "landmark-50038-height.png",
       "x": 1739.3333333333333,
       "y": 1142,
       "width": 6,
@@ -8439,6 +8454,7 @@
     {
       "id": 45975,
       "image": "landmark-45975.png",
+      "riseMap": "landmark-45975-height.png",
       "x": 838,
       "y": 1116.3333333333333,
       "width": 127.33333333333333,
@@ -8779,7 +8795,7 @@
           "y": 514.3335525487862
         }
       ],
-      "inferredCasework": 18,
+      "inferredCasework": 13,
       "pointFixtures": [
         {
           "x": 196.21792813973565,
@@ -8896,8 +8912,8 @@
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 34818,
-      "pixelSha256": "93026f5caec6468aee11d1e527c700002694d5eb178d6bcdf8ab2bd81072f91f"
+      "triangles": 34408,
+      "pixelSha256": "3bc911696321f44637cc5fc1b8046a46b15ae0238d0f5ff07e59fa2c2b6745c2"
     },
     {
       "sceneId": "interior_e3",
@@ -9368,7 +9384,7 @@
           "y": 185.5935026001046
         }
       ],
-      "inferredCasework": 49,
+      "inferredCasework": 34,
       "pointFixtures": [
         {
           "x": 161.35051983171707,
@@ -9492,8 +9508,8 @@
         "inferredSolidReturns": 4,
         "activeGlassBays": []
       },
-      "triangles": 42871,
-      "pixelSha256": "84398269bd9071cf403e2b5a6fbf4254ec83eb7f6351c0be788f8f0259578108"
+      "triangles": 41611,
+      "pixelSha256": "b661ff42e265ace3480ba83fa6f0641ed94cc173ecff76110ac2dfc5a7c5a651"
     },
     {
       "sceneId": "interior_w1",
@@ -9922,7 +9938,7 @@
           "y": 478.5235906946687
         }
       ],
-      "inferredCasework": 46,
+      "inferredCasework": 21,
       "pointFixtures": [
         {
           "x": 807.4448910880602,
@@ -10021,8 +10037,8 @@
         "inferredSolidReturns": 6,
         "activeGlassBays": []
       },
-      "triangles": 46639,
-      "pixelSha256": "3a8d134b07ed48c4dcdc2607e7aad6c5db23df7322e403e6b5300e112b94f526"
+      "triangles": 44581,
+      "pixelSha256": "572986001d0ac40a3f0fbc051cd5d7339e2f2b749dcf59e2a0aee0047aaee121"
     },
     {
       "sceneId": "interior_w3",
@@ -10350,7 +10366,7 @@
           "y": 256.43281308604816
         }
       ],
-      "inferredCasework": 26,
+      "inferredCasework": 22,
       "pointFixtures": [
         {
           "x": 821.0207528313954,
@@ -10442,8 +10458,8 @@
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 40622,
-      "pixelSha256": "79d44e752fff619313d66b6dfedd2250d0460a1b7c9b7c24fe43686e57d3aa97"
+      "triangles": 40318,
+      "pixelSha256": "ab570c9f1024831613c3849f8ceb28dc7d7d93abaa9810d42793d30ba9bdd592"
     },
     {
       "sceneId": "interior_c1",
@@ -10540,7 +10556,7 @@
           "y": 205.34388534445327
         }
       ],
-      "inferredCasework": 2,
+      "inferredCasework": 1,
       "pointFixtures": [
         {
           "x": 118.60088242202778,
@@ -10617,8 +10633,8 @@
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 11429,
-      "pixelSha256": "fe59962493fa24337522120040ddc408508ec0d86d4b5e86eab7da60eac444ec"
+      "triangles": 11345,
+      "pixelSha256": "fcb21e03b4b6face31bbf594a632ce82aefd9afde5cd145da86fefda3f2fbda4"
     },
     {
       "sceneId": "interior_c2",
@@ -10746,7 +10762,7 @@
           "y": 488.5209366552306
         }
       ],
-      "inferredCasework": 11,
+      "inferredCasework": 10,
       "pointFixtures": [
         {
           "x": 237.62041142051197,
@@ -10981,8 +10997,8 @@
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 25549,
-      "pixelSha256": "71d742be1bb843607eb82bd8c00065b1495fa16492164112f7fbc01102916f99"
+      "triangles": 25465,
+      "pixelSha256": "b37a13eadaec65faae927af67d213d674dc3dd3f240c47bc1652e895df4ff9ca"
     },
     {
       "sceneId": "interior_c3",
@@ -11611,7 +11627,7 @@
           "y": 109.40335627503386
         }
       ],
-      "inferredCasework": 1,
+      "inferredCasework": 0,
       "pointFixtures": [
         {
           "x": 249.68669733971456,
@@ -11842,8 +11858,8 @@
           }
         ]
       },
-      "triangles": 16787,
-      "pixelSha256": "b9c1ad7e234fd87e2f8a368da3a3b8138aab17aa1a14d7472be3c5cc90a8d5ab"
+      "triangles": 16703,
+      "pixelSha256": "a2acca9471ee80fde06aaff79d37abe7e8ecdf86700c63441aef2c1ae48c94be"
     },
     {
       "sceneId": "interior_east_f2",
@@ -12476,7 +12492,7 @@
           "y": 1272.9617357575942
         }
       ],
-      "inferredCasework": 53,
+      "inferredCasework": 40,
       "pointFixtures": [],
       "sourceModelInstances": 24,
       "sourceModels": [
@@ -12634,8 +12650,8 @@
         "inferredSolidReturns": 4,
         "activeGlassBays": []
       },
-      "triangles": 58232,
-      "pixelSha256": "65cc5f307915e1684332bd83e6b50c85348b8479752ef2c4b7248d9cefe662c3"
+      "triangles": 57230,
+      "pixelSha256": "e9b06426bce6b8fb3f67b725c88c5f8150810d086951c198362397777fb8dd83"
     },
     {
       "sceneId": "interior_east_f3",
@@ -13274,7 +13290,7 @@
           "y": 912.742114470005
         }
       ],
-      "inferredCasework": 55,
+      "inferredCasework": 41,
       "pointFixtures": [],
       "sourceModelInstances": 20,
       "sourceModels": [
@@ -13408,8 +13424,8 @@
         "inferredSolidReturns": 29,
         "activeGlassBays": []
       },
-      "triangles": 60082,
-      "pixelSha256": "a246894bac4f6b1d4310ef5cd6151f0c9a5e1de970ea9e719e98fe21f722e43c"
+      "triangles": 58920,
+      "pixelSha256": "d6104a8a333dc3f69ab1fdf46b5e9c9ee428a6c08480dbdd06d4ae983dfe7111"
     },
     {
       "sceneId": "interior_east_f4",
@@ -14198,7 +14214,7 @@
           "y": 440.27188059493216
         }
       ],
-      "inferredCasework": 86,
+      "inferredCasework": 57,
       "pointFixtures": [],
       "sourceModelInstances": 26,
       "sourceModels": [
@@ -14362,14 +14378,14 @@
       "extrudedPolygons": 85,
       "steppedStairs": 31,
       "openings": {
-        "sourceJambs": 35,
+        "sourceJambs": 34,
         "roomEdges": 6,
         "entranceSills": 0,
         "inferredSolidReturns": 21,
         "activeGlassBays": []
       },
-      "triangles": 71807,
-      "pixelSha256": "0bc5b6ec5386dcd08d9e2483d6dee86fb17fd8cbfe827d343b384aee8cca8c8b"
+      "triangles": 69323,
+      "pixelSha256": "52074e1b86a4e193b3c0392613225005db3edd82d4ab5d36a81a4ea42b5ac57c"
     },
     {
       "sceneId": "interior_east_f5",
@@ -15188,7 +15204,7 @@
           "y": 1171.3174933516937
         }
       ],
-      "inferredCasework": 90,
+      "inferredCasework": 74,
       "pointFixtures": [],
       "sourceModelInstances": 24,
       "sourceModels": [
@@ -15346,8 +15362,8 @@
         "inferredSolidReturns": 35,
         "activeGlassBays": []
       },
-      "triangles": 71963,
-      "pixelSha256": "bb596414bafe3c6a03b2a294b6c1cea8c33dd2ab6c5c31da32e318a73b2ac4c7"
+      "triangles": 70623,
+      "pixelSha256": "58a227b6de5837a61c4e0be47ef5ea32c044a6afa374717af10cbea6001c05ed"
     },
     {
       "sceneId": "interior_east_f6",
@@ -15914,7 +15930,7 @@
           "y": 1058.2996933988352
         }
       ],
-      "inferredCasework": 41,
+      "inferredCasework": 26,
       "pointFixtures": [],
       "sourceModelInstances": 19,
       "sourceModels": [
@@ -16042,8 +16058,8 @@
         "inferredSolidReturns": 19,
         "activeGlassBays": []
       },
-      "triangles": 53368,
-      "pixelSha256": "28b8c59bb12cf13b69230c49edf1fe32e743465afc311e96f17d7255184cda21"
+      "triangles": 52108,
+      "pixelSha256": "f9bc0207470a613afa20ff66963191305737d5e1463f0675845a3fff57fca799"
     },
     {
       "sceneId": "interior_west_f2",
@@ -16484,7 +16500,7 @@
           "y": 861.201871602742
         }
       ],
-      "inferredCasework": 28,
+      "inferredCasework": 22,
       "pointFixtures": [
         {
           "x": 776.1337364244013,
@@ -16660,11 +16676,11 @@
         "sourceJambs": 27,
         "roomEdges": 8,
         "entranceSills": 0,
-        "inferredSolidReturns": 27,
+        "inferredSolidReturns": 24,
         "activeGlassBays": []
       },
-      "triangles": 67371,
-      "pixelSha256": "a43ea85b3ba7db9d1ebe373f2366a787c10b8ec85e4aea485b8ffd6900ca6db8"
+      "triangles": 66833,
+      "pixelSha256": "399165ad2891f006724c68fae440dec8d4bb57a8bde8b5de0b99ba70bdd93b8e"
     },
     {
       "sceneId": "interior_west_f3",
@@ -17345,7 +17361,7 @@
           "y": 1046.0437295912855
         }
       ],
-      "inferredCasework": 59,
+      "inferredCasework": 44,
       "pointFixtures": [],
       "sourceModelInstances": 37,
       "sourceModels": [
@@ -17581,8 +17597,8 @@
         "inferredSolidReturns": 29,
         "activeGlassBays": []
       },
-      "triangles": 87019,
-      "pixelSha256": "214a4407889c24f3d5f554169bb910014638b6c41e82f221f297ef8e78932d68"
+      "triangles": 85763,
+      "pixelSha256": "1fc4923417c2335ea510734de4c81277358df4ce137ade6e8e08db3ec8645e8a"
     },
     {
       "sceneId": "interior_west_f4",
@@ -18227,7 +18243,7 @@
           "y": 428.90189056148256
         }
       ],
-      "inferredCasework": 57,
+      "inferredCasework": 42,
       "pointFixtures": [
         {
           "x": 407.81324621727765,
@@ -18389,11 +18405,11 @@
         "sourceJambs": 40,
         "roomEdges": 8,
         "entranceSills": 0,
-        "inferredSolidReturns": 15,
+        "inferredSolidReturns": 11,
         "activeGlassBays": []
       },
-      "triangles": 80093,
-      "pixelSha256": "8e98bc97c420d1ca06f7a3a6c0f2f0e4e2cebf253617faa2ea2ca46bb6226be3"
+      "triangles": 78785,
+      "pixelSha256": "cbd935d1614174c1e4789afca93109c7b409fc4dad90aaa69293d473b2c36296"
     },
     {
       "sceneId": "interior_west_f5",
@@ -19026,7 +19042,7 @@
           "y": 845.4518651115255
         }
       ],
-      "inferredCasework": 59,
+      "inferredCasework": 39,
       "pointFixtures": [
         {
           "x": 435.1243506256652,
@@ -19176,11 +19192,11 @@
         "sourceJambs": 67,
         "roomEdges": 7,
         "entranceSills": 0,
-        "inferredSolidReturns": 9,
+        "inferredSolidReturns": 7,
         "activeGlassBays": []
       },
-      "triangles": 80280,
-      "pixelSha256": "d543b7464353a6249dccf7d3a261213057eb6bc2e967401f6817a151da9d4cff"
+      "triangles": 78568,
+      "pixelSha256": "69527349a5361e8120abf4bd2dfe5071cd98ad287bcf8db225dbf86e577e050c"
     },
     {
       "sceneId": "interior_west_f6",
@@ -19807,7 +19823,7 @@
           "y": 171.38361243887496
         }
       ],
-      "inferredCasework": 53,
+      "inferredCasework": 41,
       "pointFixtures": [
         {
           "x": 434.85393839405083,
@@ -19955,8 +19971,8 @@
         "inferredSolidReturns": 4,
         "activeGlassBays": []
       },
-      "triangles": 79132,
-      "pixelSha256": "2053102038f3cf6ed4dd3fd03c4018ae3b54765a3655ddce02de47ff8252c17f"
+      "triangles": 78156,
+      "pixelSha256": "41104c7537651752c244b60ebb302f93fed284a6f26485153e64b0e0d3e5d57a"
     },
     {
       "sceneId": "interior_administration_f2",
@@ -20137,7 +20153,7 @@
           "y": 168.96005198333927
         }
       ],
-      "inferredCasework": 22,
+      "inferredCasework": 19,
       "pointFixtures": [],
       "sourceModelInstances": 9,
       "sourceModels": [
@@ -20205,8 +20221,8 @@
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 14461,
-      "pixelSha256": "4088506f25aa79ff2fdcd8074ad144528d280faafe23adb6578d3779f0c0bce8"
+      "triangles": 14209,
+      "pixelSha256": "96f8a9d5f2ae3d31562395a1b3829f66b61d3e70d6699d964036e07705c64594"
     },
     {
       "sceneId": "interior_administration_f3",
@@ -20369,7 +20385,7 @@
           "y": 154.18392057744217
         }
       ],
-      "inferredCasework": 19,
+      "inferredCasework": 12,
       "pointFixtures": [],
       "sourceModelInstances": 9,
       "sourceModels": [
@@ -20437,8 +20453,8 @@
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 14039,
-      "pixelSha256": "b3bf86dc4584205e67a81eb346c456cecb04ee41b8fc98c27c023262f75b0a60"
+      "triangles": 13471,
+      "pixelSha256": "1a3d5882e4c7d8816970686b7f3628f49e8a31bd8f6694097546af82e6e18a91"
     },
     {
       "sceneId": "interior_administration_f4",
@@ -20625,7 +20641,7 @@
           "y": 156.42353668189375
         }
       ],
-      "inferredCasework": 22,
+      "inferredCasework": 12,
       "pointFixtures": [],
       "sourceModelInstances": 11,
       "sourceModels": [
@@ -20705,8 +20721,8 @@
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 15091,
-      "pixelSha256": "be305d23c2c7dc00897f8150be59e036fa3f115b68869ce422d55c9d374b5bce"
+      "triangles": 14281,
+      "pixelSha256": "262379ed647ec3585d04316b3e19b35e86b341eeb0fb84d9142b38c7aef7823a"
     },
     {
       "sceneId": "interior_administration_f5",
@@ -20869,7 +20885,7 @@
           "y": 43.74012417555399
         }
       ],
-      "inferredCasework": 19,
+      "inferredCasework": 15,
       "pointFixtures": [],
       "sourceModelInstances": 9,
       "sourceModels": [
@@ -20937,8 +20953,8 @@
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 14490,
-      "pixelSha256": "30952d25a6180eda96d154cac5024dddaa3b4bdfe57e02e6327bc35c2d0ed866"
+      "triangles": 14164,
+      "pixelSha256": "1d28352a65eeabedbb3b5c17001bffb93795e56e560f69f9bfa0fa886c5dadad"
     },
     {
       "sceneId": "interior_administration_f6",
@@ -21161,7 +21177,7 @@
           "y": 153.8705676180492
         }
       ],
-      "inferredCasework": 28,
+      "inferredCasework": 14,
       "pointFixtures": [],
       "sourceModelInstances": 10,
       "sourceModels": [
@@ -21235,8 +21251,8 @@
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 16886,
-      "pixelSha256": "3defe7af253dc3e29913bd6dc6b5685069e23b7f5f5c70790e51e23a805c1715"
+      "triangles": 15724,
+      "pixelSha256": "d98c6935c630384565ff46b3956b1ad6791ccf7078c336a30f91a1579ef4fea9"
     },
     {
       "sceneId": "interior_administration_f7",
@@ -21477,7 +21493,7 @@
           "y": 99.91472089117521
         }
       ],
-      "inferredCasework": 32,
+      "inferredCasework": 19,
       "pointFixtures": [],
       "sourceModelInstances": 9,
       "sourceModels": [
@@ -21545,8 +21561,8 @@
         "inferredSolidReturns": 1,
         "activeGlassBays": []
       },
-      "triangles": 17479,
-      "pixelSha256": "13175e5167e88fe015987b09d9d2c8d3aba1d5e2dc5c706761105db72f8b7fd2"
+      "triangles": 16387,
+      "pixelSha256": "1cc9875f0d0678ea86c1fee035423403bb3189176979a1dede4a45b4efc37d2f"
     },
     {
       "sceneId": "interior_administration_f8",
@@ -21817,7 +21833,7 @@
           "y": 436.86508797744324
         }
       ],
-      "inferredCasework": 27,
+      "inferredCasework": 21,
       "pointFixtures": [],
       "sourceModelInstances": 26,
       "sourceModels": [
@@ -21987,8 +22003,8 @@
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 31936,
-      "pixelSha256": "2055393121aac109814199be6f60753b1c1b1b7713c20be529828ac2ea1d87cf"
+      "triangles": 31432,
+      "pixelSha256": "049106fd615af4e4e838c4241ccaa780f61ce7c4c226283b98699edaf581e41d"
     },
     {
       "sceneId": "interior_academic_f2",
@@ -22036,7 +22052,7 @@
           "y": 554.3679808904252
         }
       ],
-      "inferredCasework": 2,
+      "inferredCasework": 1,
       "pointFixtures": [],
       "sourceModelInstances": 50,
       "sourceModels": [
@@ -22350,8 +22366,8 @@
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 39486,
-      "pixelSha256": "5f0f3a900206df482a14e5474cf4c928105f25be1b12b3a5985cdfe36234f050"
+      "triangles": 39412,
+      "pixelSha256": "1301b711e17dafe57f42682c48af5d48909bb990639fa0cad9286a96a047a71d"
     },
     {
       "sceneId": "interior_academic_f3",

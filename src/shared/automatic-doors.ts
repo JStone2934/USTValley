@@ -52,24 +52,47 @@ export function clearOfDoor(scene: SceneMap, door: RoomDoor, feet: Point) {
   );
 }
 
-/** Cross a short, directed line on the accessible side of the surveyed sill.
- * Walking along the facade or standing at the return spawn cannot trigger it. */
+/** The grid marker is used for routing. Only the survey sill itself transfers
+ * the player, in either scene, including a shallow diagonal approach. */
 export function crossedEntrance(scene: SceneMap, from: Point, to: Point) {
   const dx = to.x - from.x,
     dy = to.y - from.y;
-  const travel = Math.hypot(dx, dy);
-  if (!travel) return;
   for (const p of scene.portals) {
     if (p.kind !== "entrance" || !p.entrance) continue;
-    const { toward, width } = p.entrance;
+    const { threshold, toward, width } = p.entrance;
     const forward = dx * toward.x + dy * toward.y;
-    if (forward < 0.45 * travel) continue;
-    const along = (from.x - p.x) * toward.x + (from.y - p.y) * toward.y;
+    if (forward <= 1e-7) continue;
+    const along =
+      (from.x - threshold.x) * toward.x + (from.y - threshold.y) * toward.y;
+    // Front of the feet meets the sill immediately before the body centre.
     const line = -scene.player.radius * 0.5;
     if (along > line || along + forward < line) continue;
     const t = (line - along) / forward;
     const across =
-      (from.x + dx * t - p.x) * toward.y - (from.y + dy * t - p.y) * toward.x;
-    if (Math.abs(across) <= width / 2 && hasLineOfSight(scene, to, p)) return p;
+      (from.x + dx * t - threshold.x) * toward.y -
+      (from.y + dy * t - threshold.y) * toward.x;
+    // Movement already checked the full footprint against both jambs. Every
+    // physically reachable crossing between them must enter, even at an edge.
+    if (Math.abs(across) <= width / 2 + 1e-7) return p;
   }
+}
+
+/** Manual entry is available directly in front of an opening. A nearby point
+ * beside the jamb or behind another wall is not an entrance. */
+export function facesEntrance(
+  scene: SceneMap,
+  feet: Point,
+  p: SceneMap["portals"][number],
+) {
+  if (p.kind !== "entrance" || !p.entrance) return true;
+  const { threshold, toward: n, width } = p.entrance;
+  const dx = feet.x - threshold.x,
+    dy = feet.y - threshold.y;
+  const depth = -(dx * n.x + dy * n.y);
+  return (
+    depth >= -scene.player.radius &&
+    depth <= scene.player.interactionRadius &&
+    Math.abs(dx * n.y - dy * n.x) <= width / 2 - scene.player.radius &&
+    hasLineOfSight(scene, feet, threshold)
+  );
 }

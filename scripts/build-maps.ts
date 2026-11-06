@@ -6,6 +6,7 @@ import {
   tiledMap,
   type Sources,
 } from "./map-builder.ts";
+import { exportCampusOrbit } from "./export-campus-orbit.ts";
 import { bakeMaps } from "./bake-maps.ts";
 const root = resolve(import.meta.dirname, ".."),
   sourceBytes = await readFile(resolve(root, "data/maps/all-maps.json")),
@@ -15,6 +16,7 @@ const { world, report } = buildWorld(sources, sourceBytes),
 const json = (v: unknown) => `${JSON.stringify(v)}\n`;
 const files = new Map<string, string | Uint8Array>([
   ...baked.files,
+  ...(await exportCampusOrbit(root, sources, world, baked.files)),
   ["public/maps/world.json", json(world)],
   [
     "content/map-build-report.json",

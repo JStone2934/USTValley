@@ -1,3 +1,4 @@
+import { OrbitView } from "./orbit-view";
 import { sundial } from "../shared/sundial";
 import React, {
   useEffect,
@@ -348,6 +349,7 @@ function App() {
   const [error, setError] = useState("");
   const [attempt, retry] = useState(0);
   const [panel, setPanel] = useState<"map" | "guide" | "sundial" | null>(null);
+  const [orbit, setOrbit] = useState(false);
   const [references, setReferences] = useState(false);
   const snapshot = useSyncExternalStore(subscribe, getSnapshot);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -393,6 +395,9 @@ function App() {
     else dialog.current?.close();
     return () => bridge.pause(false);
   }, [panel]);
+  useEffect(() => {
+    if (snapshot.sceneId !== "campus_core") setOrbit(false);
+  }, [snapshot.sceneId]);
   const current = world?.scenes.find((s) => s.id === snapshot.sceneId);
   return (
     <main
@@ -419,7 +424,7 @@ function App() {
           </span>
         </a>
         <div className="chapter">
-          <span className="eyebrow">BUILD 0.5.7 / 立体像素校园</span>
+          <span className="eyebrow">BUILD 0.5.8 / 立体像素校园</span>
           <h1>
             从校园，
             <br />
@@ -494,6 +499,13 @@ function App() {
               )}
             </div>
           )}
+          {world && orbit && current?.id === "campus_core" && (
+            <OrbitView
+              world={world}
+              bridge={bridge}
+              close={() => setOrbit(false)}
+            />
+          )}
           {world && (
             <>
               <div className="world-badge">
@@ -502,47 +514,69 @@ function App() {
                   ? "核心区 · 源模型重建"
                   : `${current?.floor.name} · 楼层与通道`}
               </div>
+              {current?.id === "campus_core" && (
+                <button
+                  className="orbit-toggle"
+                  aria-pressed={orbit}
+                  onClick={() => {
+                    bridge.clear();
+                    setOrbit(!orbit);
+                  }}
+                >
+                  {orbit ? "退出 3D 环视" : "3D 环视"}
+                </button>
+              )}
               <div className="zoom-controls">
                 <button
                   className="camera-mode"
                   onClick={() => bridge.overview()}
-                  aria-pressed={snapshot.cameraMode === "overview"}
+                  aria-pressed={
+                    orbit ? undefined : snapshot.cameraMode === "overview"
+                  }
                 >
                   {current?.id === "campus_core" ? "校园全景" : "楼层全景"}
                 </button>
                 <button
                   className="camera-mode"
                   onClick={() => bridge.toggleCamera()}
-                  aria-pressed={snapshot.cameraMode !== "follow"}
+                  aria-pressed={orbit || snapshot.cameraMode !== "follow"}
                   title={
-                    snapshot.cameraMode !== "follow"
+                    orbit || snapshot.cameraMode !== "follow"
                       ? "回到角色（C）"
                       : "拖动地图查看其他地方"
                   }
                 >
-                  {snapshot.cameraMode !== "follow" ? "回到角色" : "自由查看"}
+                  {orbit || snapshot.cameraMode !== "follow"
+                    ? "回到角色"
+                    : "自由查看"}
                 </button>
                 <button
                   aria-label="缩小视野"
-                  disabled={!snapshot.canZoomOut}
+                  disabled={!orbit && !snapshot.canZoomOut}
                   onClick={() => bridge.zoom(-1)}
                 >
                   −
                 </button>
-                <span title="相对于当前视口默认镜头的倍率">
-                  {snapshot.cameraMode === "overview"
-                    ? "全景"
-                    : `${snapshot.zoomPercent}%`}
+                <span
+                  title={
+                    orbit ? "三维透视镜头" : "相对于当前视口默认镜头的倍率"
+                  }
+                >
+                  {orbit
+                    ? "3D"
+                    : snapshot.cameraMode === "overview"
+                      ? "全景"
+                      : `${snapshot.zoomPercent}%`}
                 </span>
                 <button
                   aria-label="放大视野"
-                  disabled={!snapshot.canZoomIn}
+                  disabled={!orbit && !snapshot.canZoomIn}
                   onClick={() => bridge.zoom(1)}
                 >
                   ＋
                 </button>
               </div>
-              {snapshot.cameraMode === "overview" &&
+              {(orbit || snapshot.cameraMode === "overview") &&
                 current?.id === "campus_core" && (
                   <div className="overview-navigation">
                     <label>
@@ -550,7 +584,10 @@ function App() {
                       <select
                         aria-label="定位建筑"
                         defaultValue=""
-                        onChange={(e) => bridge.focusBuilding(e.target.value)}
+                        onChange={(e) => {
+                          bridge.focusBuilding(e.target.value);
+                          e.currentTarget.blur();
+                        }}
                       >
                         <option value="" disabled>
                           选择建筑，拉近查看
@@ -566,13 +603,24 @@ function App() {
                 )}
               {!snapshot.target && (
                 <div className="interaction-hint" role="status">
-                  {snapshot.cameraMode === "overview"
-                    ? "点击位置拉近查看 · WASD / 摇杆移动角色"
-                    : snapshot.cameraMode === "free"
-                      ? "点击定位 · 拖动 / 滚轮查看 · WASD / 摇杆行走 · C 跟随"
-                      : current?.id === "campus_core"
-                        ? "走向金色门槛，自动进入建筑"
-                        : "走近房门自动开启，楼梯和电梯按 E 选择"}
+                  {orbit ? (
+                    <>
+                      <span className="orbit-help-pointer">
+                        左键旋转 · 右键平移 · 滚轮缩放 · 点击定位 · WASD 行走
+                      </span>
+                      <span className="orbit-help-touch">
+                        单指旋转 · 双指缩放 / 平移 · 摇杆行走
+                      </span>
+                    </>
+                  ) : snapshot.cameraMode === "overview" ? (
+                    "点击位置拉近查看 · WASD / 摇杆移动角色"
+                  ) : snapshot.cameraMode === "free" ? (
+                    "点击定位 · 拖动 / 滚轮查看 · WASD / 摇杆行走 · C 跟随"
+                  ) : current?.id === "campus_core" ? (
+                    "走向金色门槛，自动进入建筑"
+                  ) : (
+                    "走近房门自动开启，楼梯和电梯按 E 选择"
+                  )}
                 </div>
               )}
               {Boolean(snapshot.passages?.length) && (
@@ -599,9 +647,11 @@ function App() {
                   E<span>{snapshot.target ?? "交互"}</span>
                 </button>
               </div>
-              <div className="rotate-hint">
-                <span>↻</span>横屏漫游，视野更开阔
-              </div>
+              {!orbit && (
+                <div className="rotate-hint">
+                  <span>↻</span>横屏漫游，视野更开阔
+                </div>
+              )}
             </>
           )}
         </div>
@@ -691,6 +741,10 @@ function App() {
               </li>
               <li>
                 室外点击“校园全景”查看所有建筑，可按建筑名称定位；室内提供“楼层全景”。
+              </li>
+              <li>
+                室外开启“3D 环视”，左键拖动旋转和调整俯仰，右键或
+                Shift＋左键平移，滚轮缩放。触屏单指旋转、双指平移缩放。角色按镜头方向移动，进入建筑后自动返回室内漫游。
               </li>
               <li>
                 走向金色门槛，自动进出建筑。也可以在门前按 E 或点入口名称。

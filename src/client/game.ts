@@ -53,6 +53,13 @@ export type Snapshot = {
   stairMarkers?: number;
 };
 export class GameBridge extends EventTarget {
+  orbit?: {
+    zoom(direction: -1 | 1): void;
+    overview(): void;
+    focusBuilding(id: string): void;
+    follow(): void;
+  };
+  orbitYaw = 0;
   direction: Point = { x: 0, y: 0 };
   keys = new Set<string>();
   paused = false;
@@ -92,22 +99,37 @@ export class GameBridge extends EventTarget {
     this.scene?.drawReferences();
   }
   zoom(direction: -1 | 1) {
-    if (!this.paused) this.scene?.stepZoom(direction);
+    if (!this.paused) {
+      if (this.orbit) this.orbit.zoom(direction);
+      else this.scene?.stepZoom(direction);
+    }
   }
   toggleCamera() {
+    if (this.orbit) {
+      this.followPlayer();
+      return;
+    }
     if (!this.paused)
       this.scene?.setCameraMode(
         this.snapshot.cameraMode === "follow" ? "free" : "follow",
       );
   }
   overview() {
-    if (!this.paused) this.scene?.setCameraMode("overview");
+    if (!this.paused) {
+      if (this.orbit) this.orbit.overview();
+      else this.scene?.setCameraMode("overview");
+    }
   }
   focusBuilding(id: string) {
-    this.scene?.focusBuilding(id);
+    if (this.paused) return;
+    if (this.orbit) this.orbit.focusBuilding(id);
+    else this.scene?.focusBuilding(id);
   }
   followPlayer() {
-    if (!this.paused) this.scene?.setCameraMode("follow");
+    if (!this.paused) {
+      if (this.orbit) this.orbit.follow();
+      else this.scene?.setCameraMode("follow");
+    }
   }
 }
 
@@ -686,6 +708,7 @@ export class CampusScene extends Phaser.Scene {
   }
   update(time: number, delta: number) {
     if (!this.player) return;
+    this.cameras.main.visible = !this.bridge.orbit;
     const k = this.bridge.keys;
     const input =
       this.bridge.paused || this.loading
@@ -700,6 +723,12 @@ export class CampusScene extends Phaser.Scene {
               Number(k.has("s") || k.has("ArrowDown")) -
               Number(k.has("w") || k.has("ArrowUp")),
           };
+    if (this.bridge.orbit && this.current.id === "campus_core") {
+      const yaw = this.bridge.orbitYaw,
+        { x, y } = input;
+      input.x = x * Math.cos(yaw) + y * Math.sin(yaw);
+      input.y = -x * Math.sin(yaw) + y * Math.cos(yaw);
+    }
     const before = this.position;
     const approaching = approachedRoomDoor(this.current, before, input);
     if (approaching) this.setDoor(approaching, true);

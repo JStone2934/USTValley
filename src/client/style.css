@@ -872,3 +872,87 @@ dialog[data-panel="sundial"] .guide {
     right: 9px;
   }
 }
+
+.orbit-view,
+.orbit-host {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.orbit-host canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  image-rendering: auto;
+}
+.orbit-toggle {
+  position: absolute;
+  top: 64px;
+  left: 16px;
+  border: 1px solid #7a9081;
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: #fff9e8;
+  color: #365e4c;
+  font-weight: 700;
+  cursor: pointer;
+}
+.orbit-toggle[aria-pressed="true"] {
+  background: #365e4c;
+  color: #fff9e8;
+}
+.orbit-building-label,
+.orbit-player-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  font-size: 11px;
+  padding: 3px 6px;
+  border-radius: 5px;
+  background: #fff9e8dc;
+  color: #365e4c;
+  box-shadow: 0 1px 3px #183c2733;
+}
+.orbit-player-label {
+  color: white;
+  background: #a54b2c;
+  font-weight: 700;
+}
+.orbit-message {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  background: #e7eddfed;
+}
+.orbit-message button {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+@media (max-width: 600px) {
+  .orbit-toggle {
+    top: 116px;
+    left: 9px;
+  }
+  .orbit-building-label {
+    font-size: 10px;
+    padding: 2px 4px;
+  }
+}
+.orbit-help-touch {
+  display: none;
+}
+@media (pointer: coarse) {
+  .orbit-help-pointer {
+    display: none;
+  }
+  .orbit-help-touch {
+    display: inline;
+  }
+}

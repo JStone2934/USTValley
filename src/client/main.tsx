@@ -419,7 +419,7 @@ function App() {
           </span>
         </a>
         <div className="chapter">
-          <span className="eyebrow">BUILD 0.5.6 / 立体像素校园</span>
+          <span className="eyebrow">BUILD 0.5.7 / 立体像素校园</span>
           <h1>
             从校园，
             <br />
@@ -505,15 +505,22 @@ function App() {
               <div className="zoom-controls">
                 <button
                   className="camera-mode"
+                  onClick={() => bridge.overview()}
+                  aria-pressed={snapshot.cameraMode === "overview"}
+                >
+                  {current?.id === "campus_core" ? "校园全景" : "楼层全景"}
+                </button>
+                <button
+                  className="camera-mode"
                   onClick={() => bridge.toggleCamera()}
-                  aria-pressed={snapshot.cameraMode === "free"}
+                  aria-pressed={snapshot.cameraMode !== "follow"}
                   title={
-                    snapshot.cameraMode === "free"
+                    snapshot.cameraMode !== "follow"
                       ? "回到角色（C）"
                       : "拖动地图查看其他地方"
                   }
                 >
-                  {snapshot.cameraMode === "free" ? "回到角色" : "自由查看"}
+                  {snapshot.cameraMode !== "follow" ? "回到角色" : "自由查看"}
                 </button>
                 <button
                   aria-label="缩小视野"
@@ -523,7 +530,9 @@ function App() {
                   −
                 </button>
                 <span title="相对于当前视口默认镜头的倍率">
-                  {snapshot.zoomPercent}%
+                  {snapshot.cameraMode === "overview"
+                    ? "全景"
+                    : `${snapshot.zoomPercent}%`}
                 </span>
                 <button
                   aria-label="放大视野"
@@ -533,13 +542,37 @@ function App() {
                   ＋
                 </button>
               </div>
+              {snapshot.cameraMode === "overview" &&
+                current?.id === "campus_core" && (
+                  <div className="overview-navigation">
+                    <label>
+                      定位建筑{" "}
+                      <select
+                        aria-label="定位建筑"
+                        defaultValue=""
+                        onChange={(e) => bridge.focusBuilding(e.target.value)}
+                      >
+                        <option value="" disabled>
+                          选择建筑，拉近查看
+                        </option>
+                        {world.buildings.map((b) => (
+                          <option key={b.id} value={b.id}>
+                            {b.id} · {b.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                )}
               {!snapshot.target && (
                 <div className="interaction-hint" role="status">
-                  {snapshot.cameraMode === "free"
-                    ? "自由查看 · 拖动地图 · 滚轮缩放 · C 回到角色"
-                    : current?.id === "campus_core"
-                      ? "走向金色门槛，自动进入建筑"
-                      : "走近房门自动开启，楼梯和电梯按 E 选择"}
+                  {snapshot.cameraMode === "overview"
+                    ? "点击位置拉近查看 · WASD / 摇杆移动角色"
+                    : snapshot.cameraMode === "free"
+                      ? "点击定位 · 拖动 / 滚轮查看 · WASD / 摇杆行走 · C 跟随"
+                      : current?.id === "campus_core"
+                        ? "走向金色门槛，自动进入建筑"
+                        : "走近房门自动开启，楼梯和电梯按 E 选择"}
                 </div>
               )}
               {Boolean(snapshot.passages?.length) && (
@@ -556,10 +589,7 @@ function App() {
                   ))}
                 </div>
               )}
-              <div
-                className="touch-controls"
-                hidden={snapshot.cameraMode === "free"}
-              >
+              <div className="touch-controls">
                 <Joystick />
                 <button
                   aria-label={snapshot.target ?? "交互"}
@@ -655,8 +685,12 @@ function App() {
                 在地图上滚动鼠标滚轮放大或缩小；按住鼠标左键或中键拖动，切换到自由查看。触屏也可拖动地图。
               </li>
               <li>
-                自由查看时角色停在原地。点击“回到角色”或按 C
-                恢复跟随；缩放倍率会保留。
+                自由查看和全景中仍可用
+                WASD、方向键或摇杆移动角色。点击地图只定位镜头，角色不会传送。点击“回到角色”或按
+                C 恢复跟随。
+              </li>
+              <li>
+                室外点击“校园全景”查看所有建筑，可按建筑名称定位；室内提供“楼层全景”。
               </li>
               <li>
                 走向金色门槛，自动进出建筑。也可以在门前按 E 或点入口名称。

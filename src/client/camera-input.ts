@@ -60,11 +60,26 @@ export function attachCameraInput(
     },
     { signal },
   );
-  for (const event of [
+  parent.addEventListener(
     "pointerup",
-    "pointercancel",
-    "lostpointercapture",
-  ] as const)
+    (e) => {
+      if (!drag || drag.id !== e.pointerId) return;
+      const click =
+        !drag.active &&
+        e.button === 0 &&
+        Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 4;
+      cancel();
+      if (click && !bridge.paused) {
+        const rect = parent.getBoundingClientRect();
+        bridge.scene?.focusView({
+          x: (e.clientX - rect.left) / rect.width,
+          y: (e.clientY - rect.top) / rect.height,
+        });
+      }
+    },
+    { signal },
+  );
+  for (const event of ["pointercancel", "lostpointercapture"] as const)
     parent.addEventListener(
       event,
       (e) => {

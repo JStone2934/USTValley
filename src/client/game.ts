@@ -42,7 +42,7 @@ export type Snapshot = {
   target?: string;
   passages?: { id: string; label: string }[];
   openDoorIds?: string[];
-  cameraMode: "follow" | "free";
+  cameraMode: "follow" | "free" | "overview";
   cameraCenter?: Point;
   zoomPercent: number;
   canZoomOut: boolean;
@@ -100,6 +100,12 @@ export class GameBridge extends EventTarget {
         this.snapshot.cameraMode === "follow" ? "free" : "follow",
       );
   }
+  overview() {
+    if (!this.paused) this.scene?.setCameraMode("overview");
+  }
+  focusBuilding(id: string) {
+    this.scene?.focusBuilding(id);
+  }
   followPlayer() {
     if (!this.paused) this.scene?.setCameraMode("follow");
   }
@@ -110,6 +116,7 @@ export class CampusScene extends Phaser.Scene {
   private player!: Phaser.GameObjects.Image;
   private occlusion?: ReturnType<typeof actorOcclusion>;
   private cutaway?: ReturnType<typeof campusCutaway>;
+  private playerBeacon!: Phaser.GameObjects.Arc;
   private footShadow!: Phaser.GameObjects.Ellipse;
   private referenceLayer!: Phaser.GameObjects.Graphics;
   private discovered = new Set<string>();
@@ -130,7 +137,7 @@ export class CampusScene extends Phaser.Scene {
     offsetY: number;
     maxScale: number;
   }[] = [];
-  private cameraMode: "follow" | "free" = "follow";
+  private cameraMode: "follow" | "free" | "overview" = "follow";
   private preferredZoom = 100;
   private zoomPercent = 100;
   private zoomStops = CAMERA_STOPS;
@@ -275,6 +282,7 @@ export class CampusScene extends Phaser.Scene {
         })
         .setOrigin(0.5)
         .setDepth(10000);
+      label.setName("building-label");
       this.mapCue(label, 2.1, -12);
     }
     for (const z of s.exploration) {
@@ -367,6 +375,11 @@ export class CampusScene extends Phaser.Scene {
       .image(point.x, point.y, "avatar-down-0")
       .setOrigin(0.5, 1)
       .setDisplaySize(s.player.width, s.player.height);
+    this.playerBeacon = this.add
+      .circle(point.x, point.y, 4, 0xd46a3a)
+      .setStrokeStyle(2, 0xfff6dc)
+      .setDepth(20000)
+      .setName("player-location");
     this.cameraMode = "follow";
     this.cameras.main
       .setBounds(0, 0, s.width * 16, s.height * 16)
@@ -395,7 +408,12 @@ export class CampusScene extends Phaser.Scene {
     offsetY = 0,
     offsetX = 0,
   ) {
-    if (object instanceof Phaser.GameObjects.Text) object.setResolution(5);
+    if (object instanceof Phaser.GameObjects.Text) {
+      object.setResolution(5);
+      // Canvas reads the texture-source density; WebGL Text reads style.resolution.
+      // Keep both renderers at the same physical label size.
+      object.frame.source.resolution = object.style.resolution;
+    }
     this.cues.push({
       object,
       x: object.x,
@@ -408,7 +426,7 @@ export class CampusScene extends Phaser.Scene {
   private frameCamera() {
     if (!this.current || !this.player) return;
     const center =
-      this.cameraMode === "free"
+      this.cameraMode !== "follow"
         ? this.cameras.main.midPoint.clone()
         : undefined;
     const { width, height } = this.scale.gameSize;
@@ -435,32 +453,89 @@ export class CampusScene extends Phaser.Scene {
       ),
     );
     this.zoomStops = [...CAMERA_STOPS.filter((p) => p < maximum), maximum];
-    this.zoomPercent = Math.min(this.preferredZoom, maximum);
-    this.cameras.main.setZoom(
-      ((screenHeight / this.player.displayHeight) * this.zoomPercent) / 100,
+    const camera = this.cameras.main;
+    const mapWidth = this.current.width * this.current.tileSize;
+    const mapHeight = this.current.height * this.current.tileSize;
+    const baseZoom = screenHeight / this.player.displayHeight;
+    if (this.cameraMode === "overview") {
+      const fit = Math.min((width - 48) / mapWidth, (height - 210) / mapHeight);
+      camera.setZoom(Math.max(0.01, fit));
+      this.zoomPercent = +((camera.zoom / baseZoom) * 100).toFixed(2);
+    } else {
+      this.zoomPercent = Math.min(this.preferredZoom, maximum);
+      camera.setZoom((baseZoom * this.zoomPercent) / 100);
+    }
+    // When a viewport is wider than the map, centre the extra margin instead
+    // of clamping all of the blank space to one side.
+    const boundsWidth = Math.max(mapWidth, width / camera.zoom);
+    const boundsHeight = Math.max(mapHeight, height / camera.zoom);
+    camera.setBounds(
+      (mapWidth - boundsWidth) / 2,
+      (mapHeight - boundsHeight) / 2,
+      boundsWidth,
+      boundsHeight,
     );
-    if (center) this.cameras.main.centerOn(center.x, center.y);
+    if (this.cameraMode === "overview") {
+      // Leave 130 px above and 80 px below the map for view controls and hints.
+      camera.removeBounds();
+      camera.centerOn(mapWidth / 2, mapHeight / 2 - 25 / camera.zoom);
+    } else if (center) camera.centerOn(center.x, center.y);
     this.cameras.main.preRender();
     for (const cue of this.cues) {
-      const scale = Math.min(1, cue.maxScale / this.cameras.main.zoom);
+      const scale = Math.max(
+        cue.object.name === "building-label" ? 1.1 / camera.zoom : 0,
+        Math.min(1, cue.maxScale / camera.zoom),
+      );
       cue.object
         .setScale(scale)
         .setPosition(cue.x + cue.offsetX * scale, cue.y + cue.offsetY * scale);
     }
+    this.playerBeacon
+      .setScale(1 / camera.zoom)
+      .setVisible(this.cameraMode === "overview" || this.zoomPercent <= 25);
     this.publish();
   }
-  setCameraMode(mode: "follow" | "free") {
+  setCameraMode(mode: "follow" | "free" | "overview") {
     if (!this.player || this.loading || this.bridge.paused) return;
-    this.bridge.clear();
     this.cameraMode = mode;
     const camera = this.cameras.main;
     if (mode === "follow") camera.startFollow(this.player, false, 1, 1);
     else camera.stopFollow();
-    camera.preRender();
+    this.frameCamera();
+  }
+  focusBuilding(id: string) {
+    if (this.current?.id !== "campus_core") return;
+    const building = this.current.buildings.find((b) => b.id === id);
+    if (building) this.focusPoint(building.label);
+  }
+  private focusPoint(point: Point) {
+    if (!this.player || this.loading || this.bridge.paused) return;
+    if (this.cameraMode === "overview") this.preferredZoom = 25;
+    this.setCameraMode("free");
+    this.cameras.main.centerOn(point.x, point.y);
+    this.cameras.main.preRender();
     this.publish();
+  }
+  focusView(point: Point) {
+    if (!this.player || this.loading || this.bridge.paused) return;
+    const camera = this.cameras.main;
+    camera.preRender();
+    const target = camera.getWorldPoint(
+      point.x * camera.width,
+      point.y * camera.height,
+    );
+    if (
+      target.x < 0 ||
+      target.y < 0 ||
+      target.x > this.current.width * this.current.tileSize ||
+      target.y > this.current.height * this.current.tileSize
+    )
+      return;
+    this.focusPoint(target);
   }
   panView(dx: number, dy: number) {
     if (!this.player || this.loading || this.bridge.paused) return;
+    if (this.cameraMode === "overview") this.preferredZoom = 25;
     if (this.cameraMode !== "free") this.setCameraMode("free");
     const camera = this.cameras.main;
     camera.scrollX -= (dx * camera.width) / camera.zoom;
@@ -470,6 +545,7 @@ export class CampusScene extends Phaser.Scene {
   }
   stepZoom(direction: -1 | 1, anchor?: Point) {
     if (!this.player || this.loading || this.bridge.paused) return;
+    if (this.cameraMode === "overview" && direction < 0) return;
     const next =
       direction > 0
         ? this.zoomStops.find((p) => p > this.zoomPercent)
@@ -477,7 +553,7 @@ export class CampusScene extends Phaser.Scene {
     if (next === undefined) return;
     const camera = this.cameras.main;
     const screen =
-      anchor && this.cameraMode === "free"
+      anchor && this.cameraMode !== "follow"
         ? { x: anchor.x * camera.width, y: anchor.y * camera.height }
         : undefined;
     camera.preRender();
@@ -485,6 +561,7 @@ export class CampusScene extends Phaser.Scene {
       ? camera.getWorldPoint(screen.x, screen.y)
       : undefined;
     this.preferredZoom = next;
+    if (this.cameraMode === "overview") this.cameraMode = "free";
     this.frameCamera();
     if (screen && before) {
       const after = camera.getWorldPoint(screen.x, screen.y);
@@ -547,7 +624,7 @@ export class CampusScene extends Phaser.Scene {
     );
   }
   interact(actionId?: string) {
-    if (this.loading || this.cameraMode === "free") return;
+    if (this.loading) return;
     const nearby = this.nearbyActions();
     const action = actionId ? nearby.find((a) => a.id === actionId) : nearby[0];
     if (action?.door) {
@@ -571,11 +648,9 @@ export class CampusScene extends Phaser.Scene {
   }
   publish() {
     if (!this.current) return;
-    const actions =
-      this.loading || this.cameraMode === "free" ? [] : this.nearbyActions();
+    const actions = this.loading ? [] : this.nearbyActions();
     const observation =
       !this.loading &&
-      this.cameraMode === "follow" &&
       !actions.length &&
       canObserveSundial(this.current, this.position);
     this.bridge.emit({
@@ -599,7 +674,8 @@ export class CampusScene extends Phaser.Scene {
         y: this.cameras.main.midPoint.y,
       },
       zoomPercent: this.zoomPercent,
-      canZoomOut: this.zoomPercent > this.zoomStops[0],
+      canZoomOut:
+        this.cameraMode !== "overview" && this.zoomPercent > this.zoomStops[0],
       canZoomIn: this.zoomPercent < this.zoomStops.at(-1)!,
       cameraZoom: this.cameras.main.zoom,
       avatarSize: {
@@ -612,7 +688,7 @@ export class CampusScene extends Phaser.Scene {
     if (!this.player) return;
     const k = this.bridge.keys;
     const input =
-      this.bridge.paused || this.loading || this.cameraMode === "free"
+      this.bridge.paused || this.loading
         ? { x: 0, y: 0 }
         : {
             x:
@@ -681,6 +757,7 @@ export class CampusScene extends Phaser.Scene {
         `avatar-${this.direction}-${moving ? Math.floor(time / (running ? 80 : 130)) % 4 : 0}`,
       );
     this.footShadow.setPosition(this.player.x, this.player.y);
+    this.playerBeacon.setPosition(this.player.x, this.player.y);
     this.occlusion?.update(this.player.x, this.player.y, this.player.depth);
     this.cutaway?.update(this.player, this.player.depth);
     for (const zone of this.current.exploration)

@@ -836,3 +836,39 @@ dialog[data-panel="sundial"] .guide {
     padding: 0 6px;
   }
 }
+
+.overview-navigation {
+  position: absolute;
+  top: 70px;
+  right: 15px;
+  padding: 8px 10px;
+  background: #f3efdced;
+  border: 1px solid #b8c3a5;
+  border-radius: 4px;
+  font-size: 11px;
+}
+.overview-navigation select {
+  max-width: 210px;
+  margin-left: 6px;
+  padding: 6px;
+  color: #304c40;
+  background: #fff9e8;
+  border: 1px solid #bac5a8;
+}
+@media (max-width: 600px) {
+  .world-badge {
+    display: none;
+  }
+  .zoom-controls {
+    left: 9px;
+    right: 9px;
+    justify-content: flex-end;
+  }
+  .zoom-controls .camera-mode:first-child {
+    margin-right: auto;
+  }
+  .overview-navigation {
+    top: 65px;
+    right: 9px;
+  }
+}

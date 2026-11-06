@@ -1,5 +1,5 @@
 {
-  "mapVersion": "core-pixel-3d-0.5.4",
+  "mapVersion": "core-pixel-3d-0.5.5",
   "status": "source-geometry-reconstructed",
   "fixtureOccupancy": [
     {
@@ -8795,7 +8795,7 @@
           "y": 514.3335525487862
         }
       ],
-      "inferredCasework": 13,
+      "inferredCasework": 12,
       "pointFixtures": [
         {
           "x": 196.21792813973565,
@@ -8906,14 +8906,14 @@
       "extrudedPolygons": 66,
       "steppedStairs": 10,
       "openings": {
-        "sourceJambs": 29,
-        "roomEdges": 0,
+        "sourceJambs": 46,
+        "roomEdges": 1,
         "entranceSills": 3,
-        "inferredSolidReturns": 0,
+        "inferredSolidReturns": 2,
         "activeGlassBays": []
       },
-      "triangles": 34738,
-      "pixelSha256": "ea7fafed5e993b8d2ab4514034935cca5a9952b7bf1abff60c7333d1e2914da6"
+      "triangles": 35888,
+      "pixelSha256": "25ccc5e99131df81b3f28f736295c370c6866b87116767a363b6a26780fab615"
     },
     {
       "sceneId": "interior_e3",
@@ -9384,7 +9384,7 @@
           "y": 185.5935026001046
         }
       ],
-      "inferredCasework": 34,
+      "inferredCasework": 29,
       "pointFixtures": [
         {
           "x": 161.35051983171707,
@@ -9502,14 +9502,14 @@
       "extrudedPolygons": 77,
       "steppedStairs": 12,
       "openings": {
-        "sourceJambs": 35,
+        "sourceJambs": 52,
         "roomEdges": 1,
         "entranceSills": 3,
         "inferredSolidReturns": 4,
         "activeGlassBays": []
       },
-      "triangles": 41677,
-      "pixelSha256": "f5898d6880f215fae8b9491e517bc8f64280646c1c36955dfff12e0a962e596c"
+      "triangles": 42379,
+      "pixelSha256": "4ab608a342926f3590b470bbfcd48912ead9cfe3797610c5eca2be7a239a72b7"
     },
     {
       "sceneId": "interior_w1",
@@ -9938,7 +9938,7 @@
           "y": 478.5235906946687
         }
       ],
-      "inferredCasework": 21,
+      "inferredCasework": 20,
       "pointFixtures": [
         {
           "x": 807.4448910880602,
@@ -10031,14 +10031,14 @@
       "extrudedPolygons": 89,
       "steppedStairs": 12,
       "openings": {
-        "sourceJambs": 53,
+        "sourceJambs": 75,
         "roomEdges": 2,
         "entranceSills": 6,
         "inferredSolidReturns": 6,
         "activeGlassBays": []
       },
-      "triangles": 44647,
-      "pixelSha256": "5bea31d019a0ff482f55e18b58845dc12861957695f7722848b018270f8312e2"
+      "triangles": 46015,
+      "pixelSha256": "c7daeb08ed65f5759426763829a426489f8c1c151fd39e1085241b91367d5ab0"
     },
     {
       "sceneId": "interior_w3",
@@ -10366,7 +10366,7 @@
           "y": 256.43281308604816
         }
       ],
-      "inferredCasework": 22,
+      "inferredCasework": 21,
       "pointFixtures": [
         {
           "x": 821.0207528313954,
@@ -10452,14 +10452,14 @@
       "extrudedPolygons": 72,
       "steppedStairs": 12,
       "openings": {
-        "sourceJambs": 35,
-        "roomEdges": 0,
+        "sourceJambs": 50,
+        "roomEdges": 2,
         "entranceSills": 5,
-        "inferredSolidReturns": 0,
+        "inferredSolidReturns": 7,
         "activeGlassBays": []
       },
-      "triangles": 40318,
-      "pixelSha256": "ab570c9f1024831613c3849f8ceb28dc7d7d93abaa9810d42793d30ba9bdd592"
+      "triangles": 41492,
+      "pixelSha256": "d608d7f945f5f35a21704e0d4374d0446c8f3a0b4057f4fe8f7e5d189e64df14"
     },
     {
       "sceneId": "interior_c1",
@@ -10627,14 +10627,14 @@
       "extrudedPolygons": 27,
       "steppedStairs": 4,
       "openings": {
-        "sourceJambs": 1,
+        "sourceJambs": 5,
         "roomEdges": 0,
         "entranceSills": 8,
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 11345,
-      "pixelSha256": "fcb21e03b4b6face31bbf594a632ce82aefd9afde5cd145da86fefda3f2fbda4"
+      "triangles": 11609,
+      "pixelSha256": "8c81afb35a2c5a839f37dbc41cdcdb2400495f9cd26f47aec9f7c3b73ec81f02"
     },
     {
       "sceneId": "interior_c2",
@@ -10991,14 +10991,14 @@
       "extrudedPolygons": 62,
       "steppedStairs": 6,
       "openings": {
-        "sourceJambs": 6,
+        "sourceJambs": 8,
         "roomEdges": 0,
         "entranceSills": 3,
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 25465,
-      "pixelSha256": "b37a13eadaec65faae927af67d213d674dc3dd3f240c47bc1652e895df4ff9ca"
+      "triangles": 25597,
+      "pixelSha256": "1f49208d1d5d057052a2b37c73bda4a3fe08d7528c7c6772fcd5c08bd0505ad7"
     },
     {
       "sceneId": "interior_c3",
@@ -11531,14 +11531,14 @@
       "extrudedPolygons": 33,
       "steppedStairs": 13,
       "openings": {
-        "sourceJambs": 6,
+        "sourceJambs": 10,
         "roomEdges": 1,
         "entranceSills": 13,
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 30676,
-      "pixelSha256": "f1edc1d6af24da936b72013669a661d1f5525a30b6d5f0453f14f741a57ab29f"
+      "triangles": 30892,
+      "pixelSha256": "ed98990a90ef7e14284eb55b35b33cc13522e1c3740e0c54b19cf611d7c536b3"
     },
     {
       "sceneId": "interior_c7",
@@ -11627,7 +11627,7 @@
           "y": 109.40335627503386
         }
       ],
-      "inferredCasework": 0,
+      "inferredCasework": 1,
       "pointFixtures": [
         {
           "x": 249.68669733971456,
@@ -11785,7 +11785,7 @@
       "extrudedPolygons": 37,
       "steppedStairs": 6,
       "openings": {
-        "sourceJambs": 2,
+        "sourceJambs": 7,
         "roomEdges": 0,
         "entranceSills": 6,
         "inferredSolidReturns": 0,
@@ -11858,8 +11858,8 @@
           }
         ]
       },
-      "triangles": 16769,
-      "pixelSha256": "1b90a38ce3aac5aa9101ff7c1c93cbf34fe90d068b4aee6186435e8a0f747764"
+      "triangles": 17183,
+      "pixelSha256": "0c5b47c65d714026bcfda36fec53a2de34b0b133fd848d1a9f1b822c1b211110"
     },
     {
       "sceneId": "interior_east_f2",
@@ -12492,7 +12492,7 @@
           "y": 1272.9617357575942
         }
       ],
-      "inferredCasework": 39,
+      "inferredCasework": 33,
       "pointFixtures": [],
       "sourceModelInstances": 24,
       "sourceModels": [
@@ -12644,14 +12644,14 @@
       "extrudedPolygons": 117,
       "steppedStairs": 31,
       "openings": {
-        "sourceJambs": 67,
+        "sourceJambs": 102,
         "roomEdges": 1,
         "entranceSills": 0,
         "inferredSolidReturns": 4,
         "activeGlassBays": []
       },
-      "triangles": 57410,
-      "pixelSha256": "85c2947c413261545e1abb3e2fce614dcab49d86053a0d8c05e017c90f733b72"
+      "triangles": 59246,
+      "pixelSha256": "c15fb6a0f5dcbd683a1b4bd1680588c8ccaf17694846cebed8d60c986b7a17e6"
     },
     {
       "sceneId": "interior_east_f3",
@@ -13290,7 +13290,7 @@
           "y": 912.742114470005
         }
       ],
-      "inferredCasework": 37,
+      "inferredCasework": 26,
       "pointFixtures": [],
       "sourceModelInstances": 20,
       "sourceModels": [
@@ -13418,14 +13418,14 @@
       "extrudedPolygons": 73,
       "steppedStairs": 32,
       "openings": {
-        "sourceJambs": 60,
+        "sourceJambs": 98,
         "roomEdges": 8,
         "entranceSills": 0,
         "inferredSolidReturns": 29,
         "activeGlassBays": []
       },
-      "triangles": 59182,
-      "pixelSha256": "5858c039edb020e6c1aa904c4850610df039933c90c04660dfc7a76413875389"
+      "triangles": 60770,
+      "pixelSha256": "06a5fd126b66352f2d70866a636803b4b0fc443e072680f25c80a99083f9545b"
     },
     {
       "sceneId": "interior_east_f4",
@@ -14214,7 +14214,7 @@
           "y": 440.27188059493216
         }
       ],
-      "inferredCasework": 54,
+      "inferredCasework": 39,
       "pointFixtures": [],
       "sourceModelInstances": 26,
       "sourceModels": [
@@ -14378,14 +14378,14 @@
       "extrudedPolygons": 85,
       "steppedStairs": 31,
       "openings": {
-        "sourceJambs": 43,
+        "sourceJambs": 112,
         "roomEdges": 6,
         "entranceSills": 0,
         "inferredSolidReturns": 21,
         "activeGlassBays": []
       },
-      "triangles": 69665,
-      "pixelSha256": "82d3efe59278257c26ca57a64d3c880f01fc3e14b2e8e211ccf2d4033acf5fe8"
+      "triangles": 72959,
+      "pixelSha256": "4e9856f4f20d6b37310a4e3fe8eba313723edf7b34b3f5f186c2d3e2079e7b67"
     },
     {
       "sceneId": "interior_east_f5",
@@ -15204,7 +15204,7 @@
           "y": 1171.3174933516937
         }
       ],
-      "inferredCasework": 73,
+      "inferredCasework": 42,
       "pointFixtures": [],
       "sourceModelInstances": 24,
       "sourceModels": [
@@ -15356,14 +15356,14 @@
       "extrudedPolygons": 79,
       "steppedStairs": 29,
       "openings": {
-        "sourceJambs": 50,
+        "sourceJambs": 104,
         "roomEdges": 10,
         "entranceSills": 0,
         "inferredSolidReturns": 35,
         "activeGlassBays": []
       },
-      "triangles": 70803,
-      "pixelSha256": "56728d00d45617d6b27763f6bb71beefde29859e53954455a305da101548eff8"
+      "triangles": 71787,
+      "pixelSha256": "1b808e1a0c34999c360d2f64855625d355fad73d56c9e6ad66815a07a2b883bc"
     },
     {
       "sceneId": "interior_east_f6",
@@ -15930,7 +15930,7 @@
           "y": 1058.2996933988352
         }
       ],
-      "inferredCasework": 26,
+      "inferredCasework": 15,
       "pointFixtures": [],
       "sourceModelInstances": 19,
       "sourceModels": [
@@ -16052,14 +16052,14 @@
       "extrudedPolygons": 57,
       "steppedStairs": 24,
       "openings": {
-        "sourceJambs": 41,
+        "sourceJambs": 81,
         "roomEdges": 7,
         "entranceSills": 0,
         "inferredSolidReturns": 19,
         "activeGlassBays": []
       },
-      "triangles": 52306,
-      "pixelSha256": "590d92a383b352af1b7fd06aed72bbf220ecbbcae7e2f7b4cc49b99d04fda381"
+      "triangles": 54022,
+      "pixelSha256": "95f0b39a9191f44f787bb9544471d5963e5e4c25cd2cbe2e8b81e02a816ed9a0"
     },
     {
       "sceneId": "interior_west_f2",
@@ -16500,7 +16500,7 @@
           "y": 861.201871602742
         }
       ],
-      "inferredCasework": 21,
+      "inferredCasework": 18,
       "pointFixtures": [
         {
           "x": 776.1337364244013,
@@ -16673,14 +16673,14 @@
       "extrudedPolygons": 131,
       "steppedStairs": 33,
       "openings": {
-        "sourceJambs": 32,
+        "sourceJambs": 52,
         "roomEdges": 9,
         "entranceSills": 0,
         "inferredSolidReturns": 26,
         "activeGlassBays": []
       },
-      "triangles": 67181,
-      "pixelSha256": "5e27a58bd34dde0fb661161230207ca03106dec59fd53c8544446a77a363af17"
+      "triangles": 68259,
+      "pixelSha256": "d59d26ec8b3c72afb5ab17480bfb99ebcfb27a9ebf315cce603a06b91695d89d"
     },
     {
       "sceneId": "interior_west_f3",
@@ -17361,7 +17361,7 @@
           "y": 1046.0437295912855
         }
       ],
-      "inferredCasework": 37,
+      "inferredCasework": 31,
       "pointFixtures": [],
       "sourceModelInstances": 37,
       "sourceModels": [
@@ -17591,14 +17591,14 @@
       "extrudedPolygons": 116,
       "steppedStairs": 31,
       "openings": {
-        "sourceJambs": 101,
+        "sourceJambs": 136,
         "roomEdges": 8,
         "entranceSills": 0,
         "inferredSolidReturns": 29,
         "activeGlassBays": []
       },
-      "triangles": 86037,
-      "pixelSha256": "183647c132f059ca81d212b7c9b551c469b881e927e3bed0daa67cf00b65cdee"
+      "triangles": 87843,
+      "pixelSha256": "29cec7b0e98392b93669153713c30f12f10f8b5c746b96c2ed2aa48f03b18cf0"
     },
     {
       "sceneId": "interior_west_f4",
@@ -18243,7 +18243,7 @@
           "y": 428.90189056148256
         }
       ],
-      "inferredCasework": 39,
+      "inferredCasework": 36,
       "pointFixtures": [
         {
           "x": 407.81324621727765,
@@ -18402,14 +18402,14 @@
       "extrudedPolygons": 93,
       "steppedStairs": 30,
       "openings": {
-        "sourceJambs": 41,
+        "sourceJambs": 69,
         "roomEdges": 14,
         "entranceSills": 0,
         "inferredSolidReturns": 19,
         "activeGlassBays": []
       },
-      "triangles": 79139,
-      "pixelSha256": "272c13864ec5adeaa6ab2a78d89fff1b87478eda067a822157d58f9acb18c2c4"
+      "triangles": 80745,
+      "pixelSha256": "bd966d9d18cda291aadec12cd00e7698aec4f9f8c496908c4ecfee8422b0739c"
     },
     {
       "sceneId": "interior_west_f5",
@@ -19189,14 +19189,14 @@
       "extrudedPolygons": 132,
       "steppedStairs": 28,
       "openings": {
-        "sourceJambs": 69,
+        "sourceJambs": 82,
         "roomEdges": 8,
         "entranceSills": 0,
         "inferredSolidReturns": 9,
         "activeGlassBays": []
       },
-      "triangles": 78718,
-      "pixelSha256": "c01c415215be46b8586814dc00e081a4b71e1e15c26e1ebe3b44f12d7f7fb405"
+      "triangles": 79576,
+      "pixelSha256": "d12357672e95a706a6325f97743a4ae40d10daa406d8b854bee2f6b76f35a390"
     },
     {
       "sceneId": "interior_west_f6",
@@ -19823,7 +19823,7 @@
           "y": 171.38361243887496
         }
       ],
-      "inferredCasework": 40,
+      "inferredCasework": 32,
       "pointFixtures": [
         {
           "x": 434.85393839405083,
@@ -19965,14 +19965,14 @@
       "extrudedPolygons": 141,
       "steppedStairs": 24,
       "openings": {
-        "sourceJambs": 83,
+        "sourceJambs": 104,
         "roomEdges": 4,
         "entranceSills": 0,
         "inferredSolidReturns": 5,
         "activeGlassBays": []
       },
-      "triangles": 78490,
-      "pixelSha256": "33884d9309bc088be3e50538e26e67d58d669bd908946db3991e7b89acff9d69"
+      "triangles": 79196,
+      "pixelSha256": "59808e9f4f6ad7485dc15077fd783e988fecbee72409f956b2407d79683bc792"
     },
     {
       "sceneId": "interior_administration_f2",
@@ -20153,7 +20153,7 @@
           "y": 168.96005198333927
         }
       ],
-      "inferredCasework": 19,
+      "inferredCasework": 14,
       "pointFixtures": [],
       "sourceModelInstances": 9,
       "sourceModels": [
@@ -20215,14 +20215,14 @@
       "extrudedPolygons": 18,
       "steppedStairs": 4,
       "openings": {
-        "sourceJambs": 5,
+        "sourceJambs": 21,
         "roomEdges": 0,
         "entranceSills": 0,
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 14407,
-      "pixelSha256": "3307a0007af6fb79058787233a9ef09536a60375b8ea780f79c71064d91e9c72"
+      "triangles": 15043,
+      "pixelSha256": "496b69d82009fb9074a3945e7d3d519180ebec108fdc030128e3151d107c4343"
     },
     {
       "sceneId": "interior_administration_f3",
@@ -20385,7 +20385,7 @@
           "y": 154.18392057744217
         }
       ],
-      "inferredCasework": 14,
+      "inferredCasework": 10,
       "pointFixtures": [],
       "sourceModelInstances": 9,
       "sourceModels": [
@@ -20447,14 +20447,14 @@
       "extrudedPolygons": 18,
       "steppedStairs": 4,
       "openings": {
-        "sourceJambs": 4,
+        "sourceJambs": 20,
         "roomEdges": 0,
         "entranceSills": 0,
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 13761,
-      "pixelSha256": "9009907678d165b2a320eb8b59a33703727b7ffca953e58420cdd6a58863cdfe"
+      "triangles": 14471,
+      "pixelSha256": "bfce6d0dc22130dea1114654ef8e736789d17b1102eb06b2395bc37819c8c39d"
     },
     {
       "sceneId": "interior_administration_f4",
@@ -20641,7 +20641,7 @@
           "y": 156.42353668189375
         }
       ],
-      "inferredCasework": 15,
+      "inferredCasework": 13,
       "pointFixtures": [],
       "sourceModelInstances": 11,
       "sourceModels": [
@@ -20715,14 +20715,14 @@
       "extrudedPolygons": 19,
       "steppedStairs": 4,
       "openings": {
-        "sourceJambs": 5,
+        "sourceJambs": 20,
         "roomEdges": 0,
         "entranceSills": 0,
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 14853,
-      "pixelSha256": "22bf0da7169006ba40f2415ef0d40dddfada34a6a10ecfeda0ec60ca8cc3403b"
+      "triangles": 15675,
+      "pixelSha256": "2e8ddd709ff1a61e5191555360ff8a3a0bd1e7a1de4bac5141f7b17238cde1a6"
     },
     {
       "sceneId": "interior_administration_f5",
@@ -20885,7 +20885,7 @@
           "y": 43.74012417555399
         }
       ],
-      "inferredCasework": 15,
+      "inferredCasework": 9,
       "pointFixtures": [],
       "sourceModelInstances": 9,
       "sourceModels": [
@@ -20947,14 +20947,14 @@
       "extrudedPolygons": 18,
       "steppedStairs": 4,
       "openings": {
-        "sourceJambs": 3,
+        "sourceJambs": 23,
         "roomEdges": 0,
         "entranceSills": 0,
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 14230,
-      "pixelSha256": "ae1862b82fb230b15d3feebeb99ce90a8ead2aa87b4b4b66252b9f89919df12c"
+      "triangles": 15046,
+      "pixelSha256": "c04d09c8527e02c0b4466ca2b9a990507db3fe34b323fadc9338bd52d4aaf76d"
     },
     {
       "sceneId": "interior_administration_f6",
@@ -21177,7 +21177,7 @@
           "y": 153.8705676180492
         }
       ],
-      "inferredCasework": 14,
+      "inferredCasework": 10,
       "pointFixtures": [],
       "sourceModelInstances": 10,
       "sourceModels": [
@@ -21245,14 +21245,14 @@
       "extrudedPolygons": 26,
       "steppedStairs": 3,
       "openings": {
-        "sourceJambs": 9,
+        "sourceJambs": 29,
         "roomEdges": 0,
         "entranceSills": 0,
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 15922,
-      "pixelSha256": "ba0d273f4ecbe54eea97be28a1c1384fcce7ec1c9c3e8b66f339710c647f7709"
+      "triangles": 16898,
+      "pixelSha256": "392f0a625c4ac342181b784ed934b6adcc372dea8b12a684c1a63628bc4e9fd2"
     },
     {
       "sceneId": "interior_administration_f7",
@@ -21493,7 +21493,7 @@
           "y": 99.91472089117521
         }
       ],
-      "inferredCasework": 17,
+      "inferredCasework": 18,
       "pointFixtures": [],
       "sourceModelInstances": 9,
       "sourceModels": [
@@ -21555,14 +21555,14 @@
       "extrudedPolygons": 14,
       "steppedStairs": 3,
       "openings": {
-        "sourceJambs": 8,
+        "sourceJambs": 29,
         "roomEdges": 1,
         "entranceSills": 0,
         "inferredSolidReturns": 1,
         "activeGlassBays": []
       },
-      "triangles": 16417,
-      "pixelSha256": "58a885809c35fd1b12bcc8c12f20b8f6a0bdffa6218f7c37d2455896f2c40224"
+      "triangles": 17887,
+      "pixelSha256": "90989882047f90eebcd69a14ab8c26640e081ff1798f60eae6744e0fa0a05ef5"
     },
     {
       "sceneId": "interior_administration_f8",
@@ -21833,7 +21833,7 @@
           "y": 436.86508797744324
         }
       ],
-      "inferredCasework": 21,
+      "inferredCasework": 17,
       "pointFixtures": [],
       "sourceModelInstances": 26,
       "sourceModels": [
@@ -21997,14 +21997,14 @@
       "extrudedPolygons": 59,
       "steppedStairs": 5,
       "openings": {
-        "sourceJambs": 10,
+        "sourceJambs": 16,
         "roomEdges": 0,
         "entranceSills": 0,
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 31564,
-      "pixelSha256": "eb1d115825fda0b0aca244a35873229e261a74b3ba12bd3f56741c27bf425f0f"
+      "triangles": 31634,
+      "pixelSha256": "d2aa28a06164afdd502a272430bf1012fe1429f41e82d65b62f14316c20c61b1"
     },
     {
       "sceneId": "interior_academic_f2",
@@ -22360,14 +22360,14 @@
       "extrudedPolygons": 38,
       "steppedStairs": 12,
       "openings": {
-        "sourceJambs": 7,
+        "sourceJambs": 9,
         "roomEdges": 0,
         "entranceSills": 0,
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 39412,
-      "pixelSha256": "1301b711e17dafe57f42682c48af5d48909bb990639fa0cad9286a96a047a71d"
+      "triangles": 39544,
+      "pixelSha256": "cec3429c350926a3eb3a0fedef0295d95c693b969b0fab22f390614eb0bb3835"
     },
     {
       "sceneId": "interior_academic_f3",
@@ -22984,14 +22984,14 @@
       "extrudedPolygons": 65,
       "steppedStairs": 6,
       "openings": {
-        "sourceJambs": 7,
+        "sourceJambs": 17,
         "roomEdges": 0,
         "entranceSills": 0,
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 18813,
-      "pixelSha256": "cb95bb14ac2647ed3c85eb8fd60c855ff1efc910d69c238abd88f7c8b8abc2ab"
+      "triangles": 19473,
+      "pixelSha256": "56ff6acf4fdd97617d8af05eea6a39e7b688ca283944dcc5275107b7f292ebaa"
     },
     {
       "sceneId": "interior_library_f3",
@@ -23470,14 +23470,14 @@
       "extrudedPolygons": 8,
       "steppedStairs": 6,
       "openings": {
-        "sourceJambs": 5,
+        "sourceJambs": 16,
         "roomEdges": 0,
         "entranceSills": 0,
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 33019,
-      "pixelSha256": "65e89eed7dafab00977a5b8dfecba82744c9610d90e6debb860840ea06de68c5"
+      "triangles": 33745,
+      "pixelSha256": "30364d7944296a63255d7593feb55bbc79ff9fac1f871e8080837fe0177aa0da"
     },
     {
       "sceneId": "interior_library_f4",
@@ -23998,14 +23998,14 @@
       "extrudedPolygons": 687,
       "steppedStairs": 6,
       "openings": {
-        "sourceJambs": 4,
+        "sourceJambs": 24,
         "roomEdges": 0,
         "entranceSills": 0,
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 26627,
-      "pixelSha256": "de79f512f7aa251e177ed2776964f023cbabd06b34a2a10067b268f2cc1c856c"
+      "triangles": 27947,
+      "pixelSha256": "2a745cd64d0fc37d61d6367821be7b29e10e078b234b0c45736e94df63078c6c"
     },
     {
       "sceneId": "interior_library_f5",
@@ -24877,14 +24877,14 @@
       "extrudedPolygons": 59,
       "steppedStairs": 5,
       "openings": {
-        "sourceJambs": 2,
+        "sourceJambs": 4,
         "roomEdges": 0,
         "entranceSills": 0,
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 43296,
-      "pixelSha256": "9e9bb742458f38432acad33a0f41e67793fd1c49a02aed5966c1fa5f2349843a"
+      "triangles": 43428,
+      "pixelSha256": "264d867c9e2da3cfc3b6a7fad4e6fabf9f77a9bf7846fe03a3a1f44aa95be5c1"
     },
     {
       "sceneId": "interior_library_f6",

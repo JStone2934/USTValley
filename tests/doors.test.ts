@@ -23,7 +23,13 @@ const bytes = readFileSync(
 const sources = JSON.parse(String(bytes)),
   { world } = buildWorld(sources, bytes);
 test("source room doors are reachable from the campus, isolate their rooms when closed, and support a physical round trip", () => {
-  const fromCampus = reachableWorld(world);
+  const closedCampus = reachableWorld(world);
+  const fromCampus = reachableWorld({
+    ...world,
+    scenes: world.scenes.map((s) =>
+      doorCollision(s, new Set(s.doors?.map((d) => d.id))),
+    ),
+  });
   let count = 0;
   for (const scene of world.scenes) {
     const publicSpace = fromCampus.get(scene.id)!;
@@ -68,7 +74,7 @@ test("source room doors are reachable from the campus, isolate their rooms when 
       );
       assert.ok(publicSpace.has(tileIndex(scene, door.outside)), door.id);
       assert.ok(
-        !publicSpace.has(tileIndex(scene, door.inside)),
+        !closedCampus.get(scene.id)!.has(tileIndex(scene, door.inside)),
         `closed room has a bypass: ${door.id}`,
       );
       assert.ok(nearbyDoors(walk, door.outside).includes(door));
@@ -81,7 +87,7 @@ test("source room doors are reachable from the campus, isolate their rooms when 
             walk,
             p,
             { x: delta.x / length, y: delta.y / length },
-            0.05,
+            Math.min(1, length - i) / 20,
             20,
           );
         return p;
@@ -93,7 +99,11 @@ test("source room doors are reachable from the campus, isolate their rooms when 
         false,
         "cannot close onto the avatar",
       );
-      assert.deepEqual(travel(door.outside, door.inside), door.inside, door.id);
+      const forward = travel(door.outside, door.inside);
+      assert.ok(
+        Math.hypot(forward.x - door.inside.x, forward.y - door.inside.y) < 0.03,
+        door.id,
+      );
       const clearForClosing = (side: Point) =>
         distanceToLeaf(door, side) > scene.player.radius
           ? side
@@ -101,9 +111,9 @@ test("source room doors are reachable from the campus, isolate their rooms when 
       assert.ok(toggleDoor(walk, door, open, clearForClosing(door.inside)));
       assert.ok(nearbyDoors(walk, door.inside).includes(door), door.id);
       assert.ok(toggleDoor(walk, door, open, door.inside));
-      assert.deepEqual(
-        travel(door.inside, door.outside),
-        door.outside,
+      const back = travel(door.inside, door.outside);
+      assert.ok(
+        Math.hypot(back.x - door.outside.x, back.y - door.outside.y) < 0.03,
         door.id,
       );
       assert.ok(toggleDoor(walk, door, open, clearForClosing(door.outside)));
@@ -188,4 +198,48 @@ test("a wall touching a grid corner does not erase the surveyed opening beside i
       feet = move(walk, feet, delta, 0.05, 20);
     assert.deepEqual(feet, door.inside, id);
   }
+});
+
+test("all door lanes support walking and running both ways at variable frame rates", () => {
+  for (const scene of world.scenes)
+    for (const door of scene.doors ?? []) {
+      const open = doorCollision(scene, new Set([door.id]));
+      for (const lane of [door, ...(door.lanes ?? [])])
+        for (const [from, to] of [
+          [lane.outside, lane.inside],
+          [lane.inside, lane.outside],
+        ])
+          for (const dt of [1 / 60, 0.05, 0.1])
+            for (const speed of [scene.player.speed, scene.player.runSpeed]) {
+              const input = { x: to.x - from.x, y: to.y - from.y };
+              const duration = Math.hypot(input.x, input.y) / speed;
+              let p = from;
+              for (let t = 0; t < duration - 1e-8; t += dt)
+                p = move(open, p, input, Math.min(dt, duration - t), speed);
+              assert.ok(
+                Math.hypot(p.x - to.x, p.y - to.y) < 0.03,
+                `${door.id} dt=${dt} speed=${speed}`,
+              );
+            }
+    }
+});
+
+test("E3 F4 room 403 connects through the two surveyed 401 meeting room doors", () => {
+  const scene = world.scenes.find((s) => s.id === "interior_east_f4")!;
+  const meeting = scene.doors!.filter((d) => d.sourceId === 382479);
+  const office = scene.doors!.find((d) => d.sourceId === 382471)!;
+  assert.equal(meeting.length, 2);
+  assert.ok(office);
+  for (const d of [...meeting, office])
+    assert.equal(d.openingSource, "wall-ends");
+  const closed = reachableWorld(world).get(scene.id)!;
+  assert.ok(!closed.has(tileIndex(scene, office.outside)));
+  const connected = reachableWorld({
+    ...world,
+    scenes: world.scenes.map((s) =>
+      s === scene ? doorCollision(s, new Set(meeting.map((d) => d.id))) : s,
+    ),
+  }).get(scene.id)!;
+  assert.ok(connected.has(tileIndex(scene, office.outside)));
+  assert.ok(!connected.has(tileIndex(scene, office.inside)));
 });

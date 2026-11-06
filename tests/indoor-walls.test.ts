@@ -1,3 +1,4 @@
+import { doorCollision } from "../src/shared/doors.ts";
 import { strict as assert } from "node:assert";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
@@ -15,8 +16,14 @@ const world: WorldMap = JSON.parse(
 );
 
 test("sprinting into the surveyed walls of each floor stops the player's feet", () => {
-  const publicSpace = reachableWorld(world);
-  for (const scene of world.scenes.slice(1)) {
+  const openWorld = {
+    ...world,
+    scenes: world.scenes.map((s) =>
+      doorCollision(s, new Set(s.doors?.map((d) => d.id))),
+    ),
+  };
+  const publicSpace = reachableWorld(openWorld);
+  for (const scene of openWorld.scenes.slice(1)) {
     const space = publicSpace.get(scene.id)!;
     const portals = scene.portals.filter((p) => p.entrance);
     let approaches = 0;

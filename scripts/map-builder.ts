@@ -1,3 +1,4 @@
+import { doorCollision } from "../src/shared/doors.ts";
 import { fixedGlazing } from "./doorway-art.ts";
 import { fitThinWalls } from "./indoor-wall-collision.ts";
 import { sealCampusBuildings } from "./campus-shell.ts";
@@ -817,9 +818,37 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
   const fixtureOccupancy = topology.scenes.map((scene) =>
     fitSourceFixtures(scene, sources[scene.sourceMap]),
   );
-  const publicSpace = reachableWorld(world);
-  for (const scene of topology.scenes)
-    fitRoomDoors(scene, sources[scene.sourceMap], publicSpace.get(scene.id)!);
+  // A secondary door can reconnect an isolated corridor and reveal more surveyed
+  // entrances. Refit from original obstacles until the circulation stops changing.
+  const roomBases = topology.scenes.map((scene) => ({
+    collision: scene.collision.slice(),
+    fixtureCollision: scene.fixtureCollision,
+  }));
+  let publicSpace = reachableWorld(world);
+  for (let pass = 0; pass < topology.scenes.length; pass++) {
+    for (const [i, scene] of topology.scenes.entries()) {
+      scene.collision = roomBases[i].collision.slice();
+      scene.fixtureCollision = roomBases[i].fixtureCollision;
+      fitRoomDoors(scene, sources[scene.sourceMap], publicSpace.get(scene.id)!);
+    }
+    const expanded = reachableWorld({
+      ...world,
+      scenes: world.scenes.map((scene) =>
+        doorCollision(scene, new Set(scene.doors?.map((d) => d.id))),
+      ),
+    });
+    const changed = world.scenes.some(
+      (scene) =>
+        expanded.get(scene.id)!.size !== publicSpace.get(scene.id)!.size ||
+        [...expanded.get(scene.id)!].some(
+          (c) => !publicSpace.get(scene.id)!.has(c),
+        ),
+    );
+    publicSpace = expanded;
+    if (!changed) break;
+    if (pass === topology.scenes.length - 1)
+      throw new Error("Room circulation did not converge");
+  }
   for (const scene of topology.scenes)
     fitRoomCasework(scene, sources[scene.sourceMap]);
   for (const scene of world.scenes) fitEntranceSills(scene);

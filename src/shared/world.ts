@@ -186,6 +186,48 @@ export function clearFixtureStep(
   );
 }
 
+/** Test every distinct pixel footprint along the segment, including its ends.
+ * Diagonal movement must not cut through a wall corner between frame samples. */
+export function canTraverse(
+  scene: SceneMap,
+  from: Point,
+  to: Point,
+  radius = scene.player.radius,
+): boolean {
+  if (!canStand(scene, from, radius) || !canStand(scene, to, radius))
+    return false;
+  const cuts = [0, 1];
+  for (const axis of ["x", "y"] as const) {
+    const delta = to[axis] - from[axis];
+    if (!delta) continue;
+    for (const edge of [-radius, radius]) {
+      const a = from[axis] + edge,
+        b = to[axis] + edge;
+      for (
+        let grid = Math.ceil(Math.min(a, b));
+        grid <= Math.floor(Math.max(a, b));
+        grid++
+      ) {
+        const t = (grid - a) / delta;
+        if (t > 0 && t < 1) cuts.push(t);
+      }
+    }
+  }
+  cuts.sort((a, b) => a - b);
+  for (let i = 1; i < cuts.length; i++) {
+    const t = (cuts[i - 1] + cuts[i]) / 2;
+    if (
+      !canStand(
+        scene,
+        { x: from.x + (to.x - from.x) * t, y: from.y + (to.y - from.y) * t },
+        radius,
+      )
+    )
+      return false;
+  }
+  return true;
+}
+
 export function move(
   scene: SceneMap,
   position: Point,
@@ -211,6 +253,12 @@ export function move(
   );
   const result = { ...position };
   for (let i = 0; i < steps; i++) {
+    const next = { x: result.x + dx / steps, y: result.y + dy / steps };
+    if (canTraverse(scene, result, next, radius)) {
+      result.x = next.x;
+      result.y = next.y;
+      continue;
+    }
     if (canStand(scene, { x: result.x + dx / steps, y: result.y }, radius))
       result.x += dx / steps;
     if (canStand(scene, { x: result.x, y: result.y + dy / steps }, radius))

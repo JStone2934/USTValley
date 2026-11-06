@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { doorCollision } from "../../src/shared/doors";
 import type { WorldMap } from "../../src/shared/world";
-import { driveTo, position, walkThroughEntrance } from "./walking";
+import { driveTo, position, steerTo, walkThroughEntrance } from "./walking";
 
 const world: WorldMap = JSON.parse(
   readFileSync(
@@ -81,6 +81,9 @@ for (const touch of [false, true]) {
     expect(advanced).toBeGreaterThan(6);
     const open = doorCollision(room, new Set([door.id]));
     await driveTo(page, open, door.inside);
+    // A partly occupied gate correctly refuses to close. Finish the approach
+    // with the touch control before exercising the manual close interaction.
+    if (touch) await steerTo(page, room, door.inside);
     await expect(action).toContainText("关门");
     await page.screenshot({
       path: `test-results/office-door-open-${touch ? "touch" : "desktop"}.png`,

@@ -107,19 +107,32 @@ export function fitRoomCasework(scene: SceneMap, source: SourceMap) {
   ];
   const reserved = new Set(protectedPoints.map((p) => tileIndex(scene, p)));
   for (const d of scene.doors ?? []) {
-    const dx = Math.sign(d.inside.x - d.outside.x),
-      dy = Math.sign(d.inside.y - d.outside.y);
     for (const cell of d.cells) reserved.add(cell);
     for (const lane of [d, ...(d.lanes ?? [])]) {
-      for (const p of [
-        lane.outside,
-        lane.inside,
-        {
-          x: lane.inside.x + dx * step,
-          y: lane.inside.y + dy * step,
-        },
-      ])
-        reserved.add(tileIndex(scene, p));
+      const dx = lane.inside.x - lane.outside.x,
+        dy = lane.inside.y - lane.outside.y;
+      const length = Math.hypot(dx, dy),
+        radius = scene.player.radius;
+      // Reserve the whole body sweep, including the landing beyond the leaf.
+      for (
+        let distance = 0;
+        distance <= Math.ceil(length + step);
+        distance += 0.5
+      ) {
+        const x = lane.outside.x + (dx * distance) / length;
+        const y = lane.outside.y + (dy * distance) / length;
+        for (
+          let row = Math.floor((y - radius) / step);
+          row <= Math.floor((y + radius) / step);
+          row++
+        )
+          for (
+            let col = Math.floor((x - radius) / step);
+            col <= Math.floor((x + radius) / step);
+            col++
+          )
+            reserved.add((row * width) / step + col);
+      }
     }
   }
   const featureInfo = new Map(

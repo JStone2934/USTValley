@@ -40,11 +40,19 @@ export function nearbyDoors(scene: SceneMap, point: Point): RoomDoor[] {
   return (scene.doors ?? []).filter((door) => {
     // A wide or oblique opening may put the grid's inside landing a step
     // beyond arm's reach of its midpoint. Keep either surveyed approach usable.
-    if (distanceToLeaf(door, point) > range + scene.collisionSize) return false;
+    const lanes = [door, ...(door.lanes ?? [])];
+    const approachReach = Math.max(
+      range + scene.collisionSize,
+      ...lanes.flatMap((lane) => [
+        distanceToLeaf(door, lane.inside),
+        distanceToLeaf(door, lane.outside),
+      ]),
+    );
+    if (distanceToLeaf(door, point) > approachReach + 1e-7) return false;
     const reachableSide = (side: Point) =>
       Math.hypot(side.x - point.x, side.y - point.y) <= range &&
       hasLineOfSight(scene, point, side);
-    return [door, ...(door.lanes ?? [])].some(
+    return lanes.some(
       (lane) => reachableSide(lane.outside) || reachableSide(lane.inside),
     );
   });

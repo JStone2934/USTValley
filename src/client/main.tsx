@@ -401,8 +401,8 @@ function App() {
       data-avatar-width={snapshot.avatarSize?.width}
       data-avatar-height={snapshot.avatarSize?.height}
       data-camera-zoom={snapshot.cameraZoom}
-      data-x={Math.round(snapshot.position.x)}
-      data-y={Math.round(snapshot.position.y)}
+      data-x={snapshot.position.x.toFixed(3)}
+      data-y={snapshot.position.y.toFixed(3)}
       data-open-doors={(snapshot.openDoorIds ?? []).join(" ")}
       data-floor={current?.floor.name}
       data-floor-images={JSON.stringify(snapshot.floorImages ?? [])}
@@ -416,7 +416,7 @@ function App() {
           </span>
         </a>
         <div className="chapter">
-          <span className="eyebrow">BUILD 0.5.4 / 立体像素校园</span>
+          <span className="eyebrow">BUILD 0.5.5 / 立体像素校园</span>
           <h1>
             从校园，
             <br />
@@ -581,7 +581,12 @@ function App() {
         <div className="caption">
           <span>01 — CORE CAMPUS</span>
           <p>15 栋建筑 · 同一座校园</p>
-          <span>31 个室内楼层 · 3D 像素重建</span>
+          <span>
+            {world
+              ? world.scenes.filter((s) => s.id !== "campus_core").length
+              : "…"}{" "}
+            个室内场景 · 3D 像素重建
+          </span>
         </div>
       </section>
       <dialog

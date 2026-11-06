@@ -9,6 +9,7 @@ import {
 } from "../scripts/map-builder.ts";
 import {
   canStand,
+  canTraverse,
   hasLineOfSight,
   move,
   nearbyPortal,
@@ -221,4 +222,28 @@ test("human-sized collision prevents thin-wall tunneling and through-wall intera
   const from = { x, y: wallY - 6 };
   assert.equal(hasLineOfSight(scene, from, portal), false);
   assert.equal(nearbyPortal(scene, from, 48), undefined);
+});
+
+test("diagonal movement checks the swept body at a one-pixel wall corner", () => {
+  const scene = structuredClone(world.scenes[1]);
+  scene.collision.fill(0);
+  scene.fixtureCollision = { sourceIds: [], runs: [9, 9, 1] };
+  const from = { x: 8.8, y: 9.8 },
+    to = { x: 9.6, y: 10.6 },
+    radius = 0.1;
+  assert.ok(canStand(scene, from, radius));
+  assert.ok(canStand(scene, to, radius));
+  assert.equal(canTraverse(scene, from, to, radius), false);
+  assert.equal(canTraverse(scene, to, from, radius), false);
+  const result = move(
+    scene,
+    from,
+    { x: 1, y: 1 },
+    0.1,
+    Math.hypot(0.8, 0.8) / 0.1,
+    radius,
+  );
+  assert.ok(canStand(scene, result, radius));
+  assert.ok(Math.hypot(result.x - to.x, result.y - to.y) > 0.1);
+  assert.ok(canTraverse(scene, { x: 8, y: 11 }, { x: 11, y: 12 }, radius));
 });

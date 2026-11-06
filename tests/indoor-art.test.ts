@@ -183,12 +183,16 @@ test("inferred furniture stays in its named source room, has physical collision 
     for (const d of scene.doors ?? []) {
       for (const c of d.cells) protectedCells.add(c);
       const step = scene.collisionSize;
+      const length = Math.hypot(
+        d.inside.x - d.outside.x,
+        d.inside.y - d.outside.y,
+      );
       for (const p of [
         d.inside,
         d.outside,
         {
-          x: d.inside.x + Math.sign(d.inside.x - d.outside.x) * step,
-          y: d.inside.y + Math.sign(d.inside.y - d.outside.y) * step,
+          x: d.inside.x + ((d.inside.x - d.outside.x) / length) * step,
+          y: d.inside.y + ((d.inside.y - d.outside.y) / length) * step,
         },
       ])
         protectedCells.add(tileIndex(scene, p));

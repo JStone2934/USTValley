@@ -1,3 +1,4 @@
+import { angledRoomGates } from "./angled-room-doors.ts";
 import { clearOfFixtures } from "../src/shared/fixtures.ts";
 import { doorEdgeCollision } from "./door-edge-collision.ts";
 import config from "../content/map-config.json";
@@ -344,7 +345,16 @@ export function fitRoomDoors(
     if (!interior.size) continue;
     const fitted: RoomDoor[] = [];
     const alternatives = new Map<string, Gate[]>();
-    for (const [index, coordinates] of room.entries.entries()) {
+    for (const [index, coordinates] of [
+      ...room.entries.entries(),
+      ...room.entries.entries(),
+    ]) {
+      if (
+        fitted.some(
+          (d) => d.id === `door_${scene.id}_${room.sourceId}_${index}`,
+        )
+      )
+        continue;
       const projected = project(coordinates, {
         ...config.transform,
         pixelsPerProjectedUnit: config.interiorScale,
@@ -377,7 +387,7 @@ export function fitRoomDoors(
           for (const d of directions) {
             const outside = position(first - d);
             if (
-              !publicSpace.has(first - d) ||
+              (!publicSpace.has(first - d) && !fitted.length) ||
               owners[first - d] ||
               !floor[first - d] ||
               hard[first - d] ||
@@ -429,6 +439,73 @@ export function fitRoomDoors(
             };
           }
         }
+      if (!best) {
+        const outside: Point[] = [],
+          inside: Point[] = [];
+        gridBox(
+          scene,
+          { x: sourceEntry.x - maxDistance, y: sourceEntry.y - maxDistance },
+          { x: sourceEntry.x + maxDistance, y: sourceEntry.y + maxDistance },
+          (cell, p) => {
+            if (interior.has(cell)) inside.push(p);
+            else if (
+              (publicSpace.has(cell) || fitted.length > 0) &&
+              !owners[cell] &&
+              floor[cell] &&
+              canStand(scene, p)
+            )
+              outside.push(p);
+          },
+        );
+        const approaches = outside
+          .flatMap((p) =>
+            [-1, 0, 1].flatMap((dx) =>
+              [-1, 0, 1].map((dy) => ({ x: p.x + dx, y: p.y + dy })),
+            ),
+          )
+          .filter((p) => canStand(scene, p));
+        for (const gate of angledRoomGates(
+          scene,
+          sourceEntry,
+          approaches,
+          inside,
+          interior,
+          (c) =>
+            owners[c] === room.owner &&
+            floor[c] !== 0 &&
+            !hard[c] &&
+            !taken.has(c),
+        )) {
+          const door: RoomDoor = {
+            ...sourceEntry,
+            id: `door_${scene.id}_${room.sourceId}_${index}`,
+            room: room.label,
+            sourceId: room.sourceId,
+            sourceEntry,
+            ...gate,
+          };
+          locateOpening(
+            door,
+            room.polygon,
+            ends,
+            scene.units.pixelsPerMeter,
+            scene.player.radius,
+          );
+          if (
+            door.openingSource !== "wall-ends" ||
+            !withinOpening(door, door.hinge!, door.latch!, scene.player.radius)
+          )
+            continue;
+          best = {
+            door,
+            distance: Math.hypot(
+              door.x - sourceEntry.x,
+              door.y - sourceEntry.y,
+            ),
+          };
+          break;
+        }
+      }
       if (best) {
         locateOpening(
           best.door,
@@ -508,6 +585,9 @@ export function fitRoomDoors(
       // A survey's wall centreline can lie just beyond the corridor grid
       // centre. Use the next public cell when needed to stand clear of the leaf.
       if (!door.hinge || !door.latch) continue;
+      // Angled approaches were already validated as a complete body sweep.
+      if (door.inside.x !== door.outside.x && door.inside.y !== door.outside.y)
+        continue;
       const tx = door.latch.x - door.hinge.x,
         ty = door.latch.y - door.hinge.y,
         dx = Math.sign(door.inside.x - door.outside.x),

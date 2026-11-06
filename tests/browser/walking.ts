@@ -2,6 +2,7 @@ import { crossedEntrance } from "../../src/shared/automatic-doors";
 import { expect, type Page } from "@playwright/test";
 import {
   canStand,
+  canTraverse,
   clearFixtureStep,
   tileIndex,
   type SceneMap,
@@ -11,19 +12,63 @@ import {
 export const position = (page: Page, axis: "x" | "y") =>
   page.locator("main").getAttribute(`data-${axis}`).then(Number);
 
+/** Use the visible analog joystick for the shallow surveyed door angles. */
+export async function steerTo(page: Page, scene: SceneMap, target: Point) {
+  const box = (await page.getByLabel("移动摇杆").boundingBox())!;
+  let stalled = 0;
+  for (let n = 0; n < 400; n++) {
+    const from = { x: await position(page, "x"), y: await position(page, "y") };
+    const dx = target.x - from.x,
+      dy = target.y - from.y,
+      distance = Math.hypot(dx, dy);
+    if (distance < 0.2) return;
+    const sprint = distance > 24,
+      speed = sprint ? scene.player.runSpeed : scene.player.speed;
+    const strength = Math.min(1, Math.max(0.16, distance / (speed * 0.12)));
+    const ms = Math.min(
+      400,
+      Math.max(16, Math.floor((distance / (speed * strength)) * 1000)),
+    );
+    if (sprint) await page.keyboard.down("ShiftLeft");
+    await page.mouse.move(
+      box.x + box.width / 2 + (32 * strength * dx) / distance,
+      box.y + box.height / 2 + (32 * strength * dy) / distance,
+    );
+    await page.mouse.down();
+    await page.clock.runFor(ms);
+    await page.mouse.up();
+    if (sprint) await page.keyboard.up("ShiftLeft");
+    await page.clock.runFor(120);
+    const actual = {
+      x: await position(page, "x"),
+      y: await position(page, "y"),
+    };
+    stalled =
+      Math.hypot(actual.x - from.x, actual.y - from.y) < 0.01 ? stalled + 1 : 0;
+    expect(
+      stalled,
+      JSON.stringify({ scene: scene.id, actual, target }),
+    ).toBeLessThan(3);
+  }
+  throw new Error(`Could not walk to ${JSON.stringify(target)}`);
+}
+
 export async function driveTo(
   page: Page,
   scene: SceneMap,
   target: Point,
   arriveScene?: string,
+  fine: boolean | "smooth" = false,
 ) {
   const start = { x: await position(page, "x"), y: await position(page, "y") },
-    step = scene.portals.some(
-      (p) =>
-        p.kind === "stairs" && Math.hypot(p.x - target.x, p.y - target.y) < 1,
-    )
-      ? 1
-      : scene.collisionSize,
+    step =
+      fine === true ||
+      scene.portals.some(
+        (p) =>
+          p.kind === "stairs" && Math.hypot(p.x - target.x, p.y - target.y) < 1,
+      )
+        ? 1
+        : scene.collisionSize,
     width = (scene.width * 16) / step;
   const offset = step === 1 ? 0 : 0.5;
   const index = (p: Point) =>
@@ -90,6 +135,34 @@ export async function driveTo(
   const path: number[] = [];
   for (let i = last; i !== -1; i = parents.get(i)!) path.push(i);
   path.reverse();
+  if (fine) {
+    const point = (i: number) => ({
+      x: ((i % width) + offset) * step,
+      y: (Math.floor(i / width) + offset) * step,
+    });
+    for (let cursor = 0; cursor < path.length - 1; ) {
+      const from = {
+        x: await position(page, "x"),
+        y: await position(page, "y"),
+      };
+      let end = Math.min(path.length - 1, cursor + 256);
+      while (
+        end > cursor + 1 &&
+        (!canTraverse(
+          scene,
+          from,
+          point(path[end]),
+          scene.player.radius + 0.2,
+        ) ||
+          (!arriveScene && crossedEntrance(scene, from, point(path[end]))))
+      )
+        end--;
+      await steerTo(page, scene, point(path[end]));
+      cursor = end;
+    }
+    await steerTo(page, scene, target);
+    return;
+  }
   const waypoints = path
     .filter(
       (id, i) =>

@@ -28,7 +28,7 @@ test("walk onto the real sundial crossing, read its field note with E and touch,
     bridge = sundialViewpoints(scene)[0];
   const action = page.locator(".touch-controls > button");
   await expect(action).not.toHaveAccessibleName(sundial.action);
-  await driveTo(page, scene, bridge);
+  await driveTo(page, scene, bridge, undefined, "smooth");
   await expect(action).toHaveAccessibleName(sundial.action);
   await page.keyboard.press("e");
   const note = page.getByRole("dialog", { name: sundial.title });

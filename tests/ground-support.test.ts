@@ -1,3 +1,4 @@
+import { doorCollision } from "../src/shared/doors.ts";
 import config from "../content/map-config.json";
 import { campusPlacement, parseGlb, primitives } from "../scripts/gltf.ts";
 import assert from "node:assert/strict";
@@ -23,7 +24,8 @@ const world = JSON.parse(
   readFileSync(new URL("../public/maps/world.json", import.meta.url), "utf8"),
 ) as WorldMap;
 test("feet on every indoor floor are supported by a slab, tread or the paved source entrance paths", () => {
-  for (const s of world.scenes.slice(1)) {
+  for (const source of world.scenes.slice(1)) {
+    const s = doorCollision(source, new Set(source.doors?.map((d) => d.id)));
     const floors = s.surfaces
       .filter(
         (v) =>

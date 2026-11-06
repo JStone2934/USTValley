@@ -400,6 +400,9 @@ function App() {
       data-scene={snapshot.sceneId}
       data-avatar-width={snapshot.avatarSize?.width}
       data-avatar-height={snapshot.avatarSize?.height}
+      data-camera-mode={snapshot.cameraMode}
+      data-camera-x={snapshot.cameraCenter?.x}
+      data-camera-y={snapshot.cameraCenter?.y}
       data-camera-zoom={snapshot.cameraZoom}
       data-x={snapshot.position.x.toFixed(3)}
       data-y={snapshot.position.y.toFixed(3)}
@@ -416,7 +419,7 @@ function App() {
           </span>
         </a>
         <div className="chapter">
-          <span className="eyebrow">BUILD 0.5.5 / 立体像素校园</span>
+          <span className="eyebrow">BUILD 0.5.6 / 立体像素校园</span>
           <h1>
             从校园，
             <br />
@@ -501,6 +504,18 @@ function App() {
               </div>
               <div className="zoom-controls">
                 <button
+                  className="camera-mode"
+                  onClick={() => bridge.toggleCamera()}
+                  aria-pressed={snapshot.cameraMode === "free"}
+                  title={
+                    snapshot.cameraMode === "free"
+                      ? "回到角色（C）"
+                      : "拖动地图查看其他地方"
+                  }
+                >
+                  {snapshot.cameraMode === "free" ? "回到角色" : "自由查看"}
+                </button>
+                <button
                   aria-label="缩小视野"
                   disabled={!snapshot.canZoomOut}
                   onClick={() => bridge.zoom(-1)}
@@ -520,9 +535,11 @@ function App() {
               </div>
               {!snapshot.target && (
                 <div className="interaction-hint" role="status">
-                  {current?.id === "campus_core"
-                    ? "走向金色门槛，自动进入建筑"
-                    : "走近房门自动开启，楼梯和电梯按 E 选择"}
+                  {snapshot.cameraMode === "free"
+                    ? "自由查看 · 拖动地图 · 滚轮缩放 · C 回到角色"
+                    : current?.id === "campus_core"
+                      ? "走向金色门槛，自动进入建筑"
+                      : "走近房门自动开启，楼梯和电梯按 E 选择"}
                 </div>
               )}
               {Boolean(snapshot.passages?.length) && (
@@ -539,7 +556,10 @@ function App() {
                   ))}
                 </div>
               )}
-              <div className="touch-controls">
+              <div
+                className="touch-controls"
+                hidden={snapshot.cameraMode === "free"}
+              >
                 <Joystick />
                 <button
                   aria-label={snapshot.target ?? "交互"}
@@ -631,6 +651,13 @@ function App() {
             <ol>
               <li>使用 WASD、方向键或左侧触摸摇杆移动。</li>
               <li>电脑按住 Shift 奔跑，松开后恢复基础移动速度。</li>
+              <li>
+                在地图上滚动鼠标滚轮放大或缩小；按住鼠标左键或中键拖动，切换到自由查看。触屏也可拖动地图。
+              </li>
+              <li>
+                自由查看时角色停在原地。点击“回到角色”或按 C
+                恢复跟随；缩放倍率会保留。
+              </li>
               <li>
                 走向金色门槛，自动进出建筑。也可以在门前按 E 或点入口名称。
               </li>

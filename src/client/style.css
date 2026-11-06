@@ -807,6 +807,32 @@ dialog[data-panel="sundial"] .guide {
   line-height: 1.75;
 }
 
-.app-shell:has(dialog[open][data-panel="sundial"]) :is(.interaction-hint, .passage-options, .touch-controls) {
+.app-shell:has(dialog[open][data-panel="sundial"])
+  :is(.interaction-hint, .passage-options, .touch-controls) {
   display: none;
+}
+
+.canvas-host canvas {
+  cursor: grab;
+  touch-action: none;
+}
+.canvas-host[data-dragging="true"] canvas {
+  cursor: grabbing;
+}
+.zoom-controls .camera-mode {
+  font: inherit;
+  padding: 0 12px;
+  border-right: 1px solid #b8c3a5;
+}
+.zoom-controls .camera-mode[aria-pressed="true"] {
+  background: #d9e2cb;
+  color: #304c40;
+}
+.touch-controls[hidden] {
+  display: none;
+}
+@media (max-width: 480px) {
+  .zoom-controls .camera-mode {
+    padding: 0 6px;
+  }
 }

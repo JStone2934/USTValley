@@ -1,3 +1,4 @@
+import { attachCameraInput } from "./camera-input";
 import { campusCutaway, entranceSill } from "./campus-cutaway";
 import { slidingEntrance } from "./entrance-art";
 import {
@@ -41,6 +42,8 @@ export type Snapshot = {
   target?: string;
   passages?: { id: string; label: string }[];
   openDoorIds?: string[];
+  cameraMode: "follow" | "free";
+  cameraCenter?: Point;
   zoomPercent: number;
   canZoomOut: boolean;
   canZoomIn: boolean;
@@ -59,6 +62,7 @@ export class GameBridge extends EventTarget {
     sceneId: "campus_core",
     position: { x: 0, y: 0 },
     discovered: [],
+    cameraMode: "follow",
     zoomPercent: 100,
     canZoomOut: false,
     canZoomIn: false,
@@ -88,7 +92,16 @@ export class GameBridge extends EventTarget {
     this.scene?.drawReferences();
   }
   zoom(direction: -1 | 1) {
-    this.scene?.stepZoom(direction);
+    if (!this.paused) this.scene?.stepZoom(direction);
+  }
+  toggleCamera() {
+    if (!this.paused)
+      this.scene?.setCameraMode(
+        this.snapshot.cameraMode === "follow" ? "free" : "follow",
+      );
+  }
+  followPlayer() {
+    if (!this.paused) this.scene?.setCameraMode("follow");
   }
 }
 
@@ -117,6 +130,7 @@ export class CampusScene extends Phaser.Scene {
     offsetY: number;
     maxScale: number;
   }[] = [];
+  private cameraMode: "follow" | "free" = "follow";
   private preferredZoom = 100;
   private zoomPercent = 100;
   private zoomStops = CAMERA_STOPS;
@@ -353,6 +367,7 @@ export class CampusScene extends Phaser.Scene {
       .image(point.x, point.y, "avatar-down-0")
       .setOrigin(0.5, 1)
       .setDisplaySize(s.player.width, s.player.height);
+    this.cameraMode = "follow";
     this.cameras.main
       .setBounds(0, 0, s.width * 16, s.height * 16)
       .startFollow(this.player, false, 1, 1);
@@ -392,6 +407,10 @@ export class CampusScene extends Phaser.Scene {
   }
   private frameCamera() {
     if (!this.current || !this.player) return;
+    const center =
+      this.cameraMode === "free"
+        ? this.cameras.main.midPoint.clone()
+        : undefined;
     const { width, height } = this.scale.gameSize;
     if (!width || !height) return;
     const compactLandscape = width > height && height <= 550;
@@ -420,6 +439,8 @@ export class CampusScene extends Phaser.Scene {
     this.cameras.main.setZoom(
       ((screenHeight / this.player.displayHeight) * this.zoomPercent) / 100,
     );
+    if (center) this.cameras.main.centerOn(center.x, center.y);
+    this.cameras.main.preRender();
     for (const cue of this.cues) {
       const scale = Math.min(1, cue.maxScale / this.cameras.main.zoom);
       cue.object
@@ -428,14 +449,50 @@ export class CampusScene extends Phaser.Scene {
     }
     this.publish();
   }
-  stepZoom(direction: -1 | 1) {
+  setCameraMode(mode: "follow" | "free") {
+    if (!this.player || this.loading || this.bridge.paused) return;
+    this.bridge.clear();
+    this.cameraMode = mode;
+    const camera = this.cameras.main;
+    if (mode === "follow") camera.startFollow(this.player, false, 1, 1);
+    else camera.stopFollow();
+    camera.preRender();
+    this.publish();
+  }
+  panView(dx: number, dy: number) {
+    if (!this.player || this.loading || this.bridge.paused) return;
+    if (this.cameraMode !== "free") this.setCameraMode("free");
+    const camera = this.cameras.main;
+    camera.scrollX -= (dx * camera.width) / camera.zoom;
+    camera.scrollY -= (dy * camera.height) / camera.zoom;
+    camera.preRender();
+    this.publish();
+  }
+  stepZoom(direction: -1 | 1, anchor?: Point) {
+    if (!this.player || this.loading || this.bridge.paused) return;
     const next =
       direction > 0
         ? this.zoomStops.find((p) => p > this.zoomPercent)
         : this.zoomStops.findLast((p) => p < this.zoomPercent);
     if (next === undefined) return;
+    const camera = this.cameras.main;
+    const screen =
+      anchor && this.cameraMode === "free"
+        ? { x: anchor.x * camera.width, y: anchor.y * camera.height }
+        : undefined;
+    camera.preRender();
+    const before = screen
+      ? camera.getWorldPoint(screen.x, screen.y)
+      : undefined;
     this.preferredZoom = next;
     this.frameCamera();
+    if (screen && before) {
+      const after = camera.getWorldPoint(screen.x, screen.y);
+      camera.scrollX += before.x - after.x;
+      camera.scrollY += before.y - after.y;
+      camera.preRender();
+      this.publish();
+    }
   }
   private setDoor(door: RoomDoor, open: boolean) {
     if (this.openDoors.has(door.id) === open) return;
@@ -490,7 +547,7 @@ export class CampusScene extends Phaser.Scene {
     );
   }
   interact(actionId?: string) {
-    if (this.loading) return;
+    if (this.loading || this.cameraMode === "free") return;
     const nearby = this.nearbyActions();
     const action = actionId ? nearby.find((a) => a.id === actionId) : nearby[0];
     if (action?.door) {
@@ -514,9 +571,11 @@ export class CampusScene extends Phaser.Scene {
   }
   publish() {
     if (!this.current) return;
-    const actions = this.loading ? [] : this.nearbyActions();
+    const actions =
+      this.loading || this.cameraMode === "free" ? [] : this.nearbyActions();
     const observation =
       !this.loading &&
+      this.cameraMode === "follow" &&
       !actions.length &&
       canObserveSundial(this.current, this.position);
     this.bridge.emit({
@@ -534,6 +593,11 @@ export class CampusScene extends Phaser.Scene {
       stairMarkers: this.children.list.filter(
         (object) => object.name === "stair-marker",
       ).length,
+      cameraMode: this.cameraMode,
+      cameraCenter: {
+        x: this.cameras.main.midPoint.x,
+        y: this.cameras.main.midPoint.y,
+      },
       zoomPercent: this.zoomPercent,
       canZoomOut: this.zoomPercent > this.zoomStops[0],
       canZoomIn: this.zoomPercent < this.zoomStops.at(-1)!,
@@ -548,7 +612,7 @@ export class CampusScene extends Phaser.Scene {
     if (!this.player) return;
     const k = this.bridge.keys;
     const input =
-      this.bridge.paused || this.loading
+      this.bridge.paused || this.loading || this.cameraMode === "free"
         ? { x: 0, y: 0 }
         : {
             x:
@@ -677,6 +741,7 @@ export function createGame(
   observer.observe(parent);
   const abort = new AbortController();
   const options = { signal: abort.signal };
+  attachCameraInput(parent, bridge, abort.signal);
   const typing = () =>
     document.activeElement?.matches(
       'input,textarea,select,[contenteditable="true"]',
@@ -714,6 +779,7 @@ export function createGame(
         bridge.keys.add(key);
       }
       if (key === "e" && !e.repeat) bridge.interact();
+      if (key === "c" && !e.repeat) bridge.followPlayer();
     },
     options,
   );

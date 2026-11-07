@@ -1,5 +1,5 @@
 {
-  "mapVersion": "core-pixel-3d-0.6.0",
+  "mapVersion": "core-pixel-3d-0.6.1",
   "status": "source-geometry-reconstructed",
   "fixtureOccupancy": [
     {
@@ -8477,6 +8477,7 @@
   ],
   "interiors": [
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_e1",
       "sourceMap": "xgkjdxaz_dkyl",
       "floor": "0",
@@ -8913,9 +8914,10 @@
         "activeGlassBays": []
       },
       "triangles": 35888,
-      "pixelSha256": "88fa31c2fc709da9b330bb46c346edea65e90f34770ae4e9ffe1a6d11810703f"
+      "pixelSha256": "b0c9d460003c173ae0e41b8931515bcaac1eb55ba09d4c852e72985fbd3fa98c"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_e3",
       "sourceMap": "xgkjdxaz_dkyl",
       "floor": "0",
@@ -9509,9 +9511,10 @@
         "activeGlassBays": []
       },
       "triangles": 42379,
-      "pixelSha256": "4c2ad19e9411d75bed916e63164e3bb338838e38a47d413cea68475e978c1d63"
+      "pixelSha256": "7350e89c8d9fb1a35222a549fb01651085feb42a37672e5cd8fc142927f2cb99"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_w1",
       "sourceMap": "xgkjdgz_xkyl",
       "floor": "0",
@@ -10038,9 +10041,10 @@
         "activeGlassBays": []
       },
       "triangles": 46015,
-      "pixelSha256": "f2dffe121f35fed850cee24c4b92967af42197e3ffab023930cf2072dce447f3"
+      "pixelSha256": "fdbda7820a85d0774664de4d279396e0b15d959896831444056af0d0ae2b54c7"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_w3",
       "sourceMap": "xgkjdgz_xkyl",
       "floor": "0",
@@ -10459,9 +10463,10 @@
         "activeGlassBays": []
       },
       "triangles": 41492,
-      "pixelSha256": "67524aa1d8f449138002b77ba6974656113c8af0cea00aeb98f3504af9ac96cb"
+      "pixelSha256": "2e749af74a94b26e475bc20f60f5fcd24e03587967f3a10bf4208a1655f1749f"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_c1",
       "sourceMap": "xgkdgz_xzbgl",
       "floor": "0",
@@ -10634,9 +10639,10 @@
         "activeGlassBays": []
       },
       "triangles": 11609,
-      "pixelSha256": "7f6f078ee3f9f11e501a750ea4b06edd01edaf1c20e6aeca11a734af01e149c8"
+      "pixelSha256": "26fc75437b048db50343defd8c3157f79b2bf310b64c64557c0ae6178af29045"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_c2",
       "sourceMap": "xgkdgz_xshdzx",
       "floor": "0",
@@ -10998,9 +11004,10 @@
         "activeGlassBays": []
       },
       "triangles": 25597,
-      "pixelSha256": "9d52596c255d102c19db86a8f33308d465aa4818253e562c3f0b48ad97b9d5ac"
+      "pixelSha256": "a1f0c502c9dd153dce63ad81f415efa76234d4ed820d1eac75f39041e3476a6c"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_c3",
       "sourceMap": "xgkjdgz_xsyjzx",
       "floor": "0",
@@ -11538,9 +11545,10 @@
         "activeGlassBays": []
       },
       "triangles": 30892,
-      "pixelSha256": "4917d3daa588d5e6c710e0f2ff631a691da6036445358c98a324c7ce1f49bbc5"
+      "pixelSha256": "48b58a798af1a101f15c5254a0cbc78a1d45126b30598759e61e0bb128cb2fde"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_c7",
       "sourceMap": "xgkdgz_tsg",
       "floor": "0",
@@ -11859,9 +11867,10 @@
         ]
       },
       "triangles": 17183,
-      "pixelSha256": "3ea4ca2ea5339bd0fc51678fbdf35b31a53ac72f53026bd1cd4eb41766e43e82"
+      "pixelSha256": "a8f95be610ed6e5290eede2f36245a724eb7a18c931435a926081b7bd643fc58"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_east_f2",
       "sourceMap": "xgkjdxaz_dkyl",
       "floor": "1",
@@ -12651,9 +12660,10 @@
         "activeGlassBays": []
       },
       "triangles": 59246,
-      "pixelSha256": "5a31bf5a167aca3e1d642831288add1316adbaf3505b4b42f78a3fd81fa2ddde"
+      "pixelSha256": "1b9328c8ecf35450e9d790e10298f00948a1788348c3c6cea9bda47cb3184bcb"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_east_f3",
       "sourceMap": "xgkjdxaz_dkyl",
       "floor": "2",
@@ -13425,9 +13435,10 @@
         "activeGlassBays": []
       },
       "triangles": 60770,
-      "pixelSha256": "bec368e6859e8a10ff030bc6ed082e9366282aeb0ae56401b81d4c37193c949e"
+      "pixelSha256": "7ca4683113247bb6c979b70ffa6b2847f8db3a075796115100b480c080497e58"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_east_f4",
       "sourceMap": "xgkjdxaz_dkyl",
       "floor": "3",
@@ -14385,9 +14396,10 @@
         "activeGlassBays": []
       },
       "triangles": 72959,
-      "pixelSha256": "b41413b7ee20fa15dd8c2a901bc4206b338774ac6e7145cb86d77ed08ce66e51"
+      "pixelSha256": "a5adad410da4e9ad14942a7b6963d8ebffc54ef9df7db93ad45522a46584b3c1"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_east_f5",
       "sourceMap": "xgkjdxaz_dkyl",
       "floor": "4",
@@ -15363,9 +15375,10 @@
         "activeGlassBays": []
       },
       "triangles": 71787,
-      "pixelSha256": "c084c3e57e2888b64853c8682a80d7623fb162c530bd1a4a5b3f4020105647b4"
+      "pixelSha256": "792b98569e0ed15b7634d15c605e1018a930af68f82c5f013a4100bbb868bdbe"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_east_f6",
       "sourceMap": "xgkjdxaz_dkyl",
       "floor": "5",
@@ -16059,9 +16072,10 @@
         "activeGlassBays": []
       },
       "triangles": 54022,
-      "pixelSha256": "3e5a0d38696d99b85a56f6bf45784b3ceffec48cc8fae8954ac47575ff308963"
+      "pixelSha256": "7230e37d5d5c04b819421b6aaea4290e940948ace9f685127379e7b920458432"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_west_f2",
       "sourceMap": "xgkjdgz_xkyl",
       "floor": "1",
@@ -16680,9 +16694,10 @@
         "activeGlassBays": []
       },
       "triangles": 68259,
-      "pixelSha256": "2baf80952586cdca41d10db24f398291ca0a83b3388902470950b4ae4b639d05"
+      "pixelSha256": "e28f6f0b6264fd089e8623f744eb3d1ef2c2ef61bf1c7769fb5a5c94198d423b"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_west_f3",
       "sourceMap": "xgkjdgz_xkyl",
       "floor": "2",
@@ -17598,9 +17613,10 @@
         "activeGlassBays": []
       },
       "triangles": 87843,
-      "pixelSha256": "fce958f4cd43f77bb4861721cbdbb32d94fb85886bbfcb1302bf03f5f63ef448"
+      "pixelSha256": "1a8e3d2c0b1b0a7756193d4939083a61ef0a528f6591090b23bfe9d992004753"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_west_f4",
       "sourceMap": "xgkjdgz_xkyl",
       "floor": "3",
@@ -18409,9 +18425,10 @@
         "activeGlassBays": []
       },
       "triangles": 80745,
-      "pixelSha256": "c87fe4a2a9771df1482444beaa21edc3d26ae772a14213c4c274d2c7326fff1b"
+      "pixelSha256": "7d64cbfce7202fe4c07ae6780ee17d0538dbb81d98e400f3578f5520945c7500"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_west_f5",
       "sourceMap": "xgkjdgz_xkyl",
       "floor": "4",
@@ -19196,9 +19213,10 @@
         "activeGlassBays": []
       },
       "triangles": 79576,
-      "pixelSha256": "96156dc2b3cc6d3ad61ef0311a098f0e16058c765a7fca7763f0a7ecdfb6e427"
+      "pixelSha256": "c2b6fd5278880d041e71db00c2a35f6d7ff383a4030369bbd81d95282c94d969"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_west_f6",
       "sourceMap": "xgkjdgz_xkyl",
       "floor": "5",
@@ -19972,9 +19990,10 @@
         "activeGlassBays": []
       },
       "triangles": 79196,
-      "pixelSha256": "740e9ec1784151ef06a39b87dff60886473647950a5fe59ef57de2569d3b28e9"
+      "pixelSha256": "aa5b38840ab1fc37ae834948ebbd91ccf4ceb9f462688c1a8dc329535eea430d"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_administration_f2",
       "sourceMap": "xgkdgz_xzbgl",
       "floor": "1",
@@ -20222,9 +20241,10 @@
         "activeGlassBays": []
       },
       "triangles": 15043,
-      "pixelSha256": "66d6d25a6244fe77199f377c76bf9352aa4e424b4866d89a1086ae1bcde24972"
+      "pixelSha256": "ae8548049a7de309adcaf0e3117442606ee499bc4c1c3d9dcce97d1651dea7c4"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_administration_f3",
       "sourceMap": "xgkdgz_xzbgl",
       "floor": "2",
@@ -20454,9 +20474,10 @@
         "activeGlassBays": []
       },
       "triangles": 14471,
-      "pixelSha256": "060e87a57110c38c6f0a686ba14bb981fbf947fb2a706cd08a7c3385efe17aaf"
+      "pixelSha256": "390763b2496f682dc50224eec42f899cfadd175e4738d52382e9f9927bdf5437"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_administration_f4",
       "sourceMap": "xgkdgz_xzbgl",
       "floor": "3",
@@ -20722,9 +20743,10 @@
         "activeGlassBays": []
       },
       "triangles": 15675,
-      "pixelSha256": "e51f1f486d223d8f8e58664f78a1ed77a2b4ea84afb25c2c40cdfbc5ba52058c"
+      "pixelSha256": "5c9ba8e427e95ec836e206e008a485745ac404abf6d23ed7e1450e7435050aa8"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_administration_f5",
       "sourceMap": "xgkdgz_xzbgl",
       "floor": "4",
@@ -20954,9 +20976,10 @@
         "activeGlassBays": []
       },
       "triangles": 15046,
-      "pixelSha256": "fa76c955aa2d941ab7e7fa4786433f95d3004fadcf358f88527e3a987444ab22"
+      "pixelSha256": "c7b2ba9f15ed0bee8e39599f13954d2a0700a1ef56ef0668f760090c80bbf77e"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_administration_f6",
       "sourceMap": "xgkdgz_xzbgl",
       "floor": "5",
@@ -21252,9 +21275,10 @@
         "activeGlassBays": []
       },
       "triangles": 16898,
-      "pixelSha256": "619881ab82ad97caaf15f8d92a9a910bc3666ee2722f335bcf8cf37dfe73244f"
+      "pixelSha256": "4d5de0c96744180cbf12ae2d9e269264d3c3f747997965536342637f1646a323"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_administration_f7",
       "sourceMap": "xgkdgz_xzbgl",
       "floor": "6",
@@ -21562,9 +21586,10 @@
         "activeGlassBays": []
       },
       "triangles": 17887,
-      "pixelSha256": "42796f1fb22cb209af76a74a81921d84f38e9f43932360f2d8169102f216432e"
+      "pixelSha256": "920e43a630e0023eee5eb147b81e3ccb8f5c9332d04b184082b9fe6f3f7423ff"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_administration_f8",
       "sourceMap": "xgkdgz_xzbgl",
       "floor": "7",
@@ -21597,9 +21622,10 @@
         "activeGlassBays": []
       },
       "triangles": 4597,
-      "pixelSha256": "a4f1128aa9fb19f51c049680d835ac4f645d9d5ab313b5181e59090a613999c9"
+      "pixelSha256": "c44b77c9ae6da26fa2dfdc1405c6edb505057e6296db5aab27fb7a74dfc92867"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_activity_f2",
       "sourceMap": "xgkdgz_xshdzx",
       "floor": "1",
@@ -22004,9 +22030,10 @@
         "activeGlassBays": []
       },
       "triangles": 31634,
-      "pixelSha256": "d2991d78e3fa0ade11a61c9b138a8bd4db92f887534c0fe8f987472ac269c984"
+      "pixelSha256": "7fd555fbfc6349cff05d37c57ecf6a268880bfd3f456ebe547ff31351f876e10"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_academic_f2",
       "sourceMap": "xgkjdgz_xsyjzx",
       "floor": "1",
@@ -22367,9 +22394,10 @@
         "activeGlassBays": []
       },
       "triangles": 39544,
-      "pixelSha256": "d5d67e9944c3ca7b7615cc296d44b62b2415828b02900301a2eea6bb7b49a3b1"
+      "pixelSha256": "6f34a4fb964051203bffd46ac3782e5de0529d7ceb67fe269e770e518dc11d4f"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_academic_f3",
       "sourceMap": "xgkjdgz_xsyjzx",
       "floor": "2",
@@ -22549,9 +22577,10 @@
         "activeGlassBays": []
       },
       "triangles": 17714,
-      "pixelSha256": "7ebf0351bd9a42f8eae4b10f7a681811fd972bd882d0bdfc8f4d0045e6ee1cde"
+      "pixelSha256": "0ce5554133a3af5b32f9bc2bb5a8b9a440307739c214ce4104c7abe96d7db43a"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_library_f2",
       "sourceMap": "xgkdgz_tsg",
       "floor": "1",
@@ -22991,9 +23020,10 @@
         "activeGlassBays": []
       },
       "triangles": 19473,
-      "pixelSha256": "941a4b3eff887339857d640c8983d9128651156546bc4d3be0679a4b474b5e2e"
+      "pixelSha256": "d9529a26c053d49a434cc3627a1b6743809fd09ec715354c87e6e50d2ad88947"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_library_f3",
       "sourceMap": "xgkdgz_tsg",
       "floor": "2",
@@ -23477,9 +23507,10 @@
         "activeGlassBays": []
       },
       "triangles": 33745,
-      "pixelSha256": "c4e364c902be0d29fb442f0b2e16e7fe438fc1f6a58fe3dc717153fb42070740"
+      "pixelSha256": "734bc009394c037daa269d30efe8b668d001af0d6592abb713750a40cbeb1bb5"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_library_f4",
       "sourceMap": "xgkdgz_tsg",
       "floor": "3",
@@ -24005,9 +24036,10 @@
         "activeGlassBays": []
       },
       "triangles": 27947,
-      "pixelSha256": "e00a908b1520e96c8ee4b6d2116041a13c2e1f5d4cd837c32196b0635290c81c"
+      "pixelSha256": "2c20893f7eb89871255def6575fa0746c129c0b6113badeb9f847a1485d7f427"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_library_f5",
       "sourceMap": "xgkdgz_tsg",
       "floor": "4",
@@ -24884,9 +24916,10 @@
         "activeGlassBays": []
       },
       "triangles": 43428,
-      "pixelSha256": "67a7192e8a27fbbe7faa8d7e5382ef7c9b21fb34511cbabd0116f0e6698970e1"
+      "pixelSha256": "0b41075ff3d77969baf37c70b788a26ecf9492ca31e3cb65b38c333d20895552"
     },
     {
+      "exteriorBackdrop": "survey-aligned-campus-cutaway",
       "sceneId": "interior_library_f6",
       "sourceMap": "xgkdgz_tsg",
       "floor": "5",
@@ -24983,7 +25016,7 @@
         "activeGlassBays": []
       },
       "triangles": 12306,
-      "pixelSha256": "6c07ba4b3f05326b112724cb2f57ee8957c5344b61bf9fddff209a0fb1ae3d89"
+      "pixelSha256": "3094c3f8842326a768760083e4138be3649d83281fe68a4d73a47d110760c049"
     }
   ]
 }

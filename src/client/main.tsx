@@ -1,3 +1,4 @@
+import { recommendedTarget } from "../shared/guide";
 import {
   JourneyBook,
   Wardrobe,
@@ -429,6 +430,10 @@ function App() {
       data-outfit={journey.progress.outfit}
       data-hat={journey.progress.hat}
       data-scene={snapshot.sceneId}
+      data-guide-status={snapshot.guide?.status ?? "off"}
+      data-guide-target={snapshot.guide?.target.id}
+      data-guide-portal={snapshot.guide?.portalId}
+      data-guide-points={JSON.stringify(snapshot.guide?.points ?? [])}
       data-avatar-width={snapshot.avatarSize?.width}
       data-avatar-height={snapshot.avatarSize?.height}
       data-camera-mode={snapshot.cameraMode}
@@ -450,7 +455,7 @@ function App() {
           </span>
         </a>
         <div className="chapter">
-          <span className="eyebrow">BUILD 0.6.0 / 校园手账</span>
+          <span className="eyebrow">BUILD 0.6.1 / 校园漫步</span>
           <h1>
             从校园，
             <br />
@@ -535,17 +540,60 @@ function App() {
           </p>
         )}
         {world && (
-          <button
-            className="journey-ribbon"
-            onClick={() => setPanel("journal")}
-          >
-            <span className="ribbon-seal">✦</span>
-            <span>
-              <small>散步清单</small>
-              {nextStep(journey.progress)}
-            </span>
-            <b>打开手账 →</b>
-          </button>
+          <div className="journey-heading">
+            <button
+              className="journey-ribbon"
+              onClick={() => setPanel("journal")}
+            >
+              <span className="ribbon-seal">✦</span>
+              <span>
+                <small>散步清单</small>
+                {nextStep(journey.progress)}
+              </span>
+              <b>打开手账 →</b>
+            </button>
+            {recommendedTarget(world, journey.progress, snapshot.sceneId) && (
+              <button
+                className="guide-next"
+                onClick={() =>
+                  bridge.guideTo(
+                    recommendedTarget(
+                      world,
+                      journey.progress,
+                      snapshot.sceneId,
+                    )!,
+                  )
+                }
+              >
+                指引下一站
+              </button>
+            )}
+          </div>
+        )}
+        {snapshot.guide && (
+          <div className="walking-guide" data-status={snapshot.guide.status}>
+            <span className="guide-compass">◇</span>
+            <div>
+              <strong>
+                {snapshot.guide.name}
+                {snapshot.guide.status === "walking"
+                  ? ` · 本段约 ${Math.max(1, Math.round(snapshot.guide.meters))} 米`
+                  : ""}
+              </strong>
+              <small>{snapshot.guide.instruction}</small>
+            </div>
+            {snapshot.guide.status === "unavailable" && (
+              <button onClick={() => bridge.guideTo(snapshot.guide!.target)}>
+                重试路线
+              </button>
+            )}
+            <button
+              onClick={() => bridge.stopGuide()}
+              aria-label="停止步行指引"
+            >
+              停止指引
+            </button>
+          </div>
         )}
         <div className="world-frame">
           {world ? (
@@ -796,6 +844,12 @@ function App() {
           <JourneyBook
             progress={journey.progress}
             world={world}
+            sceneId={snapshot.sceneId}
+            navigate={(target) => {
+              setPanel(null);
+              bridge.pause(false);
+              bridge.guideTo(target);
+            }}
             locate={
               current?.id !== "campus_core"
                 ? undefined

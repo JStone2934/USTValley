@@ -433,7 +433,7 @@ export function createIndoorBaker(root: string, sources: Sources) {
       );
     return cache.get(src)!;
   };
-  return async (scene: SceneMap) => {
+  return async (scene: SceneMap, exterior?: Buffer) => {
     const width = scene.width * 16,
       height = scene.height * 16,
       scale = scene.units.pixelsPerProjectedUnit;
@@ -829,16 +829,18 @@ export function createIndoorBaker(root: string, sources: Sources) {
         false,
         pixelRatio,
       );
-    const base = await sharp({
-      create: {
-        width: width * pixelRatio,
-        height: height * pixelRatio,
-        channels: 4,
-        background: "#414f52",
-      },
-    })
-      .png({ compressionLevel: 6 })
-      .toBuffer();
+    const base =
+      exterior ??
+      (await sharp({
+        create: {
+          width: width * pixelRatio,
+          height: height * pixelRatio,
+          channels: 4,
+          background: "#b5c6a1",
+        },
+      })
+        .png({ compressionLevel: 6 })
+        .toBuffer());
     const images = new Map<string, Uint8Array>([["base", base]]);
     for (const [id, parts] of groups) images.set(id, (await render(parts)).png);
     const all = [...groups.values()].flat(),
@@ -852,6 +854,9 @@ export function createIndoorBaker(root: string, sources: Sources) {
       riseMap: rendered.riseMap!,
       layers: images,
       report: {
+        exteriorBackdrop: exterior
+          ? "survey-aligned-campus-cutaway"
+          : "garden-fallback",
         sceneId: scene.id,
         sourceMap: scene.sourceMap,
         floor: scene.floor.key,

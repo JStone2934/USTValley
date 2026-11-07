@@ -1,3 +1,4 @@
+import { createBackdropBaker } from "./interior-backdrop";
 import sharp from "sharp";
 import {
   campusLayerSvg,
@@ -132,9 +133,10 @@ export async function bakeMaps(
       pixelSha256: createHash("sha256").update(graded).digest("hex"),
     });
   }
+  const backdrop = createBackdropBaker(campus, files);
   for (const scene of world.scenes) {
     if (scene.id !== "campus_core") {
-      const baked = await bakeInterior(scene);
+      const baked = await bakeInterior(scene, await backdrop(scene));
       interiors.push(baked.report);
       scene.art.riseMap = scene.art.ground.replace(".png", "-height.png");
       files.set(`public/maps/${scene.art.riseMap}`, baked.riseMap);

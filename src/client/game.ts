@@ -1,3 +1,5 @@
+import { GuideController } from "./guide-controller";
+import { routeDots, type GuideRoute, type GuideTarget } from "../shared/guide";
 import { ProgressStore } from "./progress-store";
 import { addJourneyArt } from "./journey-art";
 import {
@@ -45,6 +47,7 @@ const CAMERA_STOPS = [12.5, 25, 50, 75, 100, 125, 150, 175, 200];
 
 export type Snapshot = {
   sceneId: string;
+  guide?: GuideRoute;
   position: Point;
   discovered: string[];
   target?: string;
@@ -143,6 +146,12 @@ export class GameBridge extends EventTarget {
     if (this.orbit) this.orbit.focusPoint(npc);
     else this.scene?.focusPoint(npc);
   }
+  guideTo(target: GuideTarget) {
+    if (!this.paused) this.scene?.guideTo(target);
+  }
+  stopGuide() {
+    this.scene?.stopGuide();
+  }
   followPlayer() {
     if (!this.paused) {
       if (this.orbit) this.orbit.follow();
@@ -153,6 +162,8 @@ export class GameBridge extends EventTarget {
 
 export class CampusScene extends Phaser.Scene {
   private current!: SceneMap;
+  private guide?: GuideController;
+  private routeArt?: Phaser.GameObjects.Graphics;
   private player!: Phaser.GameObjects.Image;
   private occlusion?: ReturnType<typeof actorOcclusion>;
   private cutaway?: ReturnType<typeof campusCutaway>;
@@ -218,6 +229,13 @@ export class CampusScene extends Phaser.Scene {
     )
       return;
     this.bridge.scene = this;
+    this.guide = new GuideController(this.world, () => {
+      this.drawGuide();
+      this.publish();
+    });
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () =>
+      this.guide?.dispose(),
+    );
     this.scale.on(Phaser.Scale.Events.RESIZE, this.frameCamera, this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () =>
       this.scale.off(Phaser.Scale.Events.RESIZE, this.frameCamera, this),
@@ -407,6 +425,7 @@ export class CampusScene extends Phaser.Scene {
       // Destination text is shown in the interaction controls at the landing.
       // Keeping labels off the floor leaves nearby door leaves and jambs visible.
     }
+    this.routeArt = this.add.graphics().setDepth(-30).setName("walking-guide");
     this.referenceLayer = this.add.graphics().setDepth(11000);
     this.drawReferences();
     this.footShadow = this.add
@@ -435,6 +454,31 @@ export class CampusScene extends Phaser.Scene {
       .startFollow(this.player, false, 1, 1);
     this.cameras.main.roundPixels = false;
     this.frameCamera();
+    this.guide?.update(this.current, this.position, this.time.now, true);
+  }
+  guideTo(target: GuideTarget) {
+    this.guide?.start(target, this.current, this.position);
+    this.bridge.followPlayer();
+  }
+  stopGuide() {
+    this.guide?.stop();
+  }
+  private drawGuide() {
+    const g = this.routeArt?.clear(),
+      route = this.guide?.route;
+    if (
+      !g ||
+      !route ||
+      route.sceneId !== this.current.id ||
+      route.status !== "walking"
+    )
+      return;
+    for (const p of routeDots(route.points)) {
+      g.fillStyle(0x765631, 0.85).fillRect(p.x - 0.65, p.y - 0.65, 1.3, 1.3);
+      g.fillStyle(0xffdf87, 1).fillRect(p.x - 0.4, p.y - 0.4, 0.8, 0.8);
+    }
+    const end = route.points.at(-1);
+    if (end) g.lineStyle(0.5, 0xffe8a8, 1).strokeCircle(end.x, end.y, 2);
   }
   drawReferences() {
     if (!this.referenceLayer) return;
@@ -779,6 +823,7 @@ export class CampusScene extends Phaser.Scene {
       canObserveSundial(this.current, this.position);
     this.bridge.emit({
       sceneId: this.current.id,
+      guide: this.guide?.route,
       position: { ...this.position },
       discovered: [...this.discovered],
       openDoorIds: [...this.openDoors],
@@ -913,6 +958,7 @@ export class CampusScene extends Phaser.Scene {
       }
     if (time - this.lastEmit >= 100) {
       this.lastEmit = time;
+      this.guide?.update(this.current, this.position, time);
       this.journeyArt?.(this.position);
       this.bridge.progress.locate({
         ...this.position,

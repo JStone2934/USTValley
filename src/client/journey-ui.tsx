@@ -1,3 +1,4 @@
+import { recommendedTarget, type GuideTarget } from "../shared/guide";
 import { useEffect, useState } from "react";
 import { studentFrame, studentPalette } from "./avatar-art";
 import {
@@ -64,10 +65,14 @@ export function JourneyBook({
   progress,
   world,
   locate,
+  navigate,
+  sceneId,
 }: {
   progress: Progress;
   world: WorldMap;
   locate?: (id: string, kind?: "building" | "npc") => void;
+  navigate: (target: GuideTarget) => void;
+  sceneId: string;
 }) {
   const [tab, setTab] = useState<"tasks" | "stamps" | "friends">("tasks");
   return (
@@ -98,7 +103,7 @@ export function JourneyBook({
       </div>
       {!locate && (
         <p className="journal-note">
-          回到校园室外后，可以点建筑印记或朋友卡片定位镜头。
+          当前在室内，步行指引会带你经过出口、连廊或楼梯。回到室外后也可以单独查看镜头。
         </p>
       )}
       <div id="journal-page" role="tabpanel">
@@ -127,6 +132,24 @@ export function JourneyBook({
                         ? "已收进手账"
                         : `奖励：${task.reward ? `${task.reward} 探索币 · ` : ""}${task.badge}`}
                     </span>
+                    {!done &&
+                      recommendedTarget(world, progress, sceneId, task.id) && (
+                        <button
+                          className="quest-track"
+                          onClick={() =>
+                            navigate(
+                              recommendedTarget(
+                                world,
+                                progress,
+                                sceneId,
+                                task.id,
+                              )!,
+                            )
+                          }
+                        >
+                          追踪 · {task.title}
+                        </button>
+                      )}
                   </div>
                 </article>
               );
@@ -146,17 +169,26 @@ export function JourneyBook({
               {world.buildings.map((b) => {
                 const found = progress.discovered.includes(b.id);
                 return (
-                  <button
-                    className={`building-stamp ${found ? "collected" : ""}`}
-                    key={b.id}
-                    disabled={!locate}
-                    onClick={() => locate?.(b.id)}
-                    aria-label={`地图定位 ${b.id}`}
-                  >
-                    <strong>{b.id}</strong>
-                    <span>{b.name}</span>
-                    <small>{found ? "已探索 · +5 币" : "等待你的足迹"}</small>
-                  </button>
+                  <div className="stamp-actions" key={b.id}>
+                    <button
+                      className={`building-stamp ${found ? "collected" : ""}`}
+                      key={b.id}
+                      onClick={() => navigate({ kind: "building", id: b.id })}
+                      aria-label={`步行前往 ${b.id}`}
+                    >
+                      <strong>{b.id}</strong>
+                      <span>{b.name}</span>
+                      <small>{found ? "已探索 · +5 币" : "等待你的足迹"}</small>
+                    </button>
+                    {locate && (
+                      <button
+                        className="stamp-view"
+                        onClick={() => locate(b.id)}
+                      >
+                        查看 {b.id}
+                      </button>
+                    )}
+                  </div>
                 );
               })}
             </div>
@@ -174,6 +206,9 @@ export function JourneyBook({
                       ? "已经认识的校园朋友"
                       : "还没见面 · 在校园里等你"}
                   </small>
+                  <button onClick={() => navigate({ kind: "npc", id: n.id })}>
+                    步行前往 {n.name}
+                  </button>
                   <button
                     disabled={!locate}
                     onClick={() => locate?.(n.id, "npc")}

@@ -1564,3 +1564,146 @@ dialog {
     pointer-events: none;
   }
 }
+/* Walking directions sit outside the canvas so they never cover doors or controls. */
+.journey-heading {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.journey-heading .journey-ribbon {
+  flex: 1;
+  margin: 0;
+  min-width: 0;
+}
+.guide-next,
+.quest-track,
+.stamp-view {
+  border: 1px solid #aa8b52;
+  background: #fff0c7;
+  color: #4c6346;
+  padding: 8px 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #bda779;
+}
+.guide-next {
+  flex-shrink: 0;
+  font-size: 12px;
+}
+.walking-guide {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  background: #f6e7bd;
+  border: 1px solid #ae8e4f;
+  border-left: 4px solid #b5803f;
+  margin-bottom: 10px;
+  color: #4c5840;
+}
+.walking-guide > div {
+  flex: 1;
+  min-width: 0;
+}
+.walking-guide strong {
+  display: block;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.walking-guide small {
+  display: block;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.walking-guide button {
+  flex-shrink: 0;
+  font-size: 11px;
+  padding: 8px;
+  background: #fff6db;
+  color: #705431;
+  border: 1px solid #b89b62;
+  cursor: pointer;
+}
+.guide-compass {
+  font-size: 25px;
+  color: #aa7436;
+}
+.walking-guide[data-status="arrived"] {
+  border-left-color: #527e57;
+}
+.quest-track {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+}
+.stamp-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.stamp-actions .building-stamp {
+  width: 100%;
+  flex: 1;
+}
+.stamp-view {
+  font-size: 11px;
+  padding: 6px;
+}
+.friend-card button + button {
+  margin-left: 6px;
+}
+@media (max-width: 600px) {
+  .journey-heading {
+    gap: 5px;
+    margin-bottom: 8px;
+  }
+  .guide-next {
+    padding: 8px;
+    width: 58px;
+    line-height: 1.6;
+  }
+  .walking-guide {
+    padding: 6px 8px;
+    gap: 6px;
+  }
+  .walking-guide strong {
+    font-size: 12px;
+  }
+  .guide-compass {
+    display: none;
+  }
+  .walking-guide button {
+    max-width: 48px;
+    padding: 6px;
+  }
+  .friend-card button + button {
+    margin-left: 0;
+  }
+}
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 550px) {
+  .journey-heading {
+    display: none;
+  }
+  .walking-guide {
+    position: absolute;
+    top: 47px;
+    left: 12px;
+    right: 12px;
+    z-index: 25;
+    margin: 0;
+    padding: 3px 7px;
+    pointer-events: none;
+  }
+  .walking-guide strong,
+  .walking-guide small {
+    font-size: 10px;
+    display: inline;
+  }
+  .walking-guide button {
+    pointer-events: auto;
+    padding: 3px 7px;
+  }
+  .guide-compass {
+    display: none;
+  }
+}

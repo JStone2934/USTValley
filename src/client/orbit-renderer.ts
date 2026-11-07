@@ -1,3 +1,4 @@
+import { routeDots, type GuideRoute } from "../shared/guide";
 import { pixelCast, woodenChest } from "./pixel-cast";
 import { campusNpcs } from "../shared/journey";
 import type { StudentFacing } from "./avatar-art";
@@ -81,6 +82,16 @@ export function createOrbit(
   surround.position.set(width / 2, -0.3, height / 2);
   surround.receiveShadow = false;
   scene.add(surround);
+  const routeMarks = new THREE.InstancedMesh(
+    new THREE.BoxGeometry(1.1, 0.1, 1.1),
+    new THREE.MeshBasicMaterial({ color: 0xffd782, toneMapped: false }),
+    1600,
+  );
+  routeMarks.count = 0;
+  routeMarks.frustumCulled = false;
+  scene.add(routeMarks);
+  const markMatrix = new THREE.Matrix4();
+  let drawnRoute: GuideRoute | undefined;
   const cast = pixelCast(),
     personHeight = campus.player.height;
   const student = cast.actor(campus.player.width, personHeight),
@@ -481,6 +492,19 @@ export function createOrbit(
     avatar.position.set(feet.x, 0, feet.y);
     for (const { chest, model } of treasure)
       model.open((progress.chestReadyAt[chest.id] ?? 0) > Date.now());
+    const route = bridge.snapshot.guide;
+    if (route !== drawnRoute) {
+      drawnRoute = route;
+      const dots =
+        route?.sceneId === campus.id && route.status === "walking"
+          ? routeDots(route.points)
+          : [];
+      routeMarks.count = dots.length;
+      dots.forEach((p, i) =>
+        routeMarks.setMatrixAt(i, markMatrix.makeTranslation(p.x, 0.05, p.y)),
+      );
+      routeMarks.instanceMatrix.needsUpdate = true;
+    }
     renderer.render(scene, camera);
     placeLabel(marker, avatar.position.x, personHeight + 2, avatar.position.z);
     for (const { npc, label } of people) {

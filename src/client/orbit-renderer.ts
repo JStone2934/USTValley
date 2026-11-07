@@ -1,3 +1,6 @@
+import { pixelCast, woodenChest } from "./pixel-cast";
+import { campusNpcs } from "../shared/journey";
+import type { StudentFacing } from "./avatar-art";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -26,7 +29,7 @@ export function createOrbit(
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.setClearColor("#d9e6e7");
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
+  renderer.toneMappingExposure = 1;
   renderer.domElement.setAttribute("aria-label", "可旋转的三维校园");
   host.append(renderer.domElement);
   const scene = new THREE.Scene();
@@ -41,8 +44,8 @@ export function createOrbit(
   controls.maxDistance = 7000;
   controls.screenSpacePanning = false;
   controls.zoomSpeed = 0.8;
-  scene.add(new THREE.HemisphereLight(0xe8f4ff, 0x71865b, 1.8));
-  const sun = new THREE.DirectionalLight(0xfff1db, 1.8);
+  scene.add(new THREE.HemisphereLight(0xe7efdc, 0x4f6243, 1.2));
+  const sun = new THREE.DirectionalLight(0xffdfaa, 2.1);
   sun.position.set(width * 0.2, 1600, height * 0.1);
   sun.target.position.set(width / 2, 0, height / 2);
   sun.castShadow = true;
@@ -78,35 +81,39 @@ export function createOrbit(
   surround.position.set(width / 2, -0.3, height / 2);
   surround.receiveShadow = false;
   scene.add(surround);
-  const avatar = new THREE.Group(),
+  const cast = pixelCast(),
     personHeight = campus.player.height;
-  const torso = new THREE.Mesh(
-    new THREE.CapsuleGeometry(personHeight * 0.16, personHeight * 0.4, 4, 8),
-    new THREE.MeshStandardMaterial({ color: "#c45e39" }),
-  );
-  torso.position.y = personHeight * 0.45;
-  torso.castShadow = false;
-  avatar.add(torso);
-  const head = new THREE.Mesh(
-    new THREE.SphereGeometry(personHeight * 0.16, 12, 8),
-    new THREE.MeshStandardMaterial({ color: "#e9bc86" }),
-  );
-  head.position.y = personHeight * 0.87;
-  head.castShadow = false;
-  avatar.add(head);
-  const footShadow = new THREE.Mesh(
-    new THREE.CircleGeometry(personHeight * 0.25, 20),
-    new THREE.MeshBasicMaterial({
-      color: 0x253225,
-      transparent: true,
-      opacity: 0.24,
-      depthWrite: false,
-    }),
-  );
-  footShadow.rotation.x = -Math.PI / 2;
-  footShadow.position.y = 0.03;
-  avatar.add(footShadow);
+  const student = cast.actor(campus.player.width, personHeight),
+    avatar = student.group;
   scene.add(avatar);
+  let lastFeet = { ...bridge.snapshot.position },
+    facing: StudentFacing = "down";
+  const people = campusNpcs(world).map((npc) => {
+    const actor = cast.actor(campus.player.width, personHeight);
+    actor.pose(npc.outfit, npc.hat, "down", 0);
+    actor.group.position.set(npc.x, 0, npc.y);
+    scene.add(actor.group);
+    const label = document.createElement("span");
+    label.className = "orbit-building-label orbit-activity-label";
+    label.textContent = `! ${npc.name}`;
+    host.append(label);
+    return { npc, actor, label };
+  });
+  const treasure = campus.chests.map((chest) => {
+    const ppm = campus.units.pixelsPerMeter;
+    const model = woodenChest(
+      world.chest.widthMeters * ppm,
+      world.chest.heightMeters * ppm,
+      world.chest.depthMeters * ppm,
+    );
+    model.group.position.set(chest.x, 0, chest.y);
+    scene.add(model.group);
+    const label = document.createElement("span");
+    label.className = "orbit-building-label orbit-activity-label";
+    label.textContent = "✦ 宝箱";
+    host.append(label);
+    return { chest, model, label };
+  });
   const marker = document.createElement("span");
   marker.className = "orbit-player-label";
   marker.textContent = "你";
@@ -166,6 +173,11 @@ export function createOrbit(
         (Math.hypot(width, height, 300) / 2 / Math.sin(halfFov)) * 0.86,
         50,
       );
+    },
+    focusPoint(point: { x: number; y: number }) {
+      following = false;
+      panorama = false;
+      center(point.x, point.y, 110, 8);
     },
     focusBuilding(id: string) {
       const b = world.buildings.find((b) => b.id === id);
@@ -322,7 +334,8 @@ export function createOrbit(
   const disposeObject = (object: THREE.Object3D) => {
     const textures = new Set<THREE.Texture>();
     object.traverse((child) => {
-      if (!(child instanceof THREE.Mesh)) return;
+      if (!(child instanceof THREE.Mesh) && !(child instanceof THREE.Sprite))
+        return;
       child.geometry.dispose();
       for (const material of Array.isArray(child.material)
         ? child.material
@@ -375,6 +388,19 @@ export function createOrbit(
         if (child instanceof THREE.Mesh) {
           child.castShadow = true;
           child.receiveShadow = true;
+          for (const material of Array.isArray(child.material)
+            ? child.material
+            : [child.material]) {
+            if (material instanceof THREE.MeshStandardMaterial) {
+              material.color.multiply(new THREE.Color(1, 0.96, 0.87));
+              material.roughness = 0.94;
+              material.metalness = 0;
+              if (material.map) {
+                material.map.magFilter = THREE.NearestFilter;
+                material.map.anisotropy = 4;
+              }
+            }
+          }
         }
       });
       for (const group of model.children)
@@ -428,13 +454,48 @@ export function createOrbit(
       controls.target.copy(bounded);
     }
     if (ready) bridge.orbitYaw = controls.getAzimuthalAngle();
-    avatar.position.set(
-      bridge.snapshot.position.x,
-      0,
-      bridge.snapshot.position.y,
+    const progress = bridge.progress.snapshot.progress;
+    const feet = bridge.actor?.position ?? bridge.snapshot.position;
+    const dx = feet.x - lastFeet.x,
+      dz = feet.y - lastFeet.y;
+    const yaw = controls.getAzimuthalAngle(),
+      sx = dx * Math.cos(yaw) - dz * Math.sin(yaw),
+      sy = dx * Math.sin(yaw) + dz * Math.cos(yaw);
+    const walking = !bridge.paused && (bridge.actor?.moving ?? false);
+    if (walking)
+      facing =
+        Math.abs(sx) > Math.abs(sy)
+          ? sx > 0
+            ? "right"
+            : "left"
+          : sy > 0
+            ? "down"
+            : "up";
+    student.pose(
+      progress.outfit,
+      progress.hat,
+      facing,
+      walking ? Math.floor(performance.now() / 140) % 4 : 0,
     );
+    lastFeet = { ...feet };
+    avatar.position.set(feet.x, 0, feet.y);
+    for (const { chest, model } of treasure)
+      model.open((progress.chestReadyAt[chest.id] ?? 0) > Date.now());
     renderer.render(scene, camera);
     placeLabel(marker, avatar.position.x, personHeight + 2, avatar.position.z);
+    for (const { npc, label } of people) {
+      label.textContent = `${progress.talked.includes(npc.id) ? "" : "! "}${npc.name}`;
+      placeLabel(label, npc.x, personHeight + 2, npc.y);
+      if (controls.getDistance() > 1600) label.hidden = true;
+    }
+    for (const { chest, label } of treasure) {
+      label.textContent =
+        (progress.chestReadyAt[chest.id] ?? 0) > Date.now()
+          ? "已打开"
+          : "✦ 宝箱";
+      placeLabel(label, chest.x, 5, chest.y);
+      if (controls.getDistance() > 1200) label.hidden = true;
+    }
     for (const { label, building } of labels) {
       label.textContent =
         controls.getDistance() > 1300
@@ -463,6 +524,7 @@ export function createOrbit(
       bridge.orbitYaw = 0;
     }
     disposeObject(scene);
+    cast.dispose();
     sun.shadow.dispose();
     renderer.dispose();
     renderer.forceContextLoss();

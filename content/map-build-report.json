@@ -1,5 +1,5 @@
 {
-  "mapVersion": "core-pixel-3d-0.5.5",
+  "mapVersion": "core-pixel-3d-0.6.0",
   "status": "source-geometry-reconstructed",
   "fixtureOccupancy": [
     {
@@ -7920,7 +7920,7 @@
         "width": 1805,
         "height": 2999
       },
-      "pixelSha256": "5c15bd0d13fe80ae7e4eec588a164ea60f5404767e4d7cc09c55203ef7b62db4"
+      "pixelSha256": "ac22826cdf5958bac52fe4ccfb46cfb6e8ea0885a476723a0d161c51786a5d37"
     },
     {
       "group": "west",
@@ -8019,7 +8019,7 @@
         "width": 1922,
         "height": 3276
       },
-      "pixelSha256": "79b1eef49a11fc1c0121b250b3f35485908fb22020e6c432a06dfeeae556f2c6"
+      "pixelSha256": "dc5e2c690b29caa4f38eeb5c7f672317699639dbe5420b5946e6ac44874ad09c"
     },
     {
       "group": "administration",
@@ -8073,7 +8073,7 @@
         "width": 1542,
         "height": 1129
       },
-      "pixelSha256": "c04677ea62a0cb85d9a02e01fba1ebe53626fc162ee38f3eab9c45cda270d26f"
+      "pixelSha256": "83fe2349a91bcfe3e5622fd657f681acad69d711a8756f493341b110d302caff"
     },
     {
       "group": "activity",
@@ -8138,7 +8138,7 @@
         "width": 1714,
         "height": 1330
       },
-      "pixelSha256": "644ed55b82628ecf3cac0ed97a7863c462936908aff6eb03325d79bf74339b6e"
+      "pixelSha256": "142ab1c62246fbc06326621f2d28ce52bf12e37037602641981170adbe6346aa"
     },
     {
       "group": "academic",
@@ -8256,7 +8256,7 @@
         "width": 1261,
         "height": 584
       },
-      "pixelSha256": "603683e9ad3aeba42014d8dbc155270a0d69f1ca23f56d121c37b63a8431088d"
+      "pixelSha256": "de4e493da643f2b0b9e8bf3662c3ff8b2676a25656b58306700a9e764884ab22"
     }
   ],
   "landmarks": [
@@ -8913,7 +8913,7 @@
         "activeGlassBays": []
       },
       "triangles": 35888,
-      "pixelSha256": "25ccc5e99131df81b3f28f736295c370c6866b87116767a363b6a26780fab615"
+      "pixelSha256": "88fa31c2fc709da9b330bb46c346edea65e90f34770ae4e9ffe1a6d11810703f"
     },
     {
       "sceneId": "interior_e3",
@@ -9509,7 +9509,7 @@
         "activeGlassBays": []
       },
       "triangles": 42379,
-      "pixelSha256": "4ab608a342926f3590b470bbfcd48912ead9cfe3797610c5eca2be7a239a72b7"
+      "pixelSha256": "4c2ad19e9411d75bed916e63164e3bb338838e38a47d413cea68475e978c1d63"
     },
     {
       "sceneId": "interior_w1",
@@ -10038,7 +10038,7 @@
         "activeGlassBays": []
       },
       "triangles": 46015,
-      "pixelSha256": "c7daeb08ed65f5759426763829a426489f8c1c151fd39e1085241b91367d5ab0"
+      "pixelSha256": "f2dffe121f35fed850cee24c4b92967af42197e3ffab023930cf2072dce447f3"
     },
     {
       "sceneId": "interior_w3",
@@ -10459,7 +10459,7 @@
         "activeGlassBays": []
       },
       "triangles": 41492,
-      "pixelSha256": "d608d7f945f5f35a21704e0d4374d0446c8f3a0b4057f4fe8f7e5d189e64df14"
+      "pixelSha256": "67524aa1d8f449138002b77ba6974656113c8af0cea00aeb98f3504af9ac96cb"
     },
     {
       "sceneId": "interior_c1",
@@ -10634,7 +10634,7 @@
         "activeGlassBays": []
       },
       "triangles": 11609,
-      "pixelSha256": "8c81afb35a2c5a839f37dbc41cdcdb2400495f9cd26f47aec9f7c3b73ec81f02"
+      "pixelSha256": "7f6f078ee3f9f11e501a750ea4b06edd01edaf1c20e6aeca11a734af01e149c8"
     },
     {
       "sceneId": "interior_c2",
@@ -10998,7 +10998,7 @@
         "activeGlassBays": []
       },
       "triangles": 25597,
-      "pixelSha256": "1f49208d1d5d057052a2b37c73bda4a3fe08d7528c7c6772fcd5c08bd0505ad7"
+      "pixelSha256": "9d52596c255d102c19db86a8f33308d465aa4818253e562c3f0b48ad97b9d5ac"
     },
     {
       "sceneId": "interior_c3",
@@ -11538,7 +11538,7 @@
         "activeGlassBays": []
       },
       "triangles": 30892,
-      "pixelSha256": "ed98990a90ef7e14284eb55b35b33cc13522e1c3740e0c54b19cf611d7c536b3"
+      "pixelSha256": "4917d3daa588d5e6c710e0f2ff631a691da6036445358c98a324c7ce1f49bbc5"
     },
     {
       "sceneId": "interior_c7",
@@ -11859,7 +11859,7 @@
         ]
       },
       "triangles": 17183,
-      "pixelSha256": "0c5b47c65d714026bcfda36fec53a2de34b0b133fd848d1a9f1b822c1b211110"
+      "pixelSha256": "3ea4ca2ea5339bd0fc51678fbdf35b31a53ac72f53026bd1cd4eb41766e43e82"
     },
     {
       "sceneId": "interior_east_f2",
@@ -12651,7 +12651,7 @@
         "activeGlassBays": []
       },
       "triangles": 59246,
-      "pixelSha256": "c15fb6a0f5dcbd683a1b4bd1680588c8ccaf17694846cebed8d60c986b7a17e6"
+      "pixelSha256": "5a31bf5a167aca3e1d642831288add1316adbaf3505b4b42f78a3fd81fa2ddde"
     },
     {
       "sceneId": "interior_east_f3",
@@ -13425,7 +13425,7 @@
         "activeGlassBays": []
       },
       "triangles": 60770,
-      "pixelSha256": "06a5fd126b66352f2d70866a636803b4b0fc443e072680f25c80a99083f9545b"
+      "pixelSha256": "bec368e6859e8a10ff030bc6ed082e9366282aeb0ae56401b81d4c37193c949e"
     },
     {
       "sceneId": "interior_east_f4",
@@ -14385,7 +14385,7 @@
         "activeGlassBays": []
       },
       "triangles": 72959,
-      "pixelSha256": "4e9856f4f20d6b37310a4e3fe8eba313723edf7b34b3f5f186c2d3e2079e7b67"
+      "pixelSha256": "b41413b7ee20fa15dd8c2a901bc4206b338774ac6e7145cb86d77ed08ce66e51"
     },
     {
       "sceneId": "interior_east_f5",
@@ -15363,7 +15363,7 @@
         "activeGlassBays": []
       },
       "triangles": 71787,
-      "pixelSha256": "1b808e1a0c34999c360d2f64855625d355fad73d56c9e6ad66815a07a2b883bc"
+      "pixelSha256": "c084c3e57e2888b64853c8682a80d7623fb162c530bd1a4a5b3f4020105647b4"
     },
     {
       "sceneId": "interior_east_f6",
@@ -16059,7 +16059,7 @@
         "activeGlassBays": []
       },
       "triangles": 54022,
-      "pixelSha256": "95f0b39a9191f44f787bb9544471d5963e5e4c25cd2cbe2e8b81e02a816ed9a0"
+      "pixelSha256": "3e5a0d38696d99b85a56f6bf45784b3ceffec48cc8fae8954ac47575ff308963"
     },
     {
       "sceneId": "interior_west_f2",
@@ -16680,7 +16680,7 @@
         "activeGlassBays": []
       },
       "triangles": 68259,
-      "pixelSha256": "d59d26ec8b3c72afb5ab17480bfb99ebcfb27a9ebf315cce603a06b91695d89d"
+      "pixelSha256": "2baf80952586cdca41d10db24f398291ca0a83b3388902470950b4ae4b639d05"
     },
     {
       "sceneId": "interior_west_f3",
@@ -17598,7 +17598,7 @@
         "activeGlassBays": []
       },
       "triangles": 87843,
-      "pixelSha256": "29cec7b0e98392b93669153713c30f12f10f8b5c746b96c2ed2aa48f03b18cf0"
+      "pixelSha256": "fce958f4cd43f77bb4861721cbdbb32d94fb85886bbfcb1302bf03f5f63ef448"
     },
     {
       "sceneId": "interior_west_f4",
@@ -18409,7 +18409,7 @@
         "activeGlassBays": []
       },
       "triangles": 80745,
-      "pixelSha256": "bd966d9d18cda291aadec12cd00e7698aec4f9f8c496908c4ecfee8422b0739c"
+      "pixelSha256": "c87fe4a2a9771df1482444beaa21edc3d26ae772a14213c4c274d2c7326fff1b"
     },
     {
       "sceneId": "interior_west_f5",
@@ -19196,7 +19196,7 @@
         "activeGlassBays": []
       },
       "triangles": 79576,
-      "pixelSha256": "d12357672e95a706a6325f97743a4ae40d10daa406d8b854bee2f6b76f35a390"
+      "pixelSha256": "96156dc2b3cc6d3ad61ef0311a098f0e16058c765a7fca7763f0a7ecdfb6e427"
     },
     {
       "sceneId": "interior_west_f6",
@@ -19972,7 +19972,7 @@
         "activeGlassBays": []
       },
       "triangles": 79196,
-      "pixelSha256": "59808e9f4f6ad7485dc15077fd783e988fecbee72409f956b2407d79683bc792"
+      "pixelSha256": "740e9ec1784151ef06a39b87dff60886473647950a5fe59ef57de2569d3b28e9"
     },
     {
       "sceneId": "interior_administration_f2",
@@ -20222,7 +20222,7 @@
         "activeGlassBays": []
       },
       "triangles": 15043,
-      "pixelSha256": "496b69d82009fb9074a3945e7d3d519180ebec108fdc030128e3151d107c4343"
+      "pixelSha256": "66d6d25a6244fe77199f377c76bf9352aa4e424b4866d89a1086ae1bcde24972"
     },
     {
       "sceneId": "interior_administration_f3",
@@ -20454,7 +20454,7 @@
         "activeGlassBays": []
       },
       "triangles": 14471,
-      "pixelSha256": "bfce6d0dc22130dea1114654ef8e736789d17b1102eb06b2395bc37819c8c39d"
+      "pixelSha256": "060e87a57110c38c6f0a686ba14bb981fbf947fb2a706cd08a7c3385efe17aaf"
     },
     {
       "sceneId": "interior_administration_f4",
@@ -20722,7 +20722,7 @@
         "activeGlassBays": []
       },
       "triangles": 15675,
-      "pixelSha256": "2e8ddd709ff1a61e5191555360ff8a3a0bd1e7a1de4bac5141f7b17238cde1a6"
+      "pixelSha256": "e51f1f486d223d8f8e58664f78a1ed77a2b4ea84afb25c2c40cdfbc5ba52058c"
     },
     {
       "sceneId": "interior_administration_f5",
@@ -20954,7 +20954,7 @@
         "activeGlassBays": []
       },
       "triangles": 15046,
-      "pixelSha256": "c04d09c8527e02c0b4466ca2b9a990507db3fe34b323fadc9338bd52d4aaf76d"
+      "pixelSha256": "fa76c955aa2d941ab7e7fa4786433f95d3004fadcf358f88527e3a987444ab22"
     },
     {
       "sceneId": "interior_administration_f6",
@@ -21252,7 +21252,7 @@
         "activeGlassBays": []
       },
       "triangles": 16898,
-      "pixelSha256": "392f0a625c4ac342181b784ed934b6adcc372dea8b12a684c1a63628bc4e9fd2"
+      "pixelSha256": "619881ab82ad97caaf15f8d92a9a910bc3666ee2722f335bcf8cf37dfe73244f"
     },
     {
       "sceneId": "interior_administration_f7",
@@ -21562,7 +21562,7 @@
         "activeGlassBays": []
       },
       "triangles": 17887,
-      "pixelSha256": "90989882047f90eebcd69a14ab8c26640e081ff1798f60eae6744e0fa0a05ef5"
+      "pixelSha256": "42796f1fb22cb209af76a74a81921d84f38e9f43932360f2d8169102f216432e"
     },
     {
       "sceneId": "interior_administration_f8",
@@ -21597,7 +21597,7 @@
         "activeGlassBays": []
       },
       "triangles": 4597,
-      "pixelSha256": "d33c9cd4e30e7854c0055420679dea80f543f5f701f6f60ec2dc0d1ef7ce060c"
+      "pixelSha256": "a4f1128aa9fb19f51c049680d835ac4f645d9d5ab313b5181e59090a613999c9"
     },
     {
       "sceneId": "interior_activity_f2",
@@ -22004,7 +22004,7 @@
         "activeGlassBays": []
       },
       "triangles": 31634,
-      "pixelSha256": "d2aa28a06164afdd502a272430bf1012fe1429f41e82d65b62f14316c20c61b1"
+      "pixelSha256": "d2991d78e3fa0ade11a61c9b138a8bd4db92f887534c0fe8f987472ac269c984"
     },
     {
       "sceneId": "interior_academic_f2",
@@ -22367,7 +22367,7 @@
         "activeGlassBays": []
       },
       "triangles": 39544,
-      "pixelSha256": "cec3429c350926a3eb3a0fedef0295d95c693b969b0fab22f390614eb0bb3835"
+      "pixelSha256": "d5d67e9944c3ca7b7615cc296d44b62b2415828b02900301a2eea6bb7b49a3b1"
     },
     {
       "sceneId": "interior_academic_f3",
@@ -22549,7 +22549,7 @@
         "activeGlassBays": []
       },
       "triangles": 17714,
-      "pixelSha256": "1a9f1fdbec57e03ecdd1602a8e60b3b30db8e55f4fd3df15397f67c2bb381cde"
+      "pixelSha256": "7ebf0351bd9a42f8eae4b10f7a681811fd972bd882d0bdfc8f4d0045e6ee1cde"
     },
     {
       "sceneId": "interior_library_f2",
@@ -22991,7 +22991,7 @@
         "activeGlassBays": []
       },
       "triangles": 19473,
-      "pixelSha256": "56ff6acf4fdd97617d8af05eea6a39e7b688ca283944dcc5275107b7f292ebaa"
+      "pixelSha256": "941a4b3eff887339857d640c8983d9128651156546bc4d3be0679a4b474b5e2e"
     },
     {
       "sceneId": "interior_library_f3",
@@ -23477,7 +23477,7 @@
         "activeGlassBays": []
       },
       "triangles": 33745,
-      "pixelSha256": "30364d7944296a63255d7593feb55bbc79ff9fac1f871e8080837fe0177aa0da"
+      "pixelSha256": "c4e364c902be0d29fb442f0b2e16e7fe438fc1f6a58fe3dc717153fb42070740"
     },
     {
       "sceneId": "interior_library_f4",
@@ -24005,7 +24005,7 @@
         "activeGlassBays": []
       },
       "triangles": 27947,
-      "pixelSha256": "2a745cd64d0fc37d61d6367821be7b29e10e078b234b0c45736e94df63078c6c"
+      "pixelSha256": "e00a908b1520e96c8ee4b6d2116041a13c2e1f5d4cd837c32196b0635290c81c"
     },
     {
       "sceneId": "interior_library_f5",
@@ -24884,7 +24884,7 @@
         "activeGlassBays": []
       },
       "triangles": 43428,
-      "pixelSha256": "264d867c9e2da3cfc3b6a7fad4e6fabf9f77a9bf7846fe03a3a1f44aa95be5c1"
+      "pixelSha256": "67a7192e8a27fbbe7faa8d7e5382ef7c9b21fb34511cbabd0116f0e6698970e1"
     },
     {
       "sceneId": "interior_library_f6",
@@ -24983,7 +24983,7 @@
         "activeGlassBays": []
       },
       "triangles": 12306,
-      "pixelSha256": "9c009c1edc1bede0a1f231cf67ca8b98ce7b988f54aceb7cec73c47dd3a271d5"
+      "pixelSha256": "6c07ba4b3f05326b112724cb2f57ee8957c5344b61bf9fddff209a0fb1ae3d89"
     }
   ]
 }

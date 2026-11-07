@@ -27,7 +27,7 @@ function meadow() {
   for (let i = 0; i < 24; i++) {
     const x = pick(116),
       y = pick(124),
-      tone = i % 2 ? "#94b27a" : "#8cac75";
+      tone = i % 2 ? "#9cbc71" : "#86ad62";
     marks.push(
       rect(x + 2, y, 7, 1, tone),
       rect(x, y + 1, 12, 2, tone),
@@ -41,56 +41,74 @@ function meadow() {
       const blade = pick(5);
       if (blade < 2) {
         marks.push(
-          rect(x, y, 4, 1, "#88ab74"),
-          rect(x + 1, y - 1, 2, 1, "#88ab74"),
+          rect(x, y, 4, 1, "#92b66a"),
+          rect(x + 1, y - 1, 2, 1, "#92b66a"),
         );
       } else {
         marks.push(
-          rect(x, y, 3, 1, "#799b6b"),
-          rect(x + 2, y - 1, 1, 1, "#799b6b"),
+          rect(x, y, 3, 1, "#638b4d"),
+          rect(x + 2, y - 1, 1, 1, "#638b4d"),
         );
-        if (blade === 4) marks.push(rect(x - 1, y - 1, 1, 1, "#abc486"));
+        if (blade === 4) marks.push(rect(x - 1, y - 1, 1, 1, "#c5d88b"));
       }
     }
   }
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < 18; i++) {
     const x = pick(124),
       y = pick(124);
     marks.push(
-      rect(x, y, 3, 1, "#7d9c6c"),
+      rect(x, y, 3, 1, "#688c4d"),
       rect(x, y - 1, 1, 1, "#e3d495"),
       rect(x + 3, y - 2, 1, 1, "#c5cb88"),
+      ...(i % 3 === 0
+        ? [
+            rect(x + 1, y - 2, 1, 2, "#edcfb1"),
+            rect(x, y - 1, 3, 1, "#e9b49e"),
+            rect(x + 1, y - 1, 1, 1, "#f6dfa0"),
+          ]
+        : []),
     );
   }
-  return pattern("lawn", 130, 130, "#90af77", marks.join(""));
+  return pattern("lawn", 130, 130, "#8eae65", marks.join(""));
 }
 
 function stonePaving(id: string, tones: string[]) {
-  const rows = [[0, 12, 26, 39], [-6, 6, 21, 36], [-2, 9, 24, 37], [-8, 5, 18, 32]];
+  const rows = [
+    [0, 12, 26, 39],
+    [-6, 6, 21, 36],
+    [-2, 9, 24, 37],
+    [-8, 5, 18, 32],
+  ];
   const marks: string[] = [];
   for (let row = 0; row < rows.length; row++) {
     const joints = rows[row];
     for (let j = 0; j < joints.length; j++) {
-      const x = joints[j], y = row * 4;
+      const x = joints[j],
+        y = row * 4;
       const length = (joints[j + 1] ?? joints[0] + 48) - x;
       const tone = tones[(row * 3 + j + (row === 2 ? 1 : 0)) % tones.length];
       // Repeat across the pattern boundary so a clipped slab keeps both halves.
       for (const shift of [0, 48]) {
-        marks.push(rect(x + shift, y, length - .4, 3.6, tone));
+        marks.push(rect(x + shift, y, length - 0.4, 3.6, tone));
+        // Tiny top bevels and shaded lower joints give each slab a carved pixel edge.
+        marks.push(rect(x + shift + 0.3, y + 0.2, length - 1, 0.3, tones[2]));
+        marks.push(
+          rect(x + shift + 0.3, y + 3.25, length - 1, 0.25, "#a6a68b"),
+        );
         if ((row + j) % 3 === 0)
-          marks.push(rect(x + shift + 2, y + .6, 2, .45, tones[2]));
+          marks.push(rect(x + shift + 2, y + 0.6, 2, 0.45, tones[2]));
       }
     }
   }
-  return pattern(id, 48, 16, "#b6bbb3", marks.join(""));
+  return pattern(id, 48, 16, "#a5a98e", marks.join(""));
 }
 
 const definitions = [
   meadow(),
   // Between the photographed plaza and C2, granite setts are roughly one footfall
   // wide and several footfalls long. Individual stones vary more than the grout.
-  stonePaving("plaza", ["#d1cfc1", "#c5c6bb", "#dbd9ca", "#b4bab3", "#ccd0c4"]),
-  stonePaving("path", ["#d8d8ca", "#cccec2", "#e2dfd0", "#bfc5bc", "#d3d5c9"]),
+  stonePaving("plaza", ["#d4c8a9", "#c7bd9f", "#eadcba", "#aeb39d", "#d8d0b1"]),
+  stonePaving("path", ["#e0d2af", "#d2c7a8", "#f0e1be", "#b7bca3", "#ded6b8"]),
   pattern(
     "asphalt",
     29,
@@ -104,11 +122,11 @@ const definitions = [
     "pond",
     83,
     49,
-    "#579b9b",
-    '<path fill="#489093" d="M0 9h13v1h6v1H7v-1H0zM29 31h16v1h5v1H37v-1h-8zM64 21h9v1h-9z"/>' +
-      '<path fill="#75b9ae" d="M4 22h5v-1h5v1h-4v1H4zM43 7h8v-1h4v1h-3v1h-9zM66 38h7v-1h5v1h-3v1h-9z"/>' +
-      rect(15, 19, 3, 1, "#9bd0bb") +
-      rect(51, 10, 2, 1, "#9bd0bb"),
+    "#448e95",
+    '<path fill="#357d88" d="M0 9h13v1h6v1H7v-1H0zM29 31h16v1h5v1H37v-1h-8zM64 21h9v1h-9z"/>' +
+      '<path fill="#74bfaf" d="M4 22h5v-1h5v1h-4v1H4zM43 7h8v-1h4v1h-3v1h-9zM66 38h7v-1h5v1h-3v1h-9z"/>' +
+      rect(15, 19, 3, 1, "#bee6c6") +
+      rect(51, 10, 2, 1, "#bee6c6"),
   ),
   pattern(
     "treads",
@@ -184,16 +202,16 @@ export function campusLayerSvg(scene: SceneMap, layer: string) {
 // Colour ramps keep the GLB's windows, grass roofs and warm stone recognizable,
 // but group photographic noise into deliberate, legible planes of colour.
 const masonry = [
-  "#293e49",
-  "#3c5261",
-  "#4c6376",
-  "#667a8c",
-  "#839298",
-  "#9daaab",
-  "#b5c1b9",
-  "#d1d2c2",
-  "#e4dfca",
-  "#f7efd7",
+  "#2d3e45",
+  "#3a505a",
+  "#4d6673",
+  "#6a808b",
+  "#899b99",
+  "#a9b5aa",
+  "#c2c8b2",
+  "#dad7b9",
+  "#eee1bc",
+  "#fff0cc",
 ];
 const roofGrass = [
   "#294c49",
@@ -231,14 +249,31 @@ const neutralRamp = parse(masonry),
 
 // C2's source UVs already locate the narrow panels, punched windows and mullions.
 const bambooMetal = parse([
-  "#504a3a", "#736343", "#89734c", "#9e8457", "#ad9363",
-  "#bca476", "#cbb58b", "#d6c49d", "#dfceac",
+  "#504a3a",
+  "#736343",
+  "#89734c",
+  "#9e8457",
+  "#ad9363",
+  "#bca476",
+  "#cbb58b",
+  "#d6c49d",
+  "#dfceac",
 ]);
 const activityGlazing = parse([
-  "#29434a", "#324d55", "#3e5a60", "#4d676c",
-  "#637d7d", "#8e9e96", "#bec6b4",
+  "#29434a",
+  "#324d55",
+  "#3e5a60",
+  "#4d676c",
+  "#637d7d",
+  "#8e9e96",
+  "#bec6b4",
 ]);
-function finishValue(ramp: number[][], value: number, low: number, high: number) {
+function finishValue(
+  ramp: number[][],
+  value: number,
+  low: number,
+  high: number,
+) {
   const t = Math.max(0, Math.min(1, (value - low) / (high - low)));
   return ramp[Math.round(t * (ramp.length - 1))];
 }
@@ -255,7 +290,14 @@ export async function gradeCampusModel(
     .raw()
     .toBuffer({ resolveWithObject: true });
   if (featureId === 43543 && surfaceIds && names) {
-    finishHubBridge(data, info.width, info.height, surfaceIds, names, pixelRatio);
+    finishHubBridge(
+      data,
+      info.width,
+      info.height,
+      surfaceIds,
+      names,
+      pixelRatio,
+    );
     return sharp(data, { raw: info }).png({ compressionLevel: 9 }).toBuffer();
   }
   const families = names?.map((name) =>
@@ -294,10 +336,12 @@ export async function gradeCampusModel(
     if (featureId === 43540 && sourceFinish === "学生活动中心外墙1") {
       // Keep the openings in the photographed cladding texture exactly where the
       // model's UVs put them. The cool inset panes read against warm bronze fins.
-      color = b > r + 7 ? finishValue(activityGlazing, luma, .40, .80)
-                        : finishValue(bambooMetal, luma, .49, .85);
+      color =
+        b > r + 7
+          ? finishValue(activityGlazing, luma, 0.4, 0.8)
+          : finishValue(bambooMetal, luma, 0.49, 0.85);
     } else if (featureId === 43540 && sourceFinish === "窗户") {
-      color = finishValue(activityGlazing, luma, .33, .83);
+      color = finishValue(activityGlazing, luma, 0.33, 0.83);
     } else if (family === "grass") {
       // Hand-sized clusters and occasional pairs of light blades on the actual
       // planted roof material, including its sloping faces.
@@ -306,10 +350,16 @@ export async function gradeCampusModel(
       if (featureId === 43540) {
         // The living roof has broad olive and ochre planting masses. Lay the
         // vegetation in low-contrast swaths, clipped by the two source roof meshes.
-        const metresX = x / (pixelRatio * 4.34), metresY = y / (pixelRatio * 4.34);
-        const bed = Math.sin(metresX * .20 + Math.sin(metresY * .14) * 2.2)
-          + .65 * Math.cos(metresY * .27 - metresX * .11);
-        color = [c[0] * .80 + 15 + bed * 5, c[1] * .72 + 15 + bed * 2, c[2] * .63 + 8];
+        const metresX = x / (pixelRatio * 4.34),
+          metresY = y / (pixelRatio * 4.34);
+        const bed =
+          Math.sin(metresX * 0.2 + Math.sin(metresY * 0.14) * 2.2) +
+          0.65 * Math.cos(metresY * 0.27 - metresX * 0.11);
+        color = [
+          c[0] * 0.8 + 15 + bed * 5,
+          c[1] * 0.72 + 15 + bed * 2,
+          c[2] * 0.63 + 8,
+        ];
       }
       const u = x % 4,
         v = y % 4;
@@ -370,5 +420,5 @@ export function shadowSvg(scene: SceneMap, paths: string[]) {
         `<path d="${pathData(r.footprint)}" fill="black" fill-rule="evenodd"/>`,
     )
     .join("");
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" shape-rendering="crispEdges"><defs><mask id="outdoors"><rect width="100%" height="100%" fill="white"/>${footprints}</mask></defs><path d="${paths.join("")}" fill="#354f55" opacity=".25" mask="url(#outdoors)"/></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" shape-rendering="crispEdges"><defs><mask id="outdoors"><rect width="100%" height="100%" fill="white"/>${footprints}</mask></defs><path d="${paths.join("")}" fill="#314a4b" opacity=".30" mask="url(#outdoors)"/></svg>`;
 }

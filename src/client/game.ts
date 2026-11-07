@@ -1,3 +1,11 @@
+import { ProgressStore } from "./progress-store";
+import { addJourneyArt } from "./journey-art";
+import {
+  campusNpcs,
+  canInteractWith,
+  type Npc,
+  type Progress,
+} from "../shared/journey";
 import { attachCameraInput } from "./camera-input";
 import { campusCutaway, entranceSill } from "./campus-cutaway";
 import { slidingEntrance } from "./entrance-art";
@@ -9,7 +17,7 @@ import {
 } from "../shared/automatic-doors";
 import { addSundialForeground } from "./sundial-art";
 import { canObserveSundial, sundial } from "../shared/sundial";
-import { makeStudentAvatar } from "./avatar-art";
+import { makeStudentAvatar, avatarKey } from "./avatar-art";
 import Phaser from "phaser";
 import { actorOcclusion } from "./occlusion";
 import {
@@ -57,9 +65,12 @@ export class GameBridge extends EventTarget {
     zoom(direction: -1 | 1): void;
     overview(): void;
     focusBuilding(id: string): void;
+    focusPoint(point: Point): void;
     follow(): void;
   };
   orbitYaw = 0;
+  progress = new ProgressStore();
+  actor?: { position: Point; moving: boolean };
   direction: Point = { x: 0, y: 0 };
   keys = new Set<string>();
   paused = false;
@@ -125,6 +136,13 @@ export class GameBridge extends EventTarget {
     if (this.orbit) this.orbit.focusBuilding(id);
     else this.scene?.focusBuilding(id);
   }
+  focusNpc(id: string) {
+    if (this.paused) return;
+    const npc = this.scene?.npcPoint(id);
+    if (!npc) return;
+    if (this.orbit) this.orbit.focusPoint(npc);
+    else this.scene?.focusPoint(npc);
+  }
   followPlayer() {
     if (!this.paused) {
       if (this.orbit) this.orbit.follow();
@@ -142,6 +160,9 @@ export class CampusScene extends Phaser.Scene {
   private footShadow!: Phaser.GameObjects.Ellipse;
   private referenceLayer!: Phaser.GameObjects.Graphics;
   private discovered = new Set<string>();
+  private journeyArt?: ReturnType<typeof addJourneyArt>;
+  private equipment = "";
+  private npcs: Npc[] = [];
   private openDoors = new Set<string>();
   private entranceLeaves: ((feet: Point, delta: number) => void)[] = [];
   private swings = new Map<string, { door: RoomDoor; progress: number }>();
@@ -202,8 +223,15 @@ export class CampusScene extends Phaser.Scene {
       this.scale.off(Phaser.Scale.Events.RESIZE, this.frameCamera, this),
     );
 
+    this.bridge.progress.init(this.world);
+    this.npcs = campusNpcs(this.world);
+    this.discovered = new Set(
+      this.bridge.progress.snapshot.progress.discovered,
+    );
     makeStudentAvatar(this);
-    this.restartWalk();
+    const location = this.bridge.progress.snapshot.progress.location;
+    if (location) this.enterScene(location.sceneId, location);
+    else this.restartWalk();
   }
   restartWalk() {
     if (this.loading) {
@@ -211,7 +239,9 @@ export class CampusScene extends Phaser.Scene {
       this.bridge.clear();
       return;
     }
-    this.discovered.clear();
+    this.discovered = new Set(
+      this.bridge.progress.snapshot.progress.discovered,
+    );
     this.openDoors.clear();
     const scene = this.world.scenes.find((s) => s.id === "campus_core")!;
     this.enterScene(scene.id, scene.spawns[0]);
@@ -246,6 +276,8 @@ export class CampusScene extends Phaser.Scene {
     this.cutaway = undefined;
     this.occlusion?.dispose();
     this.occlusion = undefined;
+    this.journeyArt?.dispose();
+    this.journeyArt = undefined;
     this.cues = [];
     this.children.removeAll(true);
     if (this.current && this.current !== next) {
@@ -258,6 +290,11 @@ export class CampusScene extends Phaser.Scene {
     this.entranceLeaves = [];
     this.current = doorCollision(next, this.openDoors);
     this.position = { ...point };
+    this.bridge.actor = { position: this.position, moving: false };
+    this.bridge.progress.locate(
+      { ...point, sceneId: next.id, mapVersion: this.world.mapVersion },
+      true,
+    );
     const s = this.current;
     this.add
       .image(0, 0, s.art.ground)
@@ -320,23 +357,13 @@ export class CampusScene extends Phaser.Scene {
         .setDepth(-40);
       this.mapCue(label, 3);
     }
-    for (const c of s.chests) {
-      const dimensions = this.world.chest,
-        ppm = s.units.pixelsPerMeter;
-      const chest = this.add
-        .graphics({ x: c.x, y: c.y })
-        .setDepth(6000 + c.y)
-        .setScale(
-          (dimensions.widthMeters * ppm) / 14,
-          ((dimensions.heightMeters * s.units.heightProjection +
-            dimensions.depthMeters) *
-            ppm) /
-            10,
-        );
-      chest.fillStyle(0x8b5b36).fillRect(-7, -10, 14, 10);
-      chest.fillStyle(0xc9974d).fillRect(-6, -9, 12, 4);
-      chest.fillStyle(0xf4d677).fillRect(-1, -5, 3, 4);
-    }
+    this.journeyArt = addJourneyArt(
+      this,
+      s,
+      this.world,
+      this.bridge.progress,
+      (object, max, dy) => this.mapCue(object, max, dy),
+    );
     for (const p of s.portals.filter((p) => p.kind === "entrance")) {
       const glass = slidingEntrance(this, s, p);
       if (glass) this.entranceLeaves.push(glass);
@@ -530,7 +557,12 @@ export class CampusScene extends Phaser.Scene {
     const building = this.current.buildings.find((b) => b.id === id);
     if (building) this.focusPoint(building.label);
   }
-  private focusPoint(point: Point) {
+  npcPoint(id: string) {
+    return this.current.id === "campus_core"
+      ? this.npcs.find((n) => n.id === id)
+      : undefined;
+  }
+  focusPoint(point: Point) {
     if (!this.player || this.loading || this.bridge.paused) return;
     if (this.cameraMode === "overview") this.preferredZoom = 25;
     this.setCameraMode("free");
@@ -645,10 +677,66 @@ export class CampusScene extends Phaser.Scene {
       (a, b) => distance(a.point) - distance(b.point),
     );
   }
+  private nearbyJourneyActions() {
+    return [
+      ...this.npcs
+        .filter((n) => n.sceneId === this.current.id)
+        .map((n) => ({
+          id: `npc:${n.id}`,
+          label: `交谈 · ${n.name}`,
+          point: n,
+          npc: n,
+          chest: undefined as string | undefined,
+        })),
+      ...this.current.chests.map((c) => ({
+        id: `chest:${c.id}`,
+        label:
+          (this.bridge.progress.snapshot.progress.chestReadyAt[c.id] ?? 0) >
+          Date.now()
+            ? "宝箱正在补充"
+            : "打开探索宝箱",
+        point: c,
+        npc: undefined as Npc | undefined,
+        chest: c.id,
+      })),
+    ]
+      .filter((a) => canInteractWith(this.current, this.position, a.point))
+      .sort(
+        (a, b) =>
+          Math.hypot(a.point.x - this.position.x, a.point.y - this.position.y) -
+          Math.hypot(b.point.x - this.position.x, b.point.y - this.position.y),
+      );
+  }
   interact(actionId?: string) {
     if (this.loading) return;
     const nearby = this.nearbyActions();
-    const action = actionId ? nearby.find((a) => a.id === actionId) : nearby[0];
+    const activities = this.nearbyJourneyActions();
+    const all = [...nearby, ...activities].sort(
+      (a, b) =>
+        Math.hypot(a.point.x - this.position.x, a.point.y - this.position.y) -
+        Math.hypot(b.point.x - this.position.x, b.point.y - this.position.y),
+    );
+    const chosen = actionId ?? all[0]?.id;
+    const activity = activities.find((a) => a.id === chosen);
+    if (activity?.npc) {
+      this.bridge.progress.act({ type: "talk", id: activity.npc.id });
+      this.bridge.dispatchEvent(
+        new CustomEvent("npc-dialogue", { detail: activity.npc }),
+      );
+      this.publish();
+      return;
+    }
+    if (activity?.chest) {
+      this.bridge.progress.act({
+        type: "chest",
+        id: activity.chest,
+        now: Date.now(),
+      });
+      this.journeyArt?.(this.position);
+      this.publish();
+      return;
+    }
+    const action = nearby.find((a) => a.id === chosen);
     if (action?.door) {
       this.setDoor(action.door, !this.openDoors.has(action.door.id));
       this.publish();
@@ -660,8 +748,10 @@ export class CampusScene extends Phaser.Scene {
         !nearby.length &&
         (!actionId || actionId === sundial.id) &&
         canObserveSundial(this.current, this.position)
-      )
+      ) {
+        this.bridge.progress.act({ type: "observe", id: "sundial" });
         this.bridge.dispatchEvent(new Event(sundial.id));
+      }
       return;
     }
     const target = this.world.scenes.find((s) => s.id === p.targetScene)!;
@@ -670,7 +760,19 @@ export class CampusScene extends Phaser.Scene {
   }
   publish() {
     if (!this.current) return;
-    const actions = this.loading ? [] : this.nearbyActions();
+    const actions = this.loading
+      ? []
+      : [...this.nearbyActions(), ...this.nearbyJourneyActions()].sort(
+          (a, b) =>
+            Math.hypot(
+              a.point.x - this.position.x,
+              a.point.y - this.position.y,
+            ) -
+            Math.hypot(
+              b.point.x - this.position.x,
+              b.point.y - this.position.y,
+            ),
+        );
     const observation =
       !this.loading &&
       !actions.length &&
@@ -775,6 +877,13 @@ export class CampusScene extends Phaser.Scene {
           : input.y > 0
             ? "down"
             : "up";
+    const progress = this.bridge.progress.snapshot.progress;
+    const equipment = `${progress.outfit}:${progress.hat}`;
+    if (equipment !== this.equipment) {
+      makeStudentAvatar(this, progress.outfit, progress.hat);
+      this.equipment = equipment;
+    }
+    this.bridge.actor = { position: { ...this.position }, moving };
     const density = this.current.art.pixelRatio ?? 1;
     this.player
       .setPosition(
@@ -783,16 +892,33 @@ export class CampusScene extends Phaser.Scene {
       )
       .setDepth(6000 + this.position.y + 0.1)
       .setTexture(
-        `avatar-${this.direction}-${moving ? Math.floor(time / (running ? 80 : 130)) % 4 : 0}`,
+        avatarKey(
+          this.direction,
+          moving ? Math.floor(time / (running ? 80 : 130)) % 4 : 0,
+          progress.outfit,
+          progress.hat,
+        ),
       );
     this.footShadow.setPosition(this.player.x, this.player.y);
     this.playerBeacon.setPosition(this.player.x, this.player.y);
     this.occlusion?.update(this.player.x, this.player.y, this.player.depth);
     this.cutaway?.update(this.player, this.player.depth);
     for (const zone of this.current.exploration)
-      if (contains(zone, this.position)) this.discovered.add(zone.buildingId);
+      if (
+        contains(zone, this.position) &&
+        !this.discovered.has(zone.buildingId)
+      ) {
+        this.discovered.add(zone.buildingId);
+        this.bridge.progress.act({ type: "discover", id: zone.buildingId });
+      }
     if (time - this.lastEmit >= 100) {
       this.lastEmit = time;
+      this.journeyArt?.(this.position);
+      this.bridge.progress.locate({
+        ...this.position,
+        sceneId: this.current.id,
+        mapVersion: this.world.mapVersion,
+      });
       this.publish();
     }
   }
@@ -900,8 +1026,23 @@ export function createGame(
     },
     options,
   );
-  window.addEventListener("blur", () => bridge.clear(), options);
-  document.addEventListener("visibilitychange", () => bridge.clear(), options);
+  window.addEventListener(
+    "blur",
+    () => {
+      bridge.clear();
+      bridge.progress.save();
+    },
+    options,
+  );
+  window.addEventListener("pagehide", () => bridge.progress.save(), options);
+  document.addEventListener(
+    "visibilitychange",
+    () => {
+      bridge.clear();
+      bridge.progress.save();
+    },
+    options,
+  );
   document.addEventListener(
     "focusin",
     () => {
@@ -914,6 +1055,7 @@ export function createGame(
     observer.disconnect();
     bridge.clear();
     bridge.scene = undefined;
+    bridge.progress.save();
     game.destroy(true);
   };
 }

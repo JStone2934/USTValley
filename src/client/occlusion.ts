@@ -3,7 +3,11 @@ import type { SceneMap } from "../shared/world";
 
 // Sample only the few texels occupied by the actor. Large HD floor plans stay
 // in the image cache without allocating a second full-floor canvas or pixel array.
-export function actorOcclusion(scene: Phaser.Scene, map: SceneMap) {
+export function actorOcclusion(
+  scene: Phaser.Scene,
+  map: SceneMap,
+  key = "actor-foreground",
+) {
   const ratio = map.art.pixelRatio ?? 1;
   const layers = [
     ...(map.art.riseMap
@@ -22,8 +26,7 @@ export function actorOcclusion(scene: Phaser.Scene, map: SceneMap) {
   const shadowBelowFeet = Math.ceil((map.player.groundDepth * ratio) / 2);
   const width = Math.ceil(map.player.width * ratio) + 2,
     rows = Math.ceil(map.player.height * ratio) + shadowBelowFeet + 2;
-  const key = "actor-foreground",
-    texture = scene.textures.createCanvas(key, width, rows)!;
+  const texture = scene.textures.createCanvas(key, width, rows)!;
   const scratch = document.createElement("canvas");
   scratch.width = width;
   scratch.height = rows;

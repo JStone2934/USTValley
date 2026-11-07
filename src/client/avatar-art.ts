@@ -1,3 +1,4 @@
+import { outfits, type OutfitId, type HatId } from "../shared/journey";
 import type Phaser from "phaser";
 
 // Pixel clusters are drawn in an original 22 × 44 frame. The camera sets the
@@ -133,6 +134,7 @@ const sideCoat = [
 export function studentFrame(
   direction: StudentFacing,
   frame: number,
+  hat: HatId = "none",
 ): string[] {
   const pixels = Array.from({ length: avatarHeight }, () =>
     Array<string>(avatarWidth).fill("."),
@@ -166,18 +168,18 @@ export function studentFrame(
   function arm(x: number, travel: number, far = false) {
     const swing = side ? travel * 2 : 0,
       lift = side ? 0 : travel;
-    for (let y = 15; y < 25; y++) {
-      const dx = Math.round((swing * (y - 15)) / 10);
+    for (let y = 19; y < 29; y++) {
+      const dx = Math.round((swing * (y - 19)) / 10);
       stamp(
-        [far ? "RJR" : y < 18 ? "AjJ" : "jjR"],
+        [far ? "RJR" : y < 22 ? "AjJ" : "jjR"],
         x + dx,
-        y + bob + Math.round((lift * (y - 15)) / 10),
+        y + bob + Math.round((lift * (y - 19)) / 10),
       );
     }
     stamp(
       [far ? "RRR" : "RJR", far ? "sss" : "SLs", ".ss"],
       x + swing,
-      25 + bob + lift,
+      29 + bob + lift,
     );
   }
   leg(side ? 8 : 6, step, true);
@@ -186,21 +188,78 @@ export function studentFrame(
   stamp(
     side ? sideCoat : direction === "up" ? backCoat : frontCoat,
     3,
-    13 + bob,
+    17 + bob,
   );
   if (side) arm(9, step);
   else {
     arm(2, step);
     arm(17, -step, true);
   }
-  stamp(side ? hairSide : direction === "up" ? hairBack : hairFront, 4, bob);
+  const head = side ? hairSide : direction === "up" ? hairBack : hairFront;
+  const portraitHead = head.flatMap((row, y) => {
+    const widened = Array.from(
+      { length: 19 },
+      (_, x) =>
+        row[Math.min(row.length - 1, Math.floor((x * row.length) / 19))],
+    ).join("");
+    return [2, 4, 7, 11].includes(y) ? [widened, widened] : [widened];
+  });
+  stamp(portraitHead, 2, bob);
+  if (hat !== "none") {
+    const top =
+      hat === "cap"
+        ? [
+            "....CCCCCCCC....",
+            "...CCCCCCCCCC...",
+            "..ccCCCCCCCCcc..",
+            "..cccccccccccc..",
+            "......CCCCCCCCCC",
+          ]
+        : hat === "bucket"
+          ? [
+              "....CCCCCCCC....",
+              "...CCCCCCCCCC...",
+              "...ccCCCCCCcc...",
+              "..cccccccccccc..",
+              "CCCCCCCCCCCCCCCC",
+            ]
+          : [
+              ".....JJJJJJ.....",
+              "..JJjjjjjjJJJJ..",
+              ".JjjjjjjjjjjjJJ.",
+              "..RRRRRRRRRRRR..",
+            ];
+    stamp(top, 3, bob);
+  }
   return pixels.map((r) => (direction === "left" ? r.reverse() : r).join(""));
 }
 
-export function makeStudentAvatar(scene: Phaser.Scene) {
+export function avatarKey(
+  direction: string,
+  frame: number,
+  outfit: OutfitId = "clay",
+  hat: HatId = "none",
+) {
+  return outfit === "clay" && hat === "none"
+    ? `avatar-${direction}-${frame}`
+    : `avatar-${outfit}-${hat}-${direction}-${frame}`;
+}
+export function makeStudentAvatar(
+  scene: Phaser.Scene,
+  outfit: OutfitId = "clay",
+  hat: HatId = "none",
+) {
+  const colors = outfits.find((o) => o.id === outfit)!.colors;
+  const palette: Record<string, number> = {
+    ...studentPalette,
+    R: colors[0],
+    J: colors[1],
+    j: colors[2],
+    A: colors[3],
+  };
   for (const dir of ["down", "up", "left", "right"] as const)
     for (let frame = 0; frame < 4; frame++) {
-      const key = `avatar-${dir}-${frame}`;
+      const key = avatarKey(dir, frame, outfit, hat);
       if (scene.textures.exists(key)) continue;
       const texture = scene.textures.createCanvas(
         key,
@@ -210,10 +269,10 @@ export function makeStudentAvatar(scene: Phaser.Scene) {
       if (!texture) throw new Error(`Cannot allocate ${key}`);
       const context = texture.getContext(),
         image = context.createImageData(avatarWidth, avatarHeight);
-      studentFrame(dir, frame).forEach((row, y) =>
+      studentFrame(dir, frame, hat).forEach((row, y) =>
         [...row].forEach((p, x) => {
           if (p === ".") return;
-          const color = studentPalette[p],
+          const color = palette[p],
             i = (y * avatarWidth + x) * 4;
           image.data[i] = color >> 16;
           image.data[i + 1] = (color >> 8) & 255;

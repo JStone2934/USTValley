@@ -14,9 +14,9 @@ const wood = (x: number, y: number) => {
     u = (x + offsets[row]) % 24;
   const board = Math.floor((x + offsets[row]) / 24);
   const tone = (((row * 5 + board * 2) % 7) - 3) * 2;
-  if (lane === 0) return tone - 18;
+  if (lane === 0) return tone - 23;
   if (u === 0) return tone - 20;
-  if (lane === 1 && u > 2 && u < 19) return tone + 9;
+  if (lane === 1 && u > 2 && u < 19) return tone + 13;
   if (
     lane === 2 &&
     ((u > 6 && u < 15 && row % 3 === 1) || (u > 17 && u < 22 && row % 2 === 0))
@@ -76,10 +76,10 @@ const swatches = {
           : 0,
   ],
 
-  slab: [[192, 194, 178], stone],
+  slab: [[193, 191, 166], stone],
   passage: [[233, 214, 175], stone],
-  oak: [[199, 154, 104], wood],
-  teaching: [[206, 165, 119], wood],
+  oak: [[189, 136, 83], wood],
+  teaching: [[209, 162, 101], wood],
   office: [[149, 171, 177], cloth],
   laboratory: [
     [166, 197, 183],
@@ -150,9 +150,9 @@ const swatches = {
             : 0,
   ],
   wallCap: [[250, 231, 194], (x, y) => (x % 24 === 0 ? -12 : plaster(x, y))],
-  masonry: [[186, 192, 180], plaster],
+  masonry: [[204, 196, 171], plaster],
   dado: [
-    [124, 152, 148],
+    [111, 149, 130],
     (x, y) =>
       y % 11 === 0 || (x + Math.floor(y / 11) * 8) % 24 === 0
         ? -10

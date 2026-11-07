@@ -1,3 +1,11 @@
+import {
+  JourneyBook,
+  Wardrobe,
+  NpcDialogue,
+  JourneyNotices,
+  nextStep,
+} from "./journey-ui";
+import type { Npc } from "../shared/journey";
 import { OrbitView } from "./orbit-view";
 import { sundial } from "../shared/sundial";
 import React, {
@@ -22,6 +30,11 @@ const subscribe = (cb: () => void) => {
   return () => bridge.removeEventListener("change", cb);
 };
 const getSnapshot = () => bridge.snapshot;
+const subscribeJourney = (cb: () => void) => {
+  bridge.progress.addEventListener("change", cb);
+  return () => bridge.progress.removeEventListener("change", cb);
+};
+const getJourney = () => bridge.progress.snapshot;
 function WorldCanvas({ world }: { world: WorldMap }) {
   const element = useRef<HTMLDivElement>(null);
   useEffect(() => createGame(element.current!, world, bridge), [world]);
@@ -348,7 +361,11 @@ function App() {
   const [world, setWorld] = useState<WorldMap>();
   const [error, setError] = useState("");
   const [attempt, retry] = useState(0);
-  const [panel, setPanel] = useState<"map" | "guide" | "sundial" | null>(null);
+  const [panel, setPanel] = useState<
+    "map" | "guide" | "sundial" | "journal" | "wardrobe" | "npc" | null
+  >(null);
+  const journey = useSyncExternalStore(subscribeJourney, getJourney);
+  const [npc, setNpc] = useState<Npc>();
   const [orbit, setOrbit] = useState(false);
   const [references, setReferences] = useState(false);
   const snapshot = useSyncExternalStore(subscribe, getSnapshot);
@@ -359,9 +376,15 @@ function App() {
       setError("地图图像加载失败，请重试");
     };
     const observe = () => setPanel("sundial");
+    const speak = (event: Event) => {
+      setNpc((event as CustomEvent<Npc>).detail);
+      setPanel("npc");
+    };
+    bridge.addEventListener("npc-dialogue", speak);
     bridge.addEventListener(sundial.id, observe);
     bridge.addEventListener("loaderror", onError);
     return () => {
+      bridge.removeEventListener("npc-dialogue", speak);
       bridge.removeEventListener(sundial.id, observe);
       bridge.removeEventListener("loaderror", onError);
     };
@@ -402,6 +425,9 @@ function App() {
   return (
     <main
       className="app-shell"
+      data-coins={journey.progress.coins}
+      data-outfit={journey.progress.outfit}
+      data-hat={journey.progress.hat}
       data-scene={snapshot.sceneId}
       data-avatar-width={snapshot.avatarSize?.width}
       data-avatar-height={snapshot.avatarSize?.height}
@@ -424,7 +450,7 @@ function App() {
           </span>
         </a>
         <div className="chapter">
-          <span className="eyebrow">BUILD 0.5.8 / 立体像素校园</span>
+          <span className="eyebrow">BUILD 0.6.0 / 校园手账</span>
           <h1>
             从校园，
             <br />
@@ -438,14 +464,14 @@ function App() {
         </div>
         <div className="progress-card">
           <div>
-            <span>本次探索</span>
+            <span>校园足迹</span>
             <strong>
               {snapshot.discovered.length}
               <small> / 15</small>
             </strong>
           </div>
           <progress max="15" value={snapshot.discovered.length} />
-          <p>走入建筑内的绿色探索区，留下足迹。</p>
+          <p>走入绿色探索区，收下一枚建筑印记。</p>
         </div>
         <nav aria-label="校园工具">
           <button onClick={() => setPanel("map")} disabled={!world}>
@@ -456,11 +482,14 @@ function App() {
           </button>
         </nav>
         <div className="build-note">
-          <span className="status-dot" /> 几何重建 · 单机预览
+          <span className="status-dot" />{" "}
+          {journey.saveError ? "本次进度尚未保存" : "单机漫游 · 自动存档"}
           <p>
-            当前用于核对地图与操作。
+            {journey.saveError
+              ? "浏览器暂时无法保存，请保持页面打开。"
+              : "探索、奖励和外观保存在当前浏览器。"}
             <br />
-            账号、联机与奖励系统待实现。
+            不同设备的进度暂不互通。
           </p>
         </div>
         <footer>
@@ -478,7 +507,20 @@ function App() {
               <strong>{current?.name ?? "准备进入校园"}</strong>
             </span>
           </div>
-          <span className="day-tag">☀ 日间 · 自由漫游</span>
+          <div className="journey-toolbar">
+            <span
+              className="coin-pill"
+              aria-label={`探索币 ${journey.progress.coins}`}
+            >
+              ✦ {journey.progress.coins}
+            </span>
+            <button onClick={() => setPanel("journal")} disabled={!world}>
+              手账
+            </button>
+            <button onClick={() => setPanel("wardrobe")} disabled={!world}>
+              衣橱
+            </button>
+          </div>
           <button
             className="mobile-map"
             onClick={() => setPanel("map")}
@@ -487,6 +529,24 @@ function App() {
             地图
           </button>
         </header>
+        {journey.saveError && (
+          <p className="save-warning" role="status">
+            浏览器暂时无法保存，本次进度只保留到关闭页面。
+          </p>
+        )}
+        {world && (
+          <button
+            className="journey-ribbon"
+            onClick={() => setPanel("journal")}
+          >
+            <span className="ribbon-seal">✦</span>
+            <span>
+              <small>散步清单</small>
+              {nextStep(journey.progress)}
+            </span>
+            <b>打开手账 →</b>
+          </button>
+        )}
         <div className="world-frame">
           {world ? (
             <WorldCanvas world={world} />
@@ -508,6 +568,7 @@ function App() {
           )}
           {world && (
             <>
+              <JourneyNotices snapshot={journey} store={bridge.progress} />
               <div className="world-badge">
                 <span className="status-dot" />{" "}
                 {current?.floor.name === "室外"
@@ -714,7 +775,13 @@ function App() {
                   : "校园地图"
                 : panel === "sundial"
                   ? sundial.title
-                  : "漫游指南"}
+                  : panel === "journal"
+                    ? "校园手账"
+                    : panel === "wardrobe"
+                      ? "我的衣橱"
+                      : panel === "npc"
+                        ? "路上的朋友"
+                        : "漫游指南"}
             </h2>
           </div>
           <button aria-label="关闭面板" onClick={() => setPanel(null)}>
@@ -725,11 +792,37 @@ function App() {
           <Overview world={world} />
         ) : panel === "sundial" ? (
           <p className="guide">{sundial.note}</p>
+        ) : panel === "journal" && world ? (
+          <JourneyBook
+            progress={journey.progress}
+            world={world}
+            locate={
+              current?.id !== "campus_core"
+                ? undefined
+                : (id, kind) => {
+                    setPanel(null);
+                    bridge.pause(false);
+                    if (kind === "npc") bridge.focusNpc(id);
+                    else bridge.focusBuilding(id);
+                  }
+            }
+          />
+        ) : panel === "wardrobe" ? (
+          <Wardrobe progress={journey.progress} store={bridge.progress} />
+        ) : panel === "npc" && npc ? (
+          <NpcDialogue key={npc.id} npc={npc} close={() => setPanel(null)} />
         ) : (
           <div className="guide">
             <p>从 C2 学生活动中心附近出发，沿浅色步道探索校园。</p>
             <ol>
-              <li>使用 WASD、方向键或左侧触摸摇杆移动。</li>
+              <li>
+                使用 WASD、方向键或左侧触摸摇杆移动。靠近校园角色或木宝箱按 E
+                互动。
+              </li>
+              <li>
+                首次探索每栋建筑获得 5 枚探索币；宝箱每次 10 币，30
+                分钟后补充。任务奖励自动记录，探索币可在衣橱解锁服装与帽子。进度保存在当前浏览器，“回到广场”不会清空收藏。
+              </li>
               <li>电脑按住 Shift 奔跑，松开后恢复基础移动速度。</li>
               <li>
                 在地图上滚动鼠标滚轮放大或缩小；按住鼠标左键或中键拖动，切换到自由查看。触屏也可拖动地图。

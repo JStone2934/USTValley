@@ -22048,6 +22048,28 @@
         "width": 816,
         "height": 864
       },
+      "academicEnvelope": {
+        "reference": "User campus photograph, 2026-11-08",
+        "glass": "white-framed blue-green glazing",
+        "railing": "white vertical pickets, 1.1m",
+        "sourceFeatures": [
+          45179,
+          45178,
+          45105,
+          45180,
+          45182,
+          44821,
+          44825,
+          44847,
+          44823,
+          44820,
+          44819,
+          45181,
+          45102,
+          45103,
+          45104
+        ]
+      },
       "roomFinishes": {
         "washroom": 8,
         "teaching": 3,
@@ -22393,8 +22415,8 @@
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 39544,
-      "pixelSha256": "6f34a4fb964051203bffd46ac3782e5de0529d7ceb67fe269e770e518dc11d4f"
+      "triangles": 55747,
+      "pixelSha256": "62d15921ee9ee84b9d207eeb982379b32713486aa63844db98e35fccfcbd252e"
     },
     {
       "exteriorBackdrop": "survey-aligned-campus-cutaway",
@@ -22411,6 +22433,23 @@
       "logicalPixels": {
         "width": 784,
         "height": 864
+      },
+      "academicEnvelope": {
+        "reference": "User campus photograph, 2026-11-08",
+        "glass": "white-framed blue-green glazing",
+        "railing": "white vertical pickets, 1.1m",
+        "sourceFeatures": [
+          44924,
+          44923,
+          44909,
+          44915,
+          44908,
+          44914,
+          44925,
+          44918,
+          44922,
+          44932
+        ]
       },
       "roomFinishes": {
         "washroom": 2,
@@ -22576,8 +22615,8 @@
         "inferredSolidReturns": 0,
         "activeGlassBays": []
       },
-      "triangles": 17714,
-      "pixelSha256": "0ce5554133a3af5b32f9bc2bb5a8b9a440307739c214ce4104c7abe96d7db43a"
+      "triangles": 36782,
+      "pixelSha256": "4b35c7391a6296f2d2d4ac41f84b95ee43b61a1f0f74a64f8f772fd5127274e0"
     },
     {
       "exteriorBackdrop": "survey-aligned-campus-cutaway",

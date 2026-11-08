@@ -163,6 +163,17 @@ const swatches = {
     [151, 207, 211],
     (x, y) => ((x + y) % 24 < 2 ? 16 : (x + y) % 24 === 5 ? 8 : 0),
   ],
+  railWhite: [[249, 250, 241], () => 0],
+  campusGlass: [
+    [108, 167, 175],
+    (x, y) => {
+      const reflection = (x + Math.floor(y * 0.35)) % 48;
+      return reflection < 4 ? 31 : reflection < 9 ? 15 : y > 34 ? -13 : 0;
+    },
+  ],
+  vineLeaf: [[73, 118, 73], (x, y) => ((x + y) % 7 < 2 ? 12 : 0)],
+  flowerPink: [[217, 74, 146], (x, y) => ((x + y) % 5 < 2 ? 21 : 0)],
+  flowerRose: [[184, 58, 119], (x, y) => ((x + y) % 5 < 2 ? 17 : 0)],
   riser: [[110, 130, 137], (x, y) => (y % 12 === 0 ? -12 : 0)],
   tread: [[209, 197, 167], stoneChip],
   books: [[170, 138, 106], () => 0],

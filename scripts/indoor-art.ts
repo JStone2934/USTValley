@@ -1,3 +1,4 @@
+import { academicEnvelope } from "./academic-envelope.ts";
 import {
   fixedGlazing,
   inferredDoorReturns,
@@ -630,6 +631,8 @@ export function createIndoorBaker(root: string, sources: Sources) {
         .get("fixtures")!
         .push(...pointFixture(f, scale, f.kind === "coffee", material));
     }
+    const envelope = academicEnvelope(scene, material, polygonMesh);
+    if (envelope) groups.get("walls")!.push(...envelope.extras);
     const walls = scene.surfaces
       .filter((s) => s.kind === "wall" && !/玻璃/.test(s.sourceLayer))
       .flatMap((s) =>
@@ -665,6 +668,13 @@ export function createIndoorBaker(root: string, sources: Sources) {
       const visiblePolygons =
         s.kind === "wall" ? fixedGlazing(s, glassBays) : s.polygons;
       for (const polygon of visiblePolygons) {
+        const envelopeParts =
+          s.kind === "wall" ? envelope?.decorate(s, polygon) : undefined;
+        if (envelopeParts) {
+          target.push(...envelopeParts);
+          extruded++;
+          continue;
+        }
         const photoInk = photoFloorInk(scene, s);
         if (isLibraryTerrace(scene, s)) {
           target.push(...libraryTerrace(polygon, scale, material, polygonMesh));
@@ -882,6 +892,7 @@ export function createIndoorBaker(root: string, sources: Sources) {
               },
             }
           : {}),
+        academicEnvelope: envelope?.report,
         roomFinishes,
         inferredFittings,
         inferredCasework: scene.roomCasework?.length ?? 0,

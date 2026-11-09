@@ -6,3 +6,7 @@ playwright-report/
 *.sqlite*
 
 data/unpacked/
+
+data/private-photos/
+data/private-rebuild/
+.photo-work/

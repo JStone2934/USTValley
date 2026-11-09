@@ -1,3 +1,4 @@
+import { PhotoPanel } from "./photo-ui";
 import { recommendedTarget } from "../shared/guide";
 import {
   JourneyBook,
@@ -363,7 +364,14 @@ function App() {
   const [error, setError] = useState("");
   const [attempt, retry] = useState(0);
   const [panel, setPanel] = useState<
-    "map" | "guide" | "sundial" | "journal" | "wardrobe" | "npc" | null
+    | "photos"
+    | "map"
+    | "guide"
+    | "sundial"
+    | "journal"
+    | "wardrobe"
+    | "npc"
+    | null
   >(null);
   const journey = useSyncExternalStore(subscribeJourney, getJourney);
   const [npc, setNpc] = useState<Npc>();
@@ -479,6 +487,9 @@ function App() {
           <p>走入绿色探索区，收下一枚建筑印记。</p>
         </div>
         <nav aria-label="校园工具">
+          <button onClick={() => setPanel("photos")} disabled={!world}>
+            <span>◎</span> 上传实景
+          </button>
           <button onClick={() => setPanel("map")} disabled={!world}>
             <span>▦</span> 校园地图 <kbd>M</kbd>
           </button>
@@ -513,6 +524,13 @@ function App() {
             </span>
           </div>
           <div className="journey-toolbar">
+            <button
+              className="photo-mobile-entry"
+              onClick={() => setPanel("photos")}
+              disabled={!world}
+            >
+              上传实景
+            </button>
             <span
               className="coin-pill"
               aria-label={`探索币 ${journey.progress.coins}`}
@@ -817,26 +835,34 @@ function App() {
           <div>
             <span className="eyebrow">UST VALLEY / FIELD NOTES</span>
             <h2 id="panel-title">
-              {panel === "map"
-                ? current?.id !== "campus_core"
-                  ? `当前楼层地图 · ${current?.floor.name}`
-                  : "校园地图"
-                : panel === "sundial"
-                  ? sundial.title
-                  : panel === "journal"
-                    ? "校园手账"
-                    : panel === "wardrobe"
-                      ? "我的衣橱"
-                      : panel === "npc"
-                        ? "路上的朋友"
-                        : "漫游指南"}
+              {panel === "photos"
+                ? "实景照片与重建"
+                : panel === "map"
+                  ? current?.id !== "campus_core"
+                    ? `当前楼层地图 · ${current?.floor.name}`
+                    : "校园地图"
+                  : panel === "sundial"
+                    ? sundial.title
+                    : panel === "journal"
+                      ? "校园手账"
+                      : panel === "wardrobe"
+                        ? "我的衣橱"
+                        : panel === "npc"
+                          ? "路上的朋友"
+                          : "漫游指南"}
             </h2>
           </div>
           <button aria-label="关闭面板" onClick={() => setPanel(null)}>
             ×
           </button>
         </div>
-        {panel === "map" && world ? (
+        {panel === "photos" && world ? (
+          <PhotoPanel
+            world={world}
+            sceneId={snapshot.sceneId}
+            position={snapshot.position}
+          />
+        ) : panel === "map" && world ? (
           <Overview world={world} />
         ) : panel === "sundial" ? (
           <p className="guide">{sundial.note}</p>

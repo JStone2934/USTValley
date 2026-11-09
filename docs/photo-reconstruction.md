@@ -38,22 +38,22 @@ npm run photos:serve
 ## 交给 agent
 
 skill 的源版本位于 skills/ustvalley-photo-rebuild。将该目录安装到执行端 ~/.codex/skills/ 后，可用：
-“使用 $ustvalley-photo-rebuild 处理这份导出包，完成验证并提交审核分支。”
+“使用 $ustvalley-photo-rebuild 处理这份导出包，完成验证并汇入共享审核分支 photo-rebuild/review。”
 
 命令：
 
 ```sh
 npm run photo-rebuild -- prepare --bundle /private/export.zip --repo /path/to/repo
 npm run photo-rebuild -- verify --task /private/task
-# 在隔离工作区提交验证过的修改
-npm run photo-rebuild -- report --task /private/task
+# 在分离 HEAD 的隔离工作区提交验证过的修改
+npm run photo-rebuild -- report --task /private/task --publish
 ```
 
-prepare 使用明确基线创建独立 worktree。任务目录和照片不进入 Git。review.json 的逐张观察与截图必须来自实际检查，工具不会替 agent 假造视觉通过。verify 重建地图并执行测试，会拒绝建筑结构或通行数据变化。report 绑定代码指纹和标注内容；提交后若代码变化必须重验。
+prepare 拉取 origin/photo-rebuild/review，使用最新审核提交创建分离 HEAD 的独立 worktree，不为照片或批次新建分支。任务目录和照片不进入 Git。review.json 的逐张观察与截图必须来自实际检查，工具不会替 agent 假造视觉通过。verify 重建地图并执行测试，会拒绝建筑结构或通行数据变化。report 绑定代码指纹和标注内容；--publish 只把已验证提交快进到共享审核分支，不合入 main 或部署。提交后若代码变化必须重验。
 
 管理员先标记批次处理中，完成后导入 receipt.json。待审核不等于已用于重建；合入后同步本地 main，再在资料库确认采用版本。不同照片可以分别为 applied、unchanged、needs-evidence、failed。
 
-测试：npm run test:photos；npm run test:photos:e2e。服务端照片测试使用临时数据，不依赖真实私有照片。项目主页 README 继续聚焦地图展示。
+测试：npm run test:photos；npm run test:photos:e2e。服务端照片测试使用临时数据，不依赖真实私有照片。项目主页 README 展示真实地图和照片驱动重建。
 
 若失败后只需复查环境，且代码、标注和截图均未改变，可使用 verify --task 路径 --resume。成功检查仅在指纹一致时复用，失败日志保留，每轮记录独立；最多三轮。修改任何内容后必须完整验证。
 
@@ -62,3 +62,11 @@ prepare 使用明确基线创建独立 worktree。任务目录和照片不进入
 重建范围包括建筑本身，以及可辨认的桌椅、花盆、灯具、柜架、垃圾桶、标识、雕塑、展示板和墙饰。优先保证物品可识别并出现在合理区域，不要求首次摆放精确；位置、尺寸和朝向可以估计，并在更多照片到来后逐步修正。
 
 agent 会逐项记录物件清单，为每个实例保留稳定 objectId。近似落位可作为完成结果，不因缺少源地图编号或精确位置而搁置；新照片优先更新同一实例，避免重复。物件仍需正常落地或依附墙面、天花板、桌面，保持比例协调和通道畅通。细节规则见 skill 的 references/objects.md。
+
+## 统一审核分支
+
+统一入口为 photo-rebuild/review。每批照片保留自己的验证提交、回执与状态；多个批次进入同一审核队列，不再产生每张照片或每个批次的远程分支。
+
+并发任务若遇到共享分支先行更新，交付会停止。用原 prepare 参数加 --refresh 更新任务基线；它会重放本批次提交，冲突时自动中止并保留原提交。刷新成功后重新采集对照截图并完整 verify，再 report --publish。禁止强推和用旧验证结果提交整合后的代码。
+
+历史分支与回执继续保留用于追溯，新结果只汇入共享分支。已有 W1 重建结果已纳入此分支。管理员仍须在对应提交被 main 包含后逐批确认采用，不能因共享分支新增一个结果就把其他照片标为已用于重建。

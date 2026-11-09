@@ -285,7 +285,7 @@ test("private upload, originals, admin export and revision-safe receipts", async
       manifestHash,
       baseline: "a".repeat(40),
       commit: "b".repeat(40),
-      branch: "photo-rebuild/" + manifest.batchId,
+      branch: "photo-rebuild/review",
       status: "review",
       verification: { passed: true, reportHash: "c".repeat(64) },
       photos: [
@@ -318,6 +318,47 @@ test("private upload, originals, admin export and revision-safe receipts", async
       ).duplicate,
       true,
     );
+    // Two batches can share one review branch without replacing each other's receipt.
+    const secondExport = await req(
+      "admin/photos/export",
+      "POST",
+      { ids: [photo.id] },
+      adminHeaders,
+    );
+    assert.equal(secondExport.status, 200);
+    const secondZip = join(dir, "second.zip");
+    await writeFile(secondZip, Buffer.from(await secondExport.arrayBuffer()));
+    const secondBundle = await extractBundle(
+      secondZip,
+      join(dir, "second-extracted"),
+    );
+    const secondReceipt = {
+      ...receipt,
+      batchId: secondBundle.manifest.batchId,
+      manifestHash: secondBundle.manifestHash,
+      commit: "d".repeat(40),
+      photos: receipt.photos.map((p) => ({
+        ...p,
+        outcome: "unchanged",
+        summary: "Already represented",
+      })),
+    };
+    const secondImport = await req(
+      "admin/photo-batches/" + secondReceipt.batchId + "/receipt",
+      "POST",
+      secondReceipt,
+      adminHeaders,
+    );
+    assert.equal(secondImport.status, 200, await secondImport.clone().text());
+    const batches = (await (
+      await req("admin/photo-batches", "GET", undefined, adminHeaders)
+    ).json()) as any[];
+    for (const expected of [receipt, secondReceipt]) {
+      const stored = batches.find((b) => b.id === expected.batchId);
+      assert.equal(stored.status, "review");
+      assert.equal(JSON.parse(stored.receipt).commit, expected.commit);
+      assert.equal(JSON.parse(stored.receipt).branch, "photo-rebuild/review");
+    }
     assert.equal(
       (
         (await (

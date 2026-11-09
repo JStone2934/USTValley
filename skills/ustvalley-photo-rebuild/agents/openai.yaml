@@ -1,6 +1,6 @@
 interface:
   display_name: "USTValley 实景重建"
   short_description: "根据校园照片像素化建筑、物品和装饰，先合理布置再逐步校正"
-  default_prompt: "使用 $ustvalley-photo-rebuild 处理指定的校园照片资料包，识别建筑、物品和装饰，先像素化并合理布置，再完成验证和审核分支交付。"
+  default_prompt: "使用 $ustvalley-photo-rebuild 处理指定的校园照片资料包，识别建筑、物品和装饰，先像素化并合理布置，再完成验证和汇入共享审核分支 photo-rebuild/review。"
 policy:
   allow_implicit_invocation: true

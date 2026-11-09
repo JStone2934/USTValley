@@ -17,7 +17,7 @@ prepare 校验 ZIP 路径、条目数量、解压总量和文件哈希，不允�
 
 ## 私有任务目录
 
-- task.json：基线提交、worktree、审核分支、清单哈希和选中照片。
+- task.json：schemaVersion=2，最新共享审核基线、分离 HEAD worktree、固定目标 photo-rebuild/review、清单哈希和选中照片。
 - index.json：场景分组、重投影点和朝向。
 - contact-sheet.private.png：私有照片联系表，不得入库。
 - baseline-world.json：建筑结构与通行校验基线。
@@ -78,3 +78,9 @@ added／updated 必须提供 placement：
 新增对象无需 sourceId；objects 中存在实际已放置的对象时，sourceIds 可以为空。每个对象的生成配置必须进入地图生成流程，仅填写 objects 不算已实现。后续照片用相同 objectId 更新原实例的位置和细节。旧报告没有 objects 时仍能解析，新的私有报告会完整保留这些记录。
 
 示例：academic-f2-planter-01 是稳定实例ID；locationBasis 可写“按照片中的走廊边缘近似摆放”，scaleBasis 可写“参考角色与常见花盆高度估计”，accuracy 设 approximate。以后位置从 (430,510) 改到 (434,507)，仍使用同一ID，不再新增一个花盆。
+
+## 共享审核队列
+
+所有批次的回执 branch 都是 photo-rebuild/review，commit 是该批次验证过并已汇入队列的提交。共享分支不断累积，但批次、照片修订和采用状态仍分别核对。历史 photo-rebuild/<批次ID> 回执继续可解析，不据此创建新的独立分支。
+
+prepare --refresh 使用最新共享审核提交重放当前任务；成功后归档旧校验和回执，更新基线及重投影索引，清空视觉证据关联。必须重新采集对照并完整验证。共享分支推进不等于合入 main，照片仍须经过管理员确认采用。

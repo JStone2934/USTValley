@@ -1,5 +1,13 @@
+import { PHOTO_REVIEW_BRANCH } from "../src/shared/photo-review-branch.ts";
+import {
+  reviewTip,
+  createReviewWorktree,
+  refreshReviewWorktree,
+  deliverReviewCommit,
+} from "./photo-review-branch.ts";
 import {
   readFile,
+  copyFile,
   writeFile,
   mkdir,
   mkdtemp,
@@ -146,12 +154,13 @@ function structural(world: WorldMap) {
 if (command === "prepare") {
   const bundle = arg("bundle");
   if (!bundle) throw new Error("--bundle <export.zip> is required");
-  const base = exec("git", ["rev-parse", arg("baseline") ?? "HEAD"]);
+  const requestedBase = arg("baseline")
+    ? exec("git", ["rev-parse", arg("baseline")!])
+    : undefined;
   const privateRoot = resolve(arg("out") ?? join(repo, "data/private-rebuild"));
   await mkdir(privateRoot, { recursive: true, mode: 0o700 });
   const staging = await mkdtemp(join(privateRoot, ".prepare-"));
   let createdWorktree: string | undefined;
-  let createdBranch: string | undefined;
   try {
     const result = await extractBundle(
       resolve(bundle),
@@ -170,20 +179,86 @@ if (command === "prepare") {
       const existing = await json(join(dir, "task.json"));
       if (
         existing.manifestHash !== manifestHash ||
-        existing.baseline !== base ||
+        (requestedBase !== undefined && existing.baseline !== requestedBase) ||
         JSON.stringify(existing.selected) !==
           JSON.stringify(selected.map((p) => p.id))
       )
         throw new Error(
           "Existing batch, baseline or selection differs; export a new batch",
         );
+      if (
+        existing.schemaVersion !== 2 ||
+        existing.branch !== PHOTO_REVIEW_BRANCH
+      )
+        throw new Error(
+          "Legacy per-batch task: preserve its history and export a new batch on the shared review branch",
+        );
+      if (args.includes("--refresh")) {
+        const refreshed = refreshReviewWorktree(
+          existing.worktree,
+          existing.baseline,
+        );
+        if (refreshed.changed) {
+          const history = join(dir, "history", "refresh-" + Date.now());
+          await mkdir(history, { recursive: true, mode: 0o700 });
+          for (const name of [
+            "task.json",
+            "baseline-world.json",
+            "review.json",
+            "index.json",
+            "verification.json",
+            "receipt.json",
+            "report.private.json",
+            "summary.public.md",
+          ]) {
+            try {
+              await copyFile(join(dir, name), join(history, name));
+            } catch (e) {
+              if ((e as NodeJS.ErrnoException).code !== "ENOENT") throw e;
+            }
+          }
+          for (const name of [
+            "verification.json",
+            "receipt.json",
+            "report.private.json",
+            "summary.public.md",
+          ])
+            await rm(join(dir, name), { force: true });
+          const latest: WorldMap = JSON.parse(
+            exec("git", ["show", refreshed.tip + ":public/maps/world.json"]),
+          );
+          const oldReview = await json(join(history, "review.json"));
+          for (const p of oldReview.photos) delete p.evidence;
+          await put(join(dir, "review.json"), oldReview);
+          await put(join(dir, "baseline-world.json"), latest);
+          await put(
+            join(dir, "index.json"),
+            selected.map((p) => ({
+              id: p.id,
+              sceneId: p.pose.sceneId,
+              floorKey: p.pose.floorKey,
+              heading: p.pose.heading,
+              location: reproject(latest, p.pose),
+              status: reproject(latest, p.pose) ? "pending" : "needs-evidence",
+            })),
+          );
+          await put(join(dir, "task.json"), {
+            ...existing,
+            baseline: refreshed.tip,
+            refreshedAt: Date.now(),
+          });
+        }
+      }
       await rm(staging, { recursive: true, force: true });
       console.log(dir);
       process.exit(0);
     } catch (e) {
       if ((e as NodeJS.ErrnoException).code !== "ENOENT") throw e;
     }
-    const branch = "photo-rebuild/" + manifest.batchId,
+    const base = reviewTip(repo);
+    if (requestedBase && requestedBase !== base)
+      throw new Error("New tasks must start from the latest shared review tip");
+    const branch = PHOTO_REVIEW_BRANCH,
       worktree = resolve(
         arg("worktree") ??
           join(dirname(repo), ".ustvalley-rebuild", manifest.batchId),
@@ -241,9 +316,8 @@ if (command === "prepare") {
       .png()
       .toFile(join(staging, "contact-sheet.private.png"));
     await mkdir(dirname(worktree), { recursive: true });
-    exec("git", ["worktree", "add", "-b", branch, worktree, base]);
+    createReviewWorktree(repo, worktree, base);
     createdWorktree = worktree;
-    createdBranch = branch;
     try {
       await symlink(
         join(repo, "node_modules"),
@@ -254,7 +328,7 @@ if (command === "prepare") {
       if ((e as NodeJS.ErrnoException).code !== "EEXIST") throw e;
     }
     await put(join(staging, "task.json"), {
-      schemaVersion: 1,
+      schemaVersion: 2,
       batchId: manifest.batchId,
       manifestHash,
       baseline: base,
@@ -280,10 +354,8 @@ if (command === "prepare") {
     console.log(JSON.stringify({ task: dir, worktree, branch }, null, 2));
   } catch (e) {
     await rm(staging, { recursive: true, force: true });
-    if (createdWorktree && createdBranch) {
+    if (createdWorktree)
       exec("git", ["worktree", "remove", "--force", createdWorktree]);
-      exec("git", ["branch", "-D", createdBranch]);
-    }
     throw e;
   }
 } else if (command === "verify") {
@@ -450,8 +522,18 @@ if (command === "prepare") {
   if (status.some((line) => !(line === "?? node_modules" && dependencyLink)))
     throw new Error("Commit verified changes before producing final receipt");
   const commit = exec("git", ["rev-parse", "HEAD"], cwd),
-    branch = exec("git", ["branch", "--show-current"], cwd);
-  if (branch !== task.branch) throw new Error("Unexpected review branch");
+    localBranch = exec("git", ["branch", "--show-current"], cwd),
+    branch = PHOTO_REVIEW_BRANCH;
+  if (
+    task.schemaVersion !== 2 ||
+    task.branch !== branch ||
+    (localBranch && localBranch !== branch)
+  )
+    throw new Error("Expected an isolated task for the shared review branch");
+  if (verified.baseline !== task.baseline || verified.batchId !== task.batchId)
+    throw new Error("Verification baseline or batch differs; run full verify");
+  if (verified.passed)
+    deliverReviewCommit(cwd, task.baseline, commit, args.includes("--publish"));
   const outcome = verified.passed
     ? r.photos.some((p) => p.outcome === "applied") ||
       r.photos.every((p) => p.outcome === "unchanged")
@@ -492,6 +574,8 @@ if (command === "prepare") {
       task.batchId +
       "\n\nBaseline: " +
       task.baseline +
+      "\n\nReview branch: " +
+      branch +
       "\n\nResult: " +
       commit +
       "\n\nVerification: " +
@@ -514,5 +598,5 @@ if (command === "prepare") {
   );
 } else
   throw new Error(
-    "Usage: npm run photo-rebuild -- prepare --bundle export.zip [--repo path] [--scene id] [--building C3] | verify --task directory | report --task directory",
+    "Usage: npm run photo-rebuild -- prepare --bundle export.zip [--repo path] [--scene id] [--building C3] [--refresh] | verify --task directory | report --task directory [--publish]",
   );

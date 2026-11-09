@@ -7,6 +7,7 @@
 - scripts/library-photo-art.ts、scripts/room-casework.ts：图书馆设施和家具，可复用其构件与像素表达补充照片中的陈设。
 - scripts/campus-landmarks.ts、scripts/gltf.ts：室外源模型、材质和渲染。
 - src/shared/fixtures.ts、src/shared/world.ts：设施碰撞、落地及可达性；不要绕过门墙检查。
+- scripts/photo-review-branch.ts：共享审核分支的拉取、分离工作区、基线刷新与只允许快进的交付。
 - scripts/build-maps.ts：生成世界、层图、遮挡及环视资源。生成器会清理 public/maps 中未声明文件，不在此目录放照片或临时对照图。
 
 ## 当前已知场景

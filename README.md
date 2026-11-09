@@ -57,7 +57,9 @@ _这里是建筑特征与材质的不同视角对照。现有建筑细化展示�
 1. **告诉地图你在哪里拍摄。** 使用角色当前位置，或在校园／楼层地图上选点，确认楼层和镜头朝向。点位标注的是拍摄者位置。
 2. **上传照片，补充现场信息。** 可上传 JPG、PNG、WebP、HEIC/HEIF。多角度照片和简单说明，有助于判断物品、材质与相对位置。
 3. **由 Agent 制作场景更新。** 维护者导出带位置与方向的资料包，交给项目专用的 `ustvalley-photo-rebuild` skill。Agent 对照现有地图，生成或调整建筑表面、家具、设备和装饰，并同步局部碰撞与遮挡。
-4. **检查、审核，再逐步完善。** 重新构建地图，对照修改前后的画面，检查落地、穿墙和通行。通过后提交独立审核分支；维护者审核合入后，才确认照片被用于这一版地图。新照片继续修正已有物件。
+4. **检查、审核，再逐步完善。** 重新构建地图，对照修改前后的画面，检查落地、穿墙和通行。通过后提交共享审核分支 `photo-rebuild/review`；维护者审核合入后，才确认照片被用于这一版地图。新照片继续修正已有物件。
+
+所有照片任务统一进入 `photo-rebuild/review` 审核，不按照片或批次另开分支；各批次的提交、验证结果与采用状态仍分别记录。
 
 当前上传不会直接触发线上地图自动替换。照片资料默认只对上传者所在浏览器及管理员可见；本页实景图由维护者明确提供用于公开展示。重建优先保证物品可识别、位置合理，不承诺从单张照片恢复精确尺寸或完整三维模型。墙体、门洞、楼梯和楼层连接等结构调整需要另行确认。
 
@@ -106,14 +108,14 @@ _不同楼层拥有各自的轮廓和标高，室内图保留周边校园作为�
 
 ## 当前进度与入口
 
-**main 提供基础校园地图；照片采集与 Agent 重建已在功能分支实现并完成真实照片演练，场景更新通过独立分支审核。** 本次首页更新展示这条工作流程，不代表功能分支已自动合入 main。
+**main 提供基础校园地图；照片采集与 Agent 重建已完成真实照片演练，场景更新统一汇入共享分支 `photo-rebuild/review` 审核。** 相关工具和场景更新仍在共享审核分支中，尚未自动合入 main。
 
 | 内容 | 入口 |
 | --- | --- |
 | 基础地图与生成代码 | 当前 `main` 分支 |
-| 照片上传、私有资料库及部署说明 | [feat/photo-reconstruction](https://github.com/JStone2934/USTValley/tree/feat/photo-reconstruction) · [使用说明](https://github.com/JStone2934/USTValley/blob/feat/photo-reconstruction/docs/photo-reconstruction.md) |
-| Agent 重建工作流 | [ustvalley-photo-rebuild / SKILL.md](https://github.com/JStone2934/USTValley/blob/feat/photo-reconstruction/skills/ustvalley-photo-rebuild/SKILL.md) |
-| W1 最新场景校正 | [layout/w1-open-floors](https://github.com/JStone2934/USTValley/tree/layout/w1-open-floors) · [图文记录](https://github.com/JStone2934/USTValley/blob/layout/w1-open-floors/docs/w1-open-floors.md) |
+| 照片上传、私有资料库及部署说明 | [photo-rebuild/review](https://github.com/JStone2934/USTValley/tree/photo-rebuild/review) · [使用说明](https://github.com/JStone2934/USTValley/blob/photo-rebuild/review/docs/photo-reconstruction.md) |
+| Agent 重建工作流 | [ustvalley-photo-rebuild / SKILL.md](https://github.com/JStone2934/USTValley/blob/photo-rebuild/review/skills/ustvalley-photo-rebuild/SKILL.md) |
+| W1 最新场景校正 | [photo-rebuild/review](https://github.com/JStone2934/USTValley/tree/photo-rebuild/review) · [图文记录](https://github.com/JStone2934/USTValley/blob/photo-rebuild/review/docs/w1-open-floors.md) |
 
 ### 运行基础地图
 
@@ -126,9 +128,9 @@ npm run maps:verify           # 重新生成并逐字节核对地图产物
 npm run build                 # 校验地图、类型检查并构建网站
 ```
 
-照片采集需使用上述功能分支并启动照片服务，具体步骤见对应使用说明。维护者导出资料包后，可向执行端 Agent 发出：
+照片采集需使用上述共享审核分支并启动照片服务，具体步骤见对应使用说明。维护者导出资料包后，可向执行端 Agent 发出：
 
-> 使用 $ustvalley-photo-rebuild，处理这份照片资料包，将可辨认的建筑细节、物品和装饰更新到对应场景，完成验证并提交审核分支。
+> 使用 $ustvalley-photo-rebuild，处理这份照片资料包，将可辨认的建筑细节、物品和装饰更新到对应场景，完成验证并汇入共享审核分支 photo-rebuild/review。
 
 更多资料：[地图重建报告](docs/map-reconstruction-report.md) · [构建记录](content/map-build-report.json) · [实景参考](docs/campus-photo-references.md) · [全部室内场景](public/maps/interior-catalog.png)。
 

@@ -1,3 +1,4 @@
+import { applyW1Layout } from "./w1-layout-override.ts";
 import { fitPhotoProps } from "./photo-prop-art.ts";
 import { doorCollision } from "../src/shared/doors.ts";
 import { fixedGlazing } from "./doorway-art.ts";
@@ -853,6 +854,7 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
   for (const scene of topology.scenes)
     fitRoomCasework(scene, sources[scene.sourceMap]);
   for (const scene of world.scenes) fitEntranceSills(scene);
+  for (const scene of world.scenes) applyW1Layout(scene);
   for (const scene of world.scenes) fitPhotoProps(scene);
   validateWorld(world);
   const report = {
@@ -1137,6 +1139,36 @@ export function tiledMap(scene: SceneMap, mapVersion: string) {
       type: "objectgroup",
       objects: objects(scene[name]),
     })),
+    ...(scene.w1Layout
+      ? [
+          {
+            name: "walk_platforms",
+            type: "objectgroup",
+            visible: false,
+            objects: scene.w1Layout.platforms.flatMap((p) =>
+              p.polygons.map((poly) => ({
+                id: nextObject++,
+                name: p.id,
+                x: 0,
+                y: 0,
+                polygon: poly[0].map(imagePoint),
+                properties: [
+                  {
+                    name: "heightMeters",
+                    type: "float",
+                    value: p.heightMeters,
+                  },
+                  {
+                    name: "holes",
+                    type: "string",
+                    value: ringProperty(poly.slice(1)),
+                  },
+                ],
+              })),
+            ),
+          },
+        ]
+      : []),
     ...(scene.fixtureCollision
       ? [
           {

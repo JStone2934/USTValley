@@ -444,6 +444,8 @@ function App() {
       data-guide-points={JSON.stringify(snapshot.guide?.points ?? [])}
       data-avatar-width={snapshot.avatarSize?.width}
       data-avatar-height={snapshot.avatarSize?.height}
+      data-avatar-foot-y={snapshot.avatarFootY}
+      data-support-height={snapshot.supportHeight ?? 0}
       data-camera-mode={snapshot.cameraMode}
       data-camera-x={snapshot.cameraCenter?.x}
       data-camera-y={snapshot.cameraCenter?.y}
@@ -463,7 +465,7 @@ function App() {
           </span>
         </a>
         <div className="chapter">
-          <span className="eyebrow">BUILD 0.6.1 / 校园漫步</span>
+          <span className="eyebrow">BUILD 0.6.2 / 校园漫步</span>
           <h1>
             从校园，
             <br />

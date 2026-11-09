@@ -1,3 +1,4 @@
+import { w1LayoutArt } from "./w1-layout-art.ts";
 import { photoPropArt } from "./photo-prop-art.ts";
 import { academicEnvelope } from "./academic-envelope.ts";
 import {
@@ -622,6 +623,9 @@ export function createIndoorBaker(root: string, sources: Sources) {
       addShadow([item.footprint], 1.05 * scale, "fixtures");
       groups.get("fixtures")!.push(...caseworkMesh(item, scale, material));
     }
+    const layoutArt = w1LayoutArt(scene, materials, polygonMesh);
+    groups.get("rooms")!.push(...layoutArt.floor);
+    groups.get("fixtures")!.push(...layoutArt.fixtures);
     const photoArt = photoPropArt(scene, materials);
     groups.get("fixtures")!.push(...photoArt.fixtures);
     groups.get("rooms")!.push(...photoArt.floor);

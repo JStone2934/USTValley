@@ -1,3 +1,5 @@
+import { photoProps } from "../../src/shared/photo-props";
+import { newProgress } from "../../src/shared/journey";
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import type { WorldMap } from "../../src/shared/world";
@@ -50,40 +52,28 @@ test("C7 F2 bookshelf stops the avatar; the adjoining aisle remains walkable", a
   expect(await position(page, "x")).toBeGreaterThan(stopped + 5);
 });
 
-test("W1 F6 photo hoist blocks walking while the surrounding lab aisle remains open", async ({
+test("W1 F6 photo hoist blocks walking after open-plan relocation", async ({
   page,
 }) => {
-  await page.clock.install();
-  await page.addInitScript(() =>
-    localStorage.setItem(
-      "ustvalley.journey.v1",
-      JSON.stringify({
-        schema: 1,
-        coins: 0,
-        discovered: [],
-        talked: [],
-        observations: [],
-        completed: [],
-        chestReadyAt: {},
-        chestsOpened: 0,
-        ownedOutfits: ["clay"],
-        ownedHats: ["none"],
-        outfit: "clay",
-        hat: "none",
-        location: {
-          sceneId: "interior_west_f6",
-          mapVersion: "core-pixel-3d-0.6.1",
-          x: 605,
-          y: 1125,
-        },
-      }),
+  const w = JSON.parse(
+    readFileSync(
+      new URL("../../public/maps/world.json", import.meta.url),
+      "utf8",
     ),
+  ) as WorldMap;
+  const s = w.scenes.find((s) => s.id === "interior_west_f6")!,
+    hoist = photoProps(s).find((p) => p.kind === "hoist")!;
+  const start = { x: hoist.x, y: hoist.y + 14 };
+  await page.clock.install();
+  await page.addInitScript(
+    (p) => localStorage.setItem("ustvalley.journey.v1", JSON.stringify(p)),
+    {
+      ...newProgress(),
+      location: { sceneId: s.id, mapVersion: w.mapVersion, ...start },
+    },
   );
   await page.goto("/");
-  await expect(page.locator("main")).toHaveAttribute(
-    "data-scene",
-    "interior_west_f6",
-  );
+  await expect(page.locator("main")).toHaveAttribute("data-scene", s.id);
   await page.clock.pauseAt(new Date(Date.now() + 1000));
   const walk = async (key: string, ms: number) => {
     await page.keyboard.down(key);
@@ -91,13 +81,14 @@ test("W1 F6 photo hoist blocks walking while the surrounding lab aisle remains o
     await page.keyboard.up(key);
     await page.clock.runFor(150);
   };
-  await walk("w", 1600);
+  await walk("w", 1800);
   const stopped = await position(page, "y");
-  expect(stopped).toBeGreaterThan(1112);
-  expect(stopped).toBeLessThan(1122);
+  expect(stopped).toBeGreaterThan(hoist.y + 4);
+  expect(stopped).toBeLessThan(hoist.y + 13);
   await walk("w", 500);
   expect(await position(page, "y")).toBeCloseTo(stopped, 1);
-  await walk("s", 600);
+  await page.screenshot({ path: "test-results/w1-f6-equipment-closeup.png" });
+  await walk("s", 650);
   await walk("a", 900);
-  expect(await position(page, "x")).toBeLessThan(598);
+  expect(await position(page, "x")).toBeLessThan(start.x - 4);
 });

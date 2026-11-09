@@ -42,13 +42,15 @@ export function actorOcclusion(
     .setOrigin(0)
     .setScale(1 / ratio);
   let lastX = Infinity,
-    lastY = Infinity;
+    lastY = Infinity,
+    lastSupport = Infinity;
   return {
-    update(footX: number, footY: number, depth: number) {
+    update(footX: number, footY: number, depth: number, supportRise = 0) {
       const x0 = Math.floor(footX * ratio - width / 2),
         y0 = Math.round(footY * ratio) - rows + shadowBelowFeet + 1;
       if (sprite.depth !== depth + 0.02) sprite.setDepth(depth + 0.02);
-      if (lastX === x0 && lastY === y0) return;
+      if (lastX === x0 && lastY === y0 && lastSupport === supportRise) return;
+      lastSupport = supportRise;
       lastX = x0;
       lastY = y0;
       let any = false;
@@ -70,9 +72,9 @@ export function actorOcclusion(
             const i = (row * width + col) * 4,
               rise = heights[i] / 8;
             if (
-              rise < 0.5 ||
+              rise < supportRise + 0.5 ||
               !colors[i + 3] ||
-              (y0 + row + 0.5) / ratio + rise <= footY + 0.2
+              (y0 + row + 0.5) / ratio + rise <= footY + supportRise + 0.2
             )
               continue;
             overlay.data.set(colors.subarray(i, i + 4), i);

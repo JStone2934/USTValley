@@ -1,3 +1,4 @@
+import { supportHeightMeters } from "../shared/w1-layout";
 import { GuideController } from "./guide-controller";
 import { routeDots, type GuideRoute, type GuideTarget } from "../shared/guide";
 import { ProgressStore } from "./progress-store";
@@ -62,6 +63,8 @@ export type Snapshot = {
   avatarSize?: { width: number; height: number };
   floorImages?: string[];
   stairMarkers?: number;
+  supportHeight?: number;
+  avatarFootY?: number;
 };
 export class GameBridge extends EventTarget {
   orbit?: {
@@ -823,6 +826,8 @@ export class CampusScene extends Phaser.Scene {
       canObserveSundial(this.current, this.position);
     this.bridge.emit({
       sceneId: this.current.id,
+      supportHeight: supportHeightMeters(this.current, this.position),
+      avatarFootY: this.player.y,
       guide: this.guide?.route,
       position: { ...this.position },
       discovered: [...this.discovered],
@@ -930,10 +935,14 @@ export class CampusScene extends Phaser.Scene {
     }
     this.bridge.actor = { position: { ...this.position }, moving };
     const density = this.current.art.pixelRatio ?? 1;
+    const supportRise =
+      supportHeightMeters(this.current, this.position) *
+      this.current.units.pixelsPerMeter *
+      this.current.units.heightProjection;
     this.player
       .setPosition(
         Math.round(this.position.x * density) / density,
-        Math.round(this.position.y * density) / density,
+        Math.round((this.position.y - supportRise) * density) / density,
       )
       .setDepth(6000 + this.position.y + 0.1)
       .setTexture(
@@ -946,7 +955,12 @@ export class CampusScene extends Phaser.Scene {
       );
     this.footShadow.setPosition(this.player.x, this.player.y);
     this.playerBeacon.setPosition(this.player.x, this.player.y);
-    this.occlusion?.update(this.player.x, this.player.y, this.player.depth);
+    this.occlusion?.update(
+      this.player.x,
+      this.player.y,
+      this.player.depth,
+      supportRise,
+    );
     this.cutaway?.update(this.player, this.player.depth);
     for (const zone of this.current.exploration)
       if (

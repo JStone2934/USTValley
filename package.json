@@ -1,6 +1,6 @@
 {
   "name": "ustvalley",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "private": true,
   "type": "module",
   "engines": {
@@ -52,6 +52,7 @@
     "@types/three": "0.187.0",
     "@types/yauzl": "^3.4.0",
     "@types/yazl": "^3.3.1",
+    "polygon-clipping": "0.15.7",
     "tsx": "4.23.15",
     "typescript": "5.9.3",
     "vite": "7.3.7"

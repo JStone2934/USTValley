@@ -1,3 +1,4 @@
+import { supportHeightMeters } from "../src/shared/w1-layout.ts";
 import type { SceneMap } from "../src/shared/world.ts";
 import {
   photoProps,
@@ -62,7 +63,7 @@ export function photoPropArt(scene: SceneMap, materials: RasterMaterial[]) {
       s = scene.units.pixelsPerMeter;
     const vertex = (x: number, y: number, z: number): Vec3 => {
       const q = propPoint(scene, p, x, y);
-      return [q.x, q.y, z * s];
+      return [q.x, q.y, (z + supportHeightMeters(scene, p)) * s];
     };
     const box = (
       x: number,

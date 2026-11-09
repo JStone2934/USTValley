@@ -1,5 +1,5 @@
 {
-  "mapVersion": "core-pixel-3d-0.6.1",
+  "mapVersion": "core-pixel-3d-0.6.2",
   "status": "source-geometry-reconstructed",
   "fixtureOccupancy": [
     {
@@ -17632,11 +17632,11 @@
         "height": 1360
       },
       "roomFinishes": {
-        "laboratory": 16,
+        "laboratory": 14,
         "office": 64,
         "washroom": 18,
-        "teaching": 10,
-        "neutral": 97,
+        "teaching": 5,
+        "neutral": 95,
         "plant": 33
       },
       "inferredFittings": [
@@ -17663,18 +17663,6 @@
           "kind": "instruments",
           "x": 454.4369515710268,
           "y": 819.7068803855157
-        },
-        {
-          "featureId": 636385,
-          "kind": "instruments",
-          "x": 389.51429819499145,
-          "y": 1162.7935843823207
-        },
-        {
-          "featureId": 636394,
-          "kind": "instruments",
-          "x": 404.5842981949914,
-          "y": 1251.0285843823208
         },
         {
           "featureId": 636435,
@@ -18073,24 +18061,6 @@
           "y": 84.90551794641311
         },
         {
-          "featureId": 636386,
-          "kind": "blackboard",
-          "x": 278.05415728865614,
-          "y": 1205.7686195236377
-        },
-        {
-          "featureId": 636387,
-          "kind": "blackboard",
-          "x": 610.3803978126383,
-          "y": 1125.858309105856
-        },
-        {
-          "featureId": 636402,
-          "kind": "blackboard",
-          "x": 529.1682879519814,
-          "y": 1198.3063366909237
-        },
-        {
           "featureId": 619314,
           "kind": "noticeboard",
           "x": 756.1582577721437,
@@ -18159,26 +18129,8 @@
         {
           "featureId": 499662,
           "kind": "patchbay",
-          "x": 151.22446684078832,
-          "y": 1204.828542283234
-        },
-        {
-          "featureId": 499665,
-          "kind": "patchbay",
-          "x": 100.93422567723566,
-          "y": 1221.0936024716473
-        },
-        {
-          "featureId": 499666,
-          "kind": "patchbay",
-          "x": 103.50889253303764,
-          "y": 1231.3986854706905
-        },
-        {
-          "featureId": 499667,
-          "kind": "patchbay",
-          "x": 107.17982565314828,
-          "y": 1246.1134525688988
+          "x": 142.14634696624074,
+          "y": 1207.095877251901
         },
         {
           "featureId": 499672,
@@ -18259,21 +18211,8 @@
           "y": 428.90189056148256
         }
       ],
-      "inferredCasework": 36,
-      "pointFixtures": [
-        {
-          "x": 407.81324621727765,
-          "y": 1183.3390108934268,
-          "sourceId": 622065,
-          "kind": "first-aid",
-          "cells": [
-            68541,
-            68542,
-            68773,
-            68774
-          ]
-        }
-      ],
+      "inferredCasework": 34,
+      "pointFixtures": [],
       "sourceModelInstances": 23,
       "sourceModels": [
         {
@@ -18415,17 +18354,17 @@
           "triangles": 154
         }
       ],
-      "extrudedPolygons": 93,
+      "extrudedPolygons": 109,
       "steppedStairs": 30,
       "openings": {
-        "sourceJambs": 69,
+        "sourceJambs": 65,
         "roomEdges": 14,
         "entranceSills": 0,
         "inferredSolidReturns": 19,
         "activeGlassBays": []
       },
-      "triangles": 80745,
-      "pixelSha256": "7d64cbfce7202fe4c07ae6780ee17d0538dbb81d98e400f3578f5520945c7500"
+      "triangles": 80596,
+      "pixelSha256": "e8f8e76608c02b93ff04d5a58604ba7293bbfb42db2333c2ce2bfb68990d5237"
     },
     {
       "exteriorBackdrop": "survey-aligned-campus-cutaway",
@@ -18448,7 +18387,7 @@
         "office": 56,
         "teaching": 4,
         "washroom": 18,
-        "neutral": 105,
+        "neutral": 100,
         "plant": 35
       },
       "inferredFittings": [
@@ -18489,22 +18428,10 @@
           "y": 849.1618641156114
         },
         {
-          "featureId": 620338,
-          "kind": "instruments",
-          "x": 438.39916185448214,
-          "y": 1109.0286183854175
-        },
-        {
           "featureId": 620339,
           "kind": "instruments",
           "x": 143.0742326901877,
           "y": 1206.868600722638
-        },
-        {
-          "featureId": 620340,
-          "kind": "instruments",
-          "x": 315.2843835662219,
-          "y": 1139.7735630764876
         },
         {
           "featureId": 620343,
@@ -18951,24 +18878,6 @@
           "y": 933.3918087385857
         },
         {
-          "featureId": 574651,
-          "kind": "patchbay",
-          "x": 100.93915918763648,
-          "y": 1221.0936190502425
-        },
-        {
-          "featureId": 574652,
-          "kind": "patchbay",
-          "x": 103.50862580243057,
-          "y": 1231.4037518019513
-        },
-        {
-          "featureId": 574653,
-          "kind": "patchbay",
-          "x": 107.17955897277038,
-          "y": 1246.1185192660373
-        },
-        {
           "featureId": 574654,
           "kind": "patchbay",
           "x": 50.83815444261782,
@@ -19031,8 +18940,8 @@
         {
           "featureId": 574783,
           "kind": "patchbay",
-          "x": 690.4141313712428,
-          "y": 1117.863625984021
+          "x": 688.0767564565464,
+          "y": 1118.446210962759
         },
         {
           "featureId": 574789,
@@ -19060,21 +18969,8 @@
         }
       ],
       "inferredCasework": 38,
-      "pointFixtures": [
-        {
-          "x": 435.1243506256652,
-          "y": 1187.6979913337216,
-          "sourceId": 622070,
-          "kind": "first-aid",
-          "cells": [
-            67596,
-            67597,
-            67824,
-            67825
-          ]
-        }
-      ],
-      "sourceModelInstances": 21,
+      "pointFixtures": [],
+      "sourceModelInstances": 20,
       "sourceModels": [
         {
           "featureId": 621924,
@@ -19084,12 +18980,6 @@
         },
         {
           "featureId": 622084,
-          "sourceLayer": "打印机",
-          "sha256": "9e1c1842a6e8f9e60975e944b6e9f30a9b050934a08defba63da33a1e69b160c",
-          "triangles": 824
-        },
-        {
-          "featureId": 622177,
           "sourceLayer": "打印机",
           "sha256": "9e1c1842a6e8f9e60975e944b6e9f30a9b050934a08defba63da33a1e69b160c",
           "triangles": 824
@@ -19203,17 +19093,17 @@
           "triangles": 154
         }
       ],
-      "extrudedPolygons": 132,
+      "extrudedPolygons": 129,
       "steppedStairs": 28,
       "openings": {
-        "sourceJambs": 82,
+        "sourceJambs": 63,
         "roomEdges": 8,
         "entranceSills": 0,
         "inferredSolidReturns": 9,
         "activeGlassBays": []
       },
-      "triangles": 79576,
-      "pixelSha256": "c2b6fd5278880d041e71db00c2a35f6d7ff383a4030369bbd81d95282c94d969"
+      "triangles": 76685,
+      "pixelSha256": "6b82b5217af6f3ae32fde75903bfe212ec71e30dabedd1b30cebca57e1fe8849"
     },
     {
       "exteriorBackdrop": "survey-aligned-campus-cutaway",
@@ -19232,12 +19122,12 @@
         "height": 1344
       },
       "roomFinishes": {
-        "office": 62,
+        "office": 61,
         "teaching": 4,
         "laboratory": 12,
-        "washroom": 18,
+        "washroom": 17,
         "plant": 37,
-        "neutral": 104
+        "neutral": 92
       },
       "inferredFittings": [
         {
@@ -19583,18 +19473,6 @@
           "y": 801.71789500129
         },
         {
-          "featureId": 620723,
-          "kind": "instruments",
-          "x": 315.2796659813131,
-          "y": 1109.3734925160456
-        },
-        {
-          "featureId": 620724,
-          "kind": "instruments",
-          "x": 143.06903591317737,
-          "y": 1176.4636497698593
-        },
-        {
           "featureId": 620725,
           "kind": "instruments",
           "x": 96.1918838004369,
@@ -19621,8 +19499,8 @@
         {
           "featureId": 620722,
           "kind": "instruments",
-          "x": 493.4141416572366,
-          "y": 1064.9086234201736
+          "x": 619.3042110469852,
+          "y": 1033.483606120148
         },
         {
           "featureId": 620700,
@@ -19789,26 +19667,8 @@
         {
           "featureId": 617911,
           "kind": "patchbay",
-          "x": 690.4142300099896,
-          "y": 1087.46360139108
-        },
-        {
-          "featureId": 617939,
-          "kind": "patchbay",
-          "x": 100.93422567723566,
-          "y": 1190.6936024716472
-        },
-        {
-          "featureId": 617940,
-          "kind": "patchbay",
-          "x": 103.51369211360486,
-          "y": 1200.9937353216144
-        },
-        {
-          "featureId": 617941,
-          "kind": "patchbay",
-          "x": 107.18955897277039,
-          "y": 1215.7185192660372
+          "x": 680.2867247754807,
+          "y": 1089.9893864495664
         },
         {
           "featureId": 617957,
@@ -19841,22 +19701,8 @@
           "y": 171.38361243887496
         }
       ],
-      "inferredCasework": 32,
-      "pointFixtures": [
-        {
-          "x": 434.85393839405083,
-          "y": 1163.0057434165165,
-          "sourceId": 622075,
-          "kind": "first-aid",
-          "cells": [
-            66227,
-            66228,
-            66229,
-            66456,
-            66457
-          ]
-        }
-      ],
+      "inferredCasework": 31,
+      "pointFixtures": [],
       "sourceModelInstances": 20,
       "sourceModels": [
         {
@@ -19983,14 +19829,14 @@
       "extrudedPolygons": 141,
       "steppedStairs": 24,
       "openings": {
-        "sourceJambs": 104,
+        "sourceJambs": 85,
         "roomEdges": 4,
         "entranceSills": 0,
         "inferredSolidReturns": 5,
         "activeGlassBays": []
       },
-      "triangles": 82964,
-      "pixelSha256": "80df0f0b21343a4fc39862337031261ab46c8e7240da528d16097f1666138854"
+      "triangles": 78169,
+      "pixelSha256": "d3e87b343f13d52dd9b8438c5046e55fe2c930500f60781713884be3880bc38d"
     },
     {
       "exteriorBackdrop": "survey-aligned-campus-cutaway",

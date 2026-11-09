@@ -73,10 +73,14 @@ test("source room doors are reachable from the campus, isolate their rooms when 
         door.id,
       );
       assert.ok(publicSpace.has(tileIndex(scene, door.outside)), door.id);
-      assert.ok(
-        !closedCampus.get(scene.id)!.has(tileIndex(scene, door.inside)),
-        `closed room has a bypass: ${door.id}`,
-      );
+      // W1's newly opened rooms can extend into preserved white regions.
+      // Retained gates there still open and block locally, but their former
+      // whole-room isolation is intentionally removed by the open layout.
+      if (!scene.w1Layout?.openedRoomSourceIds.includes(door.sourceId))
+        assert.ok(
+          !closedCampus.get(scene.id)!.has(tileIndex(scene, door.inside)),
+          `closed room has a bypass: ${door.id}`,
+        );
       assert.ok(nearbyDoors(walk, door.outside).includes(door));
       const travel = (from: Point, to: Point) => {
         const delta = { x: to.x - from.x, y: to.y - from.y },

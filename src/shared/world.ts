@@ -82,6 +82,7 @@ export type SceneMap = {
   doors?: RoomDoor[];
   pointFixtures?: import("./casework").SourcePointFixture[];
   fixtureCollision?: FixtureCollision;
+  w1Layout?: import("./w1-layout").W1Layout;
   roomCasework?: import("./casework").RoomCasework[];
   exploration: (Rect & { buildingId: BuildingId })[];
   note_zones: Rect[];

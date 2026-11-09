@@ -1,6 +1,6 @@
 # 资料与坐标契约
 
-权威类型及验证器在项目 src/shared/photos.ts。不要在 skill 中另建不兼容的格式。
+照片包和回执的权威类型在 src/shared/photos.ts；逐张核对与物件清单的验证器在 src/shared/photo-review.ts。不要在 skill 中另建不兼容的格式。
 
 ## 资料包 v1
 
@@ -21,7 +21,7 @@ prepare 校验 ZIP 路径、条目数量、解压总量和文件哈希，不允�
 - index.json：场景分组、重投影点和朝向。
 - contact-sheet.private.png：私有照片联系表，不得入库。
 - baseline-world.json：建筑结构与通行校验基线。
-- review.json：agent 的逐张证据与结果。
+- review.json：agent 的逐张证据、objects 物件清单与结果。
 - evidence/：同条件的修改前后游戏截图及私有对照资料。
 - verification.json、check-\*.log：自动检查结果及内容指纹。
 - receipt.json：导入维护者资料库的结果。
@@ -62,3 +62,19 @@ prepare 校验 ZIP 路径、条目数量、解压总量和文件哈希，不允�
 资料库批次与照片状态独立。pending → processing → review → merged，另有 needs-evidence、failed。
 照片的 applied 结果在审核分支阶段不等于已经采用。管理员确认提交被本地 main 包含后才登记采用版本。
 照片修改或删除会使关联批次 stale；过期回执不可导入或确认合入。相同回执重复导入返回幂等成功。
+
+## objects 物件清单
+
+新任务模板包含 objects 数组。每个可辨认的物理对象独立记录 objectId、name、action、observation、reason 和 nextUpdate；action 为 added、updated、unchanged、deferred 或 excluded。未纳入需说明原因，但“位置不够精确”本身不是搁置理由。
+
+added／updated 必须提供 placement：
+
+- sceneId、position（当前场景逻辑坐标）、rotationDegrees（该场景平面从向右开始顺时针，非照片北向 heading）。
+- dimensionsMeters：width、depth、height，允许按常见物品及角色比例估计。
+- support：floor、wall、ceiling 或 surface；collision：solid 或 none。
+- accuracy：approximate 或 confirmed；近似摆放可以是 applied。
+- locationBasis 和 scaleBasis：说明位置、比例如何估计，不冒充测量值。
+
+新增对象无需 sourceId；objects 中存在实际已放置的对象时，sourceIds 可以为空。每个对象的生成配置必须进入地图生成流程，仅填写 objects 不算已实现。后续照片用相同 objectId 更新原实例的位置和细节。旧报告没有 objects 时仍能解析，新的私有报告会完整保留这些记录。
+
+示例：academic-f2-planter-01 是稳定实例ID；locationBasis 可写“按照片中的走廊边缘近似摆放”，scaleBasis 可写“参考角色与常见花盆高度估计”，accuracy 设 approximate。以后位置从 (430,510) 改到 (434,507)，仍使用同一ID，不再新增一个花盆。

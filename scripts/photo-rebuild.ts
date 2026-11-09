@@ -15,6 +15,10 @@ import { spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import sharp, { type OverlayOptions } from "sharp";
 import { z } from "zod";
+import {
+  photoReviewSchema as reviewSchema,
+  hasLocatedPhotoChange,
+} from "../src/shared/photo-review";
 import { extractBundle, sha } from "./photo-bundle";
 import {
   manifestSchema,
@@ -67,28 +71,6 @@ async function fingerprint(cwd: string) {
   }
   return sha(data.join("\n"));
 }
-const reviewSchema = z.object({
-  photos: z.array(
-    z.object({
-      id: z.string().uuid(),
-      outcome: z.enum(["applied", "unchanged", "needs-evidence", "failed"]),
-      observations: z.string().min(1).max(4000),
-      changes: z.string().max(4000),
-      sourceIds: z.array(z.number()),
-      uncertainties: z.string().max(4000),
-      evidence: z
-        .object({
-          before: z.string(),
-          after: z.string(),
-          sceneId: z.string(),
-          view: z.string().min(1),
-          zoom: z.number().positive(),
-          visualChecked: z.literal(true),
-        })
-        .optional(),
-    }),
-  ),
-});
 function taskPath() {
   const value = arg("task");
   if (!value) throw new Error("--task <private task directory> is required");
@@ -105,9 +87,9 @@ async function review(dir: string, manifest: PhotoManifest) {
     if (!manifest.photos.some((q) => q.id === p.id))
       throw new Error("Unexpected photo result");
     if (p.outcome === "applied") {
-      if (!p.sourceIds.length || !p.changes || !p.evidence)
+      if (!hasLocatedPhotoChange(p) || !p.changes || !p.evidence)
         throw new Error(
-          "Applied changes require source features and visual evidence",
+          "Applied changes require source features or placed objects, plus visual evidence; approximate placements are valid",
         );
       if (
         p.evidence.sceneId !==
@@ -290,6 +272,7 @@ if (command === "prepare") {
           : "本次过滤范围外，未处理",
         changes: "",
         sourceIds: [],
+        objects: [],
         uncertainties: "尚未完成照片校对",
       })),
     });

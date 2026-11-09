@@ -1,3 +1,4 @@
+import { photoPropArt } from "./photo-prop-art.ts";
 import { academicEnvelope } from "./academic-envelope.ts";
 import {
   fixedGlazing,
@@ -621,6 +622,9 @@ export function createIndoorBaker(root: string, sources: Sources) {
       addShadow([item.footprint], 1.05 * scale, "fixtures");
       groups.get("fixtures")!.push(...caseworkMesh(item, scale, material));
     }
+    const photoArt = photoPropArt(scene, materials);
+    groups.get("fixtures")!.push(...photoArt.fixtures);
+    groups.get("rooms")!.push(...photoArt.floor);
     const inlays = studyInlays(scene, material, polygonMesh);
     // The open-space floor image must keep its coloured inlays when fixture
     // visibility is toggled. Its 0.09 elevation sits just above walk polygons.

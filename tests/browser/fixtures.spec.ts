@@ -49,3 +49,55 @@ test("C7 F2 bookshelf stops the avatar; the adjoining aisle remains walkable", a
   await walk("d", 350);
   expect(await position(page, "x")).toBeGreaterThan(stopped + 5);
 });
+
+test("W1 F6 photo hoist blocks walking while the surrounding lab aisle remains open", async ({
+  page,
+}) => {
+  await page.clock.install();
+  await page.addInitScript(() =>
+    localStorage.setItem(
+      "ustvalley.journey.v1",
+      JSON.stringify({
+        schema: 1,
+        coins: 0,
+        discovered: [],
+        talked: [],
+        observations: [],
+        completed: [],
+        chestReadyAt: {},
+        chestsOpened: 0,
+        ownedOutfits: ["clay"],
+        ownedHats: ["none"],
+        outfit: "clay",
+        hat: "none",
+        location: {
+          sceneId: "interior_west_f6",
+          mapVersion: "core-pixel-3d-0.6.1",
+          x: 605,
+          y: 1125,
+        },
+      }),
+    ),
+  );
+  await page.goto("/");
+  await expect(page.locator("main")).toHaveAttribute(
+    "data-scene",
+    "interior_west_f6",
+  );
+  await page.clock.pauseAt(new Date(Date.now() + 1000));
+  const walk = async (key: string, ms: number) => {
+    await page.keyboard.down(key);
+    await page.clock.runFor(ms);
+    await page.keyboard.up(key);
+    await page.clock.runFor(150);
+  };
+  await walk("w", 1600);
+  const stopped = await position(page, "y");
+  expect(stopped).toBeGreaterThan(1112);
+  expect(stopped).toBeLessThan(1122);
+  await walk("w", 500);
+  expect(await position(page, "y")).toBeCloseTo(stopped, 1);
+  await walk("s", 600);
+  await walk("a", 900);
+  expect(await position(page, "x")).toBeLessThan(598);
+});

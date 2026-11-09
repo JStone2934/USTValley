@@ -1,3 +1,4 @@
+import { fitPhotoProps } from "./photo-prop-art.ts";
 import { doorCollision } from "../src/shared/doors.ts";
 import { fixedGlazing } from "./doorway-art.ts";
 import { fitThinWalls } from "./indoor-wall-collision.ts";
@@ -852,6 +853,7 @@ export function buildWorld(sources: Sources, sourceBytes: Uint8Array) {
   for (const scene of topology.scenes)
     fitRoomCasework(scene, sources[scene.sourceMap]);
   for (const scene of world.scenes) fitEntranceSills(scene);
+  for (const scene of world.scenes) fitPhotoProps(scene);
   validateWorld(world);
   const report = {
     mapVersion: world.mapVersion,

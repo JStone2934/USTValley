@@ -8,6 +8,7 @@ import {
   readdir,
   symlink,
   access,
+  lstat,
 } from "node:fs/promises";
 import { resolve, join, relative, dirname } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -454,7 +455,16 @@ if (command === "prepare") {
     throw new Error(
       "Code or assessment changed after verification; rerun verify",
     );
-  if (exec("git", ["status", "--porcelain"], cwd))
+  const status = exec("git", ["status", "--porcelain"], cwd)
+    .split("\n")
+    .filter(Boolean);
+  // Older baselines ignore node_modules/ directories but not the dependency symlink
+  // created by prepare. Never ignore any other uncommitted artifact.
+  const dependencyLink = await lstat(join(cwd, "node_modules")).then(
+    (s) => s.isSymbolicLink(),
+    () => false,
+  );
+  if (status.some((line) => !(line === "?? node_modules" && dependencyLink)))
     throw new Error("Commit verified changes before producing final receipt");
   const commit = exec("git", ["rev-parse", "HEAD"], cwd),
     branch = exec("git", ["branch", "--show-current"], cwd);

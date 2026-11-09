@@ -167,6 +167,8 @@ if (command === "prepare") {
   const privateRoot = resolve(arg("out") ?? join(repo, "data/private-rebuild"));
   await mkdir(privateRoot, { recursive: true, mode: 0o700 });
   const staging = await mkdtemp(join(privateRoot, ".prepare-"));
+  let createdWorktree: string | undefined;
+  let createdBranch: string | undefined;
   try {
     const result = await extractBundle(
       resolve(bundle),
@@ -174,11 +176,23 @@ if (command === "prepare") {
     );
     const { manifest, manifestHash } = result,
       dir = join(privateRoot, manifest.batchId);
+    const selected = manifest.photos.filter(
+      (p) =>
+        (!arg("scene") || p.pose.sceneId === arg("scene")) &&
+        (!arg("building") || p.pose.buildingId === arg("building")),
+    );
+    if (!selected.length) throw new Error("No photos match requested filter");
+
     try {
       const existing = await json(join(dir, "task.json"));
-      if (existing.manifestHash !== manifestHash || existing.baseline !== base)
+      if (
+        existing.manifestHash !== manifestHash ||
+        existing.baseline !== base ||
+        JSON.stringify(existing.selected) !==
+          JSON.stringify(selected.map((p) => p.id))
+      )
         throw new Error(
-          "Existing batch differs; choose another output directory",
+          "Existing batch, baseline or selection differs; export a new batch",
         );
       await rm(staging, { recursive: true, force: true });
       console.log(dir);
@@ -191,26 +205,9 @@ if (command === "prepare") {
         arg("worktree") ??
           join(dirname(repo), ".ustvalley-rebuild", manifest.batchId),
       );
-    await mkdir(dirname(worktree), { recursive: true });
-    exec("git", ["worktree", "add", "-b", branch, worktree, base]);
-    try {
-      await symlink(
-        join(repo, "node_modules"),
-        join(worktree, "node_modules"),
-        "dir",
-      );
-    } catch (e) {
-      if ((e as NodeJS.ErrnoException).code !== "EEXIST") throw e;
-    }
-    const world: WorldMap = await json(
-      join(worktree, "public/maps/world.json"),
+    const world: WorldMap = JSON.parse(
+      exec("git", ["show", base + ":public/maps/world.json"]),
     );
-    const selected = manifest.photos.filter(
-      (p) =>
-        (!arg("scene") || p.pose.sceneId === arg("scene")) &&
-        (!arg("building") || p.pose.buildingId === arg("building")),
-    );
-    if (!selected.length) throw new Error("No photos match requested filter");
     await mkdir(join(staging, "evidence"));
     await put(join(staging, "baseline-world.json"), world);
     const groups = selected.map((p) => ({
@@ -260,6 +257,19 @@ if (command === "prepare") {
       .composite(tiles)
       .png()
       .toFile(join(staging, "contact-sheet.private.png"));
+    await mkdir(dirname(worktree), { recursive: true });
+    exec("git", ["worktree", "add", "-b", branch, worktree, base]);
+    createdWorktree = worktree;
+    createdBranch = branch;
+    try {
+      await symlink(
+        join(repo, "node_modules"),
+        join(worktree, "node_modules"),
+        "dir",
+      );
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code !== "EEXIST") throw e;
+    }
     await put(join(staging, "task.json"), {
       schemaVersion: 1,
       batchId: manifest.batchId,
@@ -286,6 +296,10 @@ if (command === "prepare") {
     console.log(JSON.stringify({ task: dir, worktree, branch }, null, 2));
   } catch (e) {
     await rm(staging, { recursive: true, force: true });
+    if (createdWorktree && createdBranch) {
+      exec("git", ["worktree", "remove", "--force", createdWorktree]);
+      exec("git", ["branch", "-D", createdBranch]);
+    }
     throw e;
   }
 } else if (command === "verify") {
@@ -297,6 +311,23 @@ if (command === "prepare") {
   const assessment = await review(dir, manifest),
     checks: { command: string; passed: boolean; log: string }[] = [];
   const cwd = task.worktree as string;
+  const previous = args.includes("--resume")
+    ? await json(join(dir, "verification.json"))
+    : undefined;
+  if (
+    previous &&
+    (previous.fingerprint !== (await fingerprint(cwd)) ||
+      previous.reviewHash !== sha(await readFile(join(dir, "review.json"))) ||
+      previous.evidenceHash !== (await evidenceHash(dir, assessment)))
+  )
+    throw new Error(
+      "Cannot resume: code, assessment or evidence changed; run full verify",
+    );
+  const attempt = previous ? (previous.attempt ?? 1) + 1 : 1;
+  if (attempt > 3)
+    throw new Error(
+      "Three verification attempts exhausted; preserve failure and request investigation",
+    );
   for (const [bin, params] of [
     ["npm", ["run", "maps:build"]],
     ["npm", ["test"]],
@@ -311,9 +342,19 @@ if (command === "prepare") {
         "tests/browser/fixtures.spec.ts",
         "tests/browser/doors.spec.ts",
         "tests/browser/orbit.spec.ts",
+        "--workers=1",
       ],
     ],
   ] as [string, string[]][]) {
+    const commandLabel = [bin, ...params].join(" ");
+    const cached = previous?.checks.find(
+      (c: { command: string; passed: boolean; log: string }) =>
+        c.command === commandLabel && c.passed,
+    );
+    if (cached) {
+      checks.push(cached);
+      continue;
+    }
     let passed = true,
       log = "";
     try {
@@ -322,7 +363,7 @@ if (command === "prepare") {
       passed = false;
       log = (e as Error).message;
     }
-    const name = "check-" + checks.length + ".log";
+    const name = "check-" + checks.length + "-attempt-" + attempt + ".log";
     await writeFile(join(dir, name), log, { mode: 0o600 });
     checks.push({ command: [bin, ...params].join(" "), passed, log: name });
     if (!passed) break;
@@ -387,6 +428,10 @@ if (command === "prepare") {
       checks.every((c) => c.passed) &&
       !assessment.photos.some((p) => p.outcome === "failed"),
     checks,
+    attempt,
+    previousRun: previous
+      ? { createdAt: previous.createdAt, checks: previous.checks }
+      : undefined,
     createdAt: Date.now(),
   };
   await put(join(dir, "verification.json"), result);

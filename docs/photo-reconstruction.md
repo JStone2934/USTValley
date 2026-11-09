@@ -54,3 +54,5 @@ prepare 使用明确基线创建独立 worktree。任务目录和照片不进入
 管理员先标记批次处理中，完成后导入 receipt.json。待审核不等于已用于重建；合入后同步本地 main，再在资料库确认采用版本。不同照片可以分别为 applied、unchanged、needs-evidence、failed。
 
 测试：npm run test:photos；npm run test:photos:e2e。服务端照片测试使用临时数据，不依赖真实私有照片。项目主页 README 继续聚焦地图展示。
+
+若失败后只需复查环境，且代码、标注和截图均未改变，可使用 verify --task 路径 --resume。成功检查仅在指纹一致时复用，失败日志保留，每轮记录独立；最多三轮。修改任何内容后必须完整验证。

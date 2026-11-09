@@ -202,6 +202,8 @@ test("private upload, originals, admin export and revision-safe receipts", async
     ).metadata();
     assert.equal(rotatedMeta.width, 60);
     assert.equal(rotatedMeta.height, 40);
+    const concurrent = await Promise.all([upload(), upload(), upload()]);
+    assert.deepEqual(concurrent.map((r) => r.status).sort(), [201, 201, 503]);
     assert.equal(
       (await upload(Buffer.alloc(25 * 1024 * 1024 + 1))).status,
       413,
@@ -409,20 +411,83 @@ test("private upload, originals, admin export and revision-safe receipts", async
     await rm(dir, { recursive: true, force: true });
   }
 });
-test("archive reader rejects undeclared files and cleans failed extraction", async () => {
+test("archive reader rejects undeclared files, hash changes and symlinks", async () => {
   const dir = await mkdtemp(join(tmpdir(), "ust-bundle-"));
   try {
-    const zip = new ZipFile(),
-      chunks: Buffer[] = [];
-    zip.outputStream.on("data", (b) => chunks.push(b));
-    const done = new Promise<void>((ok) => zip.outputStream.on("end", ok));
-    zip.addBuffer(Buffer.from("{}"), "manifest.json");
-    zip.addBuffer(Buffer.from("bad"), "script.sh");
-    zip.end();
-    await done;
-    const input = join(dir, "bad.zip");
-    await writeFile(input, Buffer.concat(chunks));
-    await assert.rejects(extractBundle(input, join(dir, "out")));
+    const scene = world.scenes[0],
+      id = randomUUID(),
+      picture = await sharp({
+        create: { width: 8, height: 8, channels: 3, background: "#568" },
+      })
+        .webp()
+        .toBuffer();
+    const transform = JSON.parse(
+      await readFile("content/map-config.json", "utf8"),
+    ).transform;
+    const manifest: PhotoManifest = {
+      schemaVersion: 1,
+      batchId: randomUUID(),
+      createdAt: Date.now(),
+      photos: [
+        {
+          id,
+          revision: 1,
+          sha256: digest(picture),
+          previewSha256: digest(picture),
+          original: "originals/" + id + ".webp",
+          preview: "previews/" + id + ".webp",
+          note: "archive fixture",
+          capturedAt: null,
+          capturedAtSource: null,
+          pose: {
+            sceneId: scene.id,
+            mapVersion: world.mapVersion,
+            x: 100,
+            y: 100,
+            heading: 0,
+            pitch: null,
+            buildingId: null,
+            blockedConfirmed: true,
+            sourceMap: scene.sourceMap,
+            floorKey: scene.floor.key,
+            floorName: scene.floor.name,
+            elevation: scene.floor.elevation,
+            source: sourcePoint(scene, { x: 100, y: 100 }),
+            transform,
+            scale: scene.units.pixelsPerProjectedUnit,
+            offset: scene.sourceOffset,
+          },
+        },
+      ],
+    };
+    for (const kind of ["undeclared", "hash", "link"]) {
+      const zip = new ZipFile(),
+        chunks: Buffer[] = [];
+      zip.outputStream.on("data", (b) => chunks.push(b));
+      const done = new Promise<void>((ok) => zip.outputStream.on("end", ok));
+      zip.addBuffer(Buffer.from(JSON.stringify(manifest)), "manifest.json");
+      zip.addBuffer(
+        kind === "hash" ? Buffer.from("changed") : picture,
+        manifest.photos[0].original,
+      );
+      zip.addBuffer(picture, manifest.photos[0].preview);
+      if (kind === "undeclared") zip.addBuffer(Buffer.from("bad"), "script.sh");
+      if (kind === "link")
+        zip.addBuffer(Buffer.from("/etc/passwd"), "link", { mode: 0o120777 });
+      zip.end();
+      await done;
+      const input = join(dir, kind + ".zip");
+      await writeFile(input, Buffer.concat(chunks));
+      await assert.rejects(
+        extractBundle(input, join(dir, kind)),
+        kind === "undeclared"
+          ? /Undeclared/
+          : kind === "hash"
+            ? /hash mismatch/
+            : /Links/,
+      );
+      await assert.rejects(readFile(join(dir, kind, "manifest.json")));
+    }
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

@@ -334,10 +334,12 @@ export function createPhotoApp(options: PhotoOptions) {
     throttle("owner:" + o.hash, options.ownerDailyLimit ?? 100);
     throttle("ip:" + digest(req.ip ?? "unknown"), options.ipDailyLimit ?? 500);
     req.setTimeout(120000, () => req.destroy(new Error("Upload timeout")));
-    await ready;
-    const temp = await mkdtemp(join(root, ".upload-"));
     processing++;
+    let cleanupTemp: string | undefined;
     try {
+      await ready;
+      const temp = await mkdtemp(join(root, ".upload-"));
+      cleanupTemp = temp;
       const fields: Record<string, string> = {};
       let filename = "",
         fileCount = 0,
@@ -487,7 +489,7 @@ export function createPhotoApp(options: PhotoOptions) {
       res.status(201).json(publicPhoto(get(id)!));
     } finally {
       processing--;
-      await rm(temp, { recursive: true, force: true });
+      if (cleanupTemp) await rm(cleanupTemp, { recursive: true, force: true });
     }
   });
   app.post("/api/v1/photos/:id/confirm", (req, res) => {

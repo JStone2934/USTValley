@@ -132,6 +132,12 @@ npm run build                 # 校验地图、类型检查并构建网站
 
 更多资料：[地图重建报告](docs/map-reconstruction-report.md) · [构建记录](content/map-build-report.json) · [实景参考](docs/campus-photo-references.md) · [全部室内场景](public/maps/interior-catalog.png)。
 
+<img width="2564" height="1354" alt="65ef37724c389591f4dbc70161a3edf5" src="https://github.com/user-attachments/assets/7c8ad58c-cf41-42ac-9b3a-a2091184509a" />
+
+
+<img width="1284" height="668" alt="dcdac8a80d763d442e65f1cb66f5cc80" src="https://github.com/user-attachments/assets/8f75da7c-0075-4f64-9fd8-3671f9e7d3f6" />
+
+
 ## 素材与展示说明
 
 校园几何与原始模型来自项目保存的校园地图资料；像素纹理、材质及补充物件由项目制作。原地图、模型与派生美术的来源及复用状态见 [素材清单](content/assets.json)。
